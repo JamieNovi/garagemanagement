@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.customer;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -49,6 +50,7 @@ public class Customer {
     @NotBlank(message = "Woonplaats is verplicht.")
     private String city;
 
+    @JsonIgnoreProperties("customer")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude
