@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.CustomerMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private CustomerMapper mapper;
+    private int customerId;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, CustomerMapper mapper) {
@@ -28,8 +30,11 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer getCustomer(int customerId) {
+    public Customer getCustomer(Integer customerId) {
        Optional<Customer> customerOptional =   customerRepository.findById(customerId);
+            if(!customerOptional.isPresent()){
+                throw new EntityNotFoundException(Customer.class,"id", customerId.toString());
+            }
        Customer customer = customerOptional.get();
         log.info(customer.getLastName());
        return customer;

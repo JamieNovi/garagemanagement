@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.customer;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.List;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Customers")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -50,7 +52,6 @@ public class Customer {
     @NotBlank(message = "Woonplaats is verplicht.")
     private String city;
 
-    @JsonIgnoreProperties("customer")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude
