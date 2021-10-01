@@ -20,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -113,13 +114,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
      * @param ex the EntityNotFoundException
      * @return the ApiError object
      */
-//    @ExceptionHandler(EntityNotFoundException.class)
-//    protected ResponseEntity<Object> handleEntityNotFound(
-//            EntityNotFoundException ex) {
-//        ApiError apiError = new ApiError(NOT_FOUND);
-//        apiError.setMessage(ex.getMessage());
-//        return buildResponseEntity(apiError);
-//    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    protected ResponseEntity<Object> handleEntityNotFound(
+            EntityNotFoundException ex) {
+        ApiError apiError = new ApiError(NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
 
     /**
      * Handle HttpMessageNotReadableException. Happens when request JSON is malformed.
@@ -135,7 +136,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
         log.info("{} to {}", servletWebRequest.getHttpMethod(), servletWebRequest.getRequest().getServletPath());
         String error = "Malformed JSON request";
-        return buildResponseEntity(new ApiError(BAD_REQUEST, error, ex));
+        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
     /**
@@ -174,10 +175,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * Handle javax.persistence.EntityNotFoundException
      */
-    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
-        return buildResponseEntity(new ApiError(NOT_FOUND, ex));
-    }
+//    @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
+//    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
+//        return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
+//    }
 
     /**
      * Handle DataIntegrityViolationException, inspects the cause for different DB causes.

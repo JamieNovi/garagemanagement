@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.customer;
 
+import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class CustomerController {
     }
 
     @GetMapping(path = "/klant/{customerId}")
-    public Customer getCustomer(@PathVariable("customerId") int customerId){
+    public Customer getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
         return customerService.getCustomer(customerId);
     }
 

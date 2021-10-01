@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerRepository;
+import nl.jamienovi.garagemanagement.inspection.InspectionReport;
+import nl.jamienovi.garagemanagement.inspection.InspectionService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -19,9 +21,12 @@ import java.util.List;
 public class CustomerDataLoader implements CommandLineRunner {
 
     private CustomerRepository customerRepository;
+    private final InspectionService inspectionService;
 
-    public CustomerDataLoader(CustomerRepository customerRepository) {
+    public CustomerDataLoader(CustomerRepository customerRepository,
+                              InspectionService inspectionService) {
         this.customerRepository = customerRepository;
+        this.inspectionService = inspectionService;
     }
 
     @Override
@@ -39,6 +44,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                "90024", "Los Angeles",
                 carsTomCruise
                 ));
+
         customers.add(new Customer(
                "Leonardo",
                 "Dicaprio",
@@ -47,6 +53,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "90210",
                 "Los Angeles",
                 carsLeonardo));
+
         customers.add(new Customer(
                 "Julie",
                 "Cash",
@@ -56,7 +63,10 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "Texas",
                 carsJulieCash));
 
+        InspectionReport report = new InspectionReport();
+        report.setCar(carsTomCruise.get(0));
         customerRepository.saveAll(customers);
+        inspectionService.addInspectionReportToCar(1, report);
 
         log.info("Seeding customers to database succeeded");
     }
