@@ -1,0 +1,39 @@
+package nl.jamienovi.garagemanagement.laboritem;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import nl.jamienovi.garagemanagement.repairorderline.Item;
+
+import javax.persistence.*;
+
+import static javax.persistence.GenerationType.SEQUENCE;
+
+@Entity(name = "Labor")
+@Table(name = "handelingen")
+@Getter
+@Setter
+@NoArgsConstructor
+public class Labor implements Item {
+
+    @Id
+    @SequenceGenerator(name = "labor_sequence",sequenceName = "labor_sequence",allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "labor_sequence")
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "Naam")
+    private String name;
+
+    @Column(name = "prijs")
+    private Double price;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private ItemType type = ItemType.LABOR_ITEM;
+
+    public Labor(String name, Double price) {
+        this.name = name;
+        this.price = price;
+    }
+}

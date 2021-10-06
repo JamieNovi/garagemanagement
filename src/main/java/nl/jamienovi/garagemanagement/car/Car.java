@@ -15,7 +15,7 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@Entity(name = "Cars")
+@Entity(name = "Car")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
@@ -31,7 +31,7 @@ public class Car {
     @Column(name = "id",updatable = false)
     private Integer id;
 
-    @Column(name = "brand")
+    @Column(name = "merk")
     @NotBlank(message = "Merk van auto niet ingevoerd.")
     private String brand;
 
@@ -39,13 +39,13 @@ public class Car {
     @Column(name = "model")
     private String model;
 
-    @Column(name = "registration_plate",unique = true)
+    @Column(name = "kenteken",unique = true)
     @NotBlank(message = "Kenteken invoeren verplicht.")
     private String registrationPlate;
 
+
     @ManyToOne(cascade = CascadeType.MERGE)
     private Customer customer;
-
 
     @OneToMany(cascade = CascadeType.ALL,targetEntity = InspectionReport.class)
     @JoinColumn(name="car_id", referencedColumnName = "id")

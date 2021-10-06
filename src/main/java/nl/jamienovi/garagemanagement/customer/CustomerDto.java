@@ -12,7 +12,7 @@ import java.util.List;
 public class CustomerDto {
       private int id;
       private String firstName;
-      private String LastName;
+      private String lastName;
       private String email;
       private String address;
       private String postalCode;

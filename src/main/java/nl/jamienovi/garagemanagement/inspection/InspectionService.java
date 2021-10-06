@@ -2,6 +2,7 @@ package nl.jamienovi.garagemanagement.inspection;
 
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarRepository;
+import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +13,14 @@ import java.util.Optional;
 public class InspectionService {
     private final InspectionReportRepository inspectionReportRepository;
     private final CarRepository carRepository;
+    private final RepairOrderService repairOrderService;
 
     @Autowired
     public InspectionService(InspectionReportRepository inspectionReportRepository,
-                             CarRepository carRepository) {
+                             CarRepository carRepository, RepairOrderService repairOrderService) {
         this.inspectionReportRepository = inspectionReportRepository;
         this.carRepository = carRepository;
+        this.repairOrderService = repairOrderService;
     }
 
     public List<InspectionReport> getAllInspectionReports() {
@@ -32,6 +35,7 @@ public class InspectionService {
         Optional<Car> car = carRepository.findById(carId);
         newInspectionReport.setCar(car.get());
         inspectionReportRepository.save(newInspectionReport);
+
     }
 
 

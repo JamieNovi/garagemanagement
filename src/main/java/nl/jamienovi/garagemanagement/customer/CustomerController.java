@@ -24,7 +24,7 @@ public class CustomerController {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping(path = "/klant/{customerId}")
+    @GetMapping(path = "/klanten/{customerId}")
     public Customer getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
         return customerService.getCustomer(customerId);
     }
@@ -38,8 +38,8 @@ public class CustomerController {
     }
 
     @PutMapping(path="/klant-aanpassen/{customerId}")
-    public ResponseEntity<?> updateCustomer(@RequestBody CustomerDto customerDto) {
-        customerService.updateCustomer(customerDto);
+    public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId, @RequestBody CustomerDto customerDto) {
+        customerService.updateCustomer(customerId ,customerDto);
         return ResponseEntity.ok(
                 new MessageResponse(String.format("Klant succesvol aangepast.")));
     }
@@ -51,6 +51,4 @@ public class CustomerController {
         return ResponseEntity.ok(
                 new MessageResponse(String.format("Klant verwijderd.")));
     }
-
-
 }

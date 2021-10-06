@@ -48,10 +48,10 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
-    public void updateCustomer(CustomerDto customerDto) {
-               Customer existingCustomer = customerRepository.findById(customerDto.getId())
+    public void updateCustomer(Integer customerId, CustomerDto customerDto) {
+               Customer existingCustomer = customerRepository.findById(customerId)
                .orElseThrow(() -> new IllegalStateException(
-                       "Klant met id " + customerDto.getId() + " bestaat niet."
+                       "Klant met id " + customerId + " bestaat niet."
                ));
                mapper.updateCustomerFromDto(customerDto,existingCustomer);
                customerRepository.save(existingCustomer);
@@ -61,6 +61,7 @@ public class CustomerService {
         boolean exists = customerRepository.existsById(customerId);
         if(!exists) {
             throw new IllegalStateException(String.format("Klant met id %s bestaat niet!",customerId));
+
         }
         customerRepository.deleteById(customerId);
     }

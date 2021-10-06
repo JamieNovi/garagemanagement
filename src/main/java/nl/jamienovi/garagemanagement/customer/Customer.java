@@ -15,12 +15,14 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@Entity(name = "Customers")
+@Entity(name = "Customer")
+@Table(name = "Klanten")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
+
 public class Customer {
     @Id
     @SequenceGenerator(name = "customer_sequence",sequenceName = "customer_sequence", allocationSize = 1)
@@ -28,11 +30,11 @@ public class Customer {
     @Column(name = "id",updatable = false)
     private Integer id;
 
-    @Column(name = "first_name",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "voornaam",nullable = false,columnDefinition = "TEXT")
     @NotBlank(message = "Voornaam is verplicht.")
     private String firstName;
 
-    @Column(name = "last_name",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "achternaam",nullable = false,columnDefinition = "TEXT")
     @NotBlank(message = "Achternaam is verplicht.")
     private String lastName;
 
@@ -40,18 +42,19 @@ public class Customer {
     @Email(message = "Geen geldig emailadres ingevoerd.")
     private String email;
 
-    @Column(name = "address",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "adres",nullable = false,columnDefinition = "TEXT")
     @NotBlank(message = "Adres is verplicht.")
     private String address;
 
-    @Column(name = "postal_code",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "postcode",nullable = false,columnDefinition = "TEXT")
     @NotBlank(message = "Postcode is verplicht.")
     private String postalCode;
 
-    @Column(name = "city",nullable = false,columnDefinition = "TEXT")
+    @Column(name = "woonplaats",nullable = false,columnDefinition = "TEXT")
     @NotBlank(message = "Woonplaats is verplicht.")
     private String city;
 
+    @Column(name= "cars")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude

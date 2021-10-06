@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.shortcoming;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,14 +11,15 @@ import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-@Entity(name="shortcomings")
+@Entity(name="ShortComing")
+@Table(name = "tekortkomingen")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -29,14 +30,14 @@ public class ShortComing {
     @GeneratedValue(strategy = SEQUENCE, generator = "shortcoming_sequence")
     private int id;
 
-    @Column(name = "created_at")
+    @Column(name = "aangemaakt_op")
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
-    @Column(name = "description")
+    @Column(name = "beschrijving")
     private String description;
 
-    @JsonIgnoreProperties("car")
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.MERGE)
     private InspectionReport inspectionReport;
 

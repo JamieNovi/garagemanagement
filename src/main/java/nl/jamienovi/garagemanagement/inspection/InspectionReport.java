@@ -1,17 +1,18 @@
 package nl.jamienovi.garagemanagement.inspection;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.jamienovi.garagemanagement.car.Car;
+import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import nl.jamienovi.garagemanagement.shortcoming.ShortComing;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -19,7 +20,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id")
-@Entity(name = "inspection_reports")
+@Entity(name = "InspectionReport")
+@Table(name = "keuringsrapport")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,22 +35,19 @@ public class InspectionReport {
 
     @Column(name = "created_at")
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    @Column(name = "short_comings")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name= "inspection_report_id", referencedColumnName = "id")
     private List<ShortComing> shortcomings;
 
+   @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
     @ManyToOne(targetEntity = Car.class,cascade = CascadeType.MERGE)
     private Car car;
 
-//    @OneToOne(fetch = FetchType.LAZY, targetEntity = RepairOrder.class)
-//    private RepairOrder repairOrder;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="repairorder_id",referencedColumnName = "id")
+    private RepairOrder repairOrder = new RepairOrder("Geen afspraken.");
 
 
 

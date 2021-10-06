@@ -19,17 +19,17 @@ public class CarController {
         this.carService = carService;
     }
 
-    @GetMapping(path = "/voertuigen")
+    @GetMapping(path = "/auto")
     public List<Car> getAllCars() {
         return carService.getAllCars();
     }
 
-    @GetMapping(path = "/voertuig/{carId}")
+    @GetMapping(path = "/auto/{carId}")
     public Car getCar(@PathVariable("carId") int carId) {
         return carService.getCar(carId);
     }
 
-    @PostMapping(path = "/voertuig-toevoegen/{customerId}")
+    @PostMapping(path = "/auto-toevoegen/{customerId}")
     public ResponseEntity<?> addCar(@PathVariable("customerId") int customerId, @RequestBody Car car){
         carService.addCarToCustomer(customerId,car);
         return ResponseEntity.ok(
@@ -37,7 +37,7 @@ public class CarController {
         );
     }
 
-    @PutMapping(path = "/voertuig-aanpassen/{carId}")
+    @PutMapping(path = "/auto-aanpassen/{carId}")
     public ResponseEntity<?> updateCar(@PathVariable("carId") int carId, @RequestBody CarDto carDto){
         carService.updateCarCustomer(carId,carDto);
         return ResponseEntity.ok(
@@ -45,7 +45,7 @@ public class CarController {
         );
     }
 
-    @DeleteMapping(path = "/voertuig-verwijderen/{customerId}")
+    @DeleteMapping(path = "/auto-verwijderen/{customerId}")
        public ResponseEntity<?> deleteCar(@PathVariable("customerId") int customerId) {
            carService.deleteCar(customerId);
            return ResponseEntity.ok(
