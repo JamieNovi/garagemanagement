@@ -28,7 +28,8 @@ public class ShortComing {
     @Id
     @SequenceGenerator(name = "shortcoming_sequence",sequenceName = "shortcoming_sequence")
     @GeneratedValue(strategy = SEQUENCE, generator = "shortcoming_sequence")
-    private int id;
+    @Column(name="tekortkoming_id", updatable = false)
+    private Integer id;
 
     @Column(name = "aangemaakt_op")
     @CreationTimestamp

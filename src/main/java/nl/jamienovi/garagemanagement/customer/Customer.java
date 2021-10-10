@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import nl.jamienovi.garagemanagement.car.Car;
+import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -59,6 +60,9 @@ public class Customer {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude
     private List<Car> cars;
+
+    @OneToOne(mappedBy = "customer")
+    private RepairOrder repairOrder;
 
     public Customer(String firstName, String lastName, String email, String address,
                     String postalCode, String city, List<Car> cars) {

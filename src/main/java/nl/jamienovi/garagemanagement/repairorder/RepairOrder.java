@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLine;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
+
 
 @Entity(name = "RepairOrder")
 @Table(name = "repair_orders")
@@ -24,28 +26,32 @@ public class RepairOrder {
     @Id
     @SequenceGenerator(name="inspection_order_sequence", sequenceName = "repair_order_sequence",allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "repair_order_sequence")
-    @Column(name = "id", updatable = false)
+    @Column(name = "reparatie_id", updatable = false)
     private Integer id;
 
     @OneToOne(mappedBy = "repairOrder", cascade = CascadeType.MERGE)
     private InspectionReport inspectionReport;
 
-    @Column(name = "created_at")
+    @Column(name = "aangemaakt_op")
     @CreationTimestamp
     private LocalDate createdAt;
 
-    @Column(name = "repair_status")
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private RepairStatus status = RepairStatus.NIEUW;
 
     @Column(name = "afspraken")
-    private String agreementComments;
+    private String agreementComments = "Geen afspraken";
 
     @JsonIgnoreProperties("repairOrder")
     @OneToMany(mappedBy = "repairOrder")
     private List<RepairOrderLine> repairOrderLines;
 
-    public RepairOrder(String agreementComments) {
-        this.agreementComments = agreementComments;
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "klant_id",referencedColumnName = "id")
+    private Customer customer;
+
+    public RepairOrder(Customer customer) {
+        this.customer = customer;
     }
 }

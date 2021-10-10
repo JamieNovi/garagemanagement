@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.inspection;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
@@ -37,17 +38,18 @@ public class InspectionReport {
     @CreationTimestamp
     private LocalDate createdAt;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name= "inspection_report_id", referencedColumnName = "id")
+    @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL)
+    //@JoinColumn(name= "keuringsrapport_id")
     private List<ShortComing> shortcomings;
 
-   @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
+    @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
     @ManyToOne(targetEntity = Car.class,cascade = CascadeType.MERGE)
     private Car car;
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="repairorder_id",referencedColumnName = "id")
-    private RepairOrder repairOrder = new RepairOrder("Geen afspraken.");
+    @JoinColumn(name="reparatie_id",referencedColumnName = "reparatie_id")
+    private RepairOrder repairOrder;
 
 
 

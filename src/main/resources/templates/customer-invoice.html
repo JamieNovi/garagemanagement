@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+     <link th:href="@{/main.css}" rel="stylesheet"/>
+</head>
+<body class="flex items-center justify-center h-screen">
+<div class="rounded-lg border shadow-lg p-10 w-3/5">
+    <div class="flex flex-row justify-between pb-4">
+        <div>
+            <h2 class="text-xl font-bold">Factuur voor reparatieorder <span class="text-green-600" th:text="${customer.getRepairOrderId()}"></span>
+            </h2>
+        </div>
+        <div>
+            <div class="text-xl font-bold">Status <p th:text="${customer.getStatus()}">Status</p> </div>
+        </div>
+    </div>
+    <div class="flex pb-8 ">
+        <div class="pr-8">
+            <div class="pb-2">
+                <h2 class="text-xl font-bold">Klant gegevens</h2>
+            </div>
+            <div th:text="${customer.getFirstName()} + ' ' + ${customer.getLastName()}"></div>
+            <div th:text="${customer.getAddress()}"></div>
+            <div th:text="${customer.getPostalCode()}"></div>
+            <div th:text="${customer.getCity()}"></div>
+            <div th:text="${customer.getEmail()}"></div>
+        </div>
+
+        <div>
+            <div  class=" pb-2">
+                <h2 class="text-xl font-bold">Auto gegevens</h2>
+            </div>
+            <div th:text="${customer.getBrand()}">Merk</div>
+            <div th:text="${customer.getModel()}">Model</div>
+            <div th:text="${customer.getRegistrationPlate()}">Kenteken</div>
+        </div>
+    </div>
+    
+    <table class="table-fixed w-full text-right border rounded">
+        <thead class="bg-gray-100">
+        <col span="1" class="wide">
+        <tr>
+            <th class="text-left pl-4">Product</th>
+            <th>Prijs</th>
+            <th>Btw</th>
+            <th>Aantal</th>
+            <th class="pr-4">Subtotaal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item: ${carparts}">
+            <td class="pl-4 text-left" th:text="${item.getName()}"></td>
+            <td th:text="${item.getPrice()}"></td>
+            <td>21 %</td>
+            <td class="pr-4" th:text="${item.getOrderLineQuantity()}"></td>
+            <td th:text="${#numbers.formatDecimal(item.getPrice(),0,2) * item.getOrderLineQuantity()}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="table-fixed w-full text-right border rounded">
+        <thead class="bg-gray-100">
+        <col span="1" class="wide">
+        <tr>
+            <th class="text-left pl-4">Handelingen</th>
+            <th>Prijs</th>
+            <th>Btw</th>
+            <th>Aantal</th>
+            <th class="pr-4">Subtotaal</th>
+        </tr>
+        </thead>
+        <tbody>
+                <tr th:each="item : ${labors}">
+                    <td class="pl-4 text-left" th:text="${item.getName()}"></td>
+                    <td th:text="${item.getPrice()}"></td>
+                    <td>21 %</td>
+                    <td class="pr-4" th:text="${item.getOrderLineQuantity()}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.getPrice(),0,2) * item.getOrderLineQuantity()}"></td>
+                </tr>
+        </tbody>
+    </table>
+
+    <!-- bedrag btw en totaal prijs -->
+    <div class="flex justify-end p-5">
+        <div class="justify-end">
+            <h2  class="flex flex-row justify-between">
+                <p>Totaal ex. BTW : </p>
+                <span th:text="${subTotal}" class="text-green-600 text-right">123.</span>
+            </h2>
+            <h2 class="flex justify-between">
+                <p>BTW 21%: </p>
+                <span th:text="${#numbers.formatDecimal(subTotal * 0.21,0,2)}" class="text-green-600">123.33</span>
+            </h2>
+            <h2 class="flex grandtotal-width  justify-between font-medium  bg-gray-200  rounded">
+                <p>TOTAAL EUR:</p> 
+                <span th:text="${#numbers.formatDecimal(subTotal * 1.21,0,2)}" class="text-green-600">123.33</span>
+            </h2>
+        </div>
+
+
+    </div>
+
+    <footer>
+        <p>Bedankt voor uw aankoop. Op deze aankoop is een garantie van toepassing van 6 maanden.</p>
+    </footer>
+</div>
+</body>
+</html>

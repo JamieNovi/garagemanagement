@@ -52,4 +52,10 @@ public class CarController {
                    new MessageResponse(String.format("Auto met id %s is verwijderd",customerId))
            );
     }
+
+    @GetMapping(path = "test")
+    public TestDto getTestQeury(){
+            return carService.getTestQuery();
+
+    }
 }

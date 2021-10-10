@@ -36,4 +36,10 @@ public class Labor implements Item {
         this.name = name;
         this.price = price;
     }
+
+    public Labor(Integer id, String name, Double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
 }

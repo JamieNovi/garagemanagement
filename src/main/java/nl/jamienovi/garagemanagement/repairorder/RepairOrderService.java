@@ -22,4 +22,8 @@ public class RepairOrderService {
         return repairOrderRepository.getById(repairOrderId);
     }
 
+    public void setRepairOrderStatus(Integer repairOrderId, RepairStatus status){
+
+    }
+
 }

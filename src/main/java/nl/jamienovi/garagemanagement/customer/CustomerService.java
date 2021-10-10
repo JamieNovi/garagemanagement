@@ -14,7 +14,6 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private CustomerMapper mapper;
-    private int customerId;
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, CustomerMapper mapper) {
