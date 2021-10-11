@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.repairorder;
 
+import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,18 @@ public class RepairOrderService {
         return repairOrderRepository.findAll();
     }
 
-    public RepairOrder getRepairOrder(Integer repairOrderId) {
-        return repairOrderRepository.getById(repairOrderId);
+    public RepairOrder getSingle(Integer repairOrderId) {
+        RepairOrder repairOrder = repairOrderRepository.findById(repairOrderId)
+                .orElseThrow(() -> {
+                    throw new EntityNotFoundException(RepairOrder.class,"id", repairOrderId.toString());
+                });
+        return repairOrder;
     }
 
-    public void setRepairOrderStatus(Integer repairOrderId, RepairStatus status){
-
+    public RepairOrder setStatus(Integer repairOrderId, RepairStatus status){
+            RepairOrder currentRepairOrder = repairOrderRepository.getById(repairOrderId);
+            currentRepairOrder.setStatus(status);
+            return repairOrderRepository.save(currentRepairOrder);
     }
 
 }

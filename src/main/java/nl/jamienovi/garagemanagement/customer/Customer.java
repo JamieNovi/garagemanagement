@@ -23,7 +23,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Setter
 @NoArgsConstructor
 @ToString
-
 public class Customer {
     @Id
     @SequenceGenerator(name = "customer_sequence",sequenceName = "customer_sequence", allocationSize = 1)

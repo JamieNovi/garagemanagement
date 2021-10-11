@@ -34,9 +34,7 @@ public class CustomerService {
             if(!customerOptional.isPresent()){
                 throw new EntityNotFoundException(Customer.class,"id", customerId.toString());
             }
-       Customer customer = customerOptional.get();
-        log.info(customer.getLastName());
-       return customer;
+       return customerOptional.get();
     }
 
     public void saveCustomer(Customer customer) {

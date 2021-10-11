@@ -8,6 +8,7 @@ import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLine;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-
+@CrossOrigin()
 @Entity(name = "RepairOrder")
 @Table(name = "repair_orders")
 @Getter

@@ -26,7 +26,7 @@ public class RepairOrderLineService {
     }
 
     public void addRepairOrderItem(Integer repairOrderId, CarPart carpartItem){
-        RepairOrder repairOrder = repairOrderService.getRepairOrder(repairOrderId);
+        RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
         //Create new orderline
         RepairOrderLine line = new RepairOrderLine();
         //Set repairorder in orderline
@@ -41,7 +41,7 @@ public class RepairOrderLineService {
     }
 
     public void addRepairOrderLaborItem(Integer repairOrderId, Labor laborItem){
-        RepairOrder repairOrder = repairOrderService.getRepairOrder(repairOrderId);
+        RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
         //Create new orderline
         RepairOrderLine line = new RepairOrderLine();
         //Set repairorder in orderline

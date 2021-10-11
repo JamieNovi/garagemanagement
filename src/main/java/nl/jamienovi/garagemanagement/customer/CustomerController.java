@@ -30,7 +30,7 @@ public class CustomerController {
     }
 
     @PostMapping(path = "/klant-toevoegen")
-    public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) {
+    public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
         customerService.saveCustomer(customer);
         return ResponseEntity.ok(
                 new MessageResponse(String.format("Klant succesvol aangemaakt.")));
