@@ -1,5 +1,7 @@
 package nl.jamienovi.garagemanagement.utils;
 
+import nl.jamienovi.garagemanagement.appointment.Appointment;
+import nl.jamienovi.garagemanagement.appointment.AppointmentDto;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarDto;
 import nl.jamienovi.garagemanagement.customer.Customer;
@@ -11,15 +13,18 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface CustomerMapper {
+public interface DtoMapper {
 
-    CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
+    DtoMapper INSTANCE = Mappers.getMapper(DtoMapper.class);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateCustomerFromDto(CustomerDto dto, @MappingTarget Customer entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateCarFromDto(CarDto car,@MappingTarget Car entity);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateAppointmentFromDto(AppointmentDto appointmentDto, @MappingTarget Appointment entity);
 
 
 }

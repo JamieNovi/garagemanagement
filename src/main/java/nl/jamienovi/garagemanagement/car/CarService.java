@@ -3,7 +3,7 @@ package nl.jamienovi.garagemanagement.car;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
-import nl.jamienovi.garagemanagement.utils.CustomerMapper;
+import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +16,11 @@ public class CarService {
 
    private final CarRepository carRepository;
    private final CustomerService  customerService;
-   private final CustomerMapper mapper;
+   private final DtoMapper mapper;
 
    @Autowired
    public CarService(CarRepository carRepository, CustomerService customerService,
-                     CustomerMapper mapper) {
+                     DtoMapper mapper) {
         this.carRepository = carRepository;
         this.customerService = customerService;
        this.mapper = mapper;

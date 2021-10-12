@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import nl.jamienovi.garagemanagement.appointment.Appointment;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
@@ -62,6 +63,9 @@ public class Customer {
 
     @OneToOne(mappedBy = "customer")
     private RepairOrder repairOrder;
+
+    @OneToOne(mappedBy = "customer")
+    private Appointment appointment;
 
     public Customer(String firstName, String lastName, String email, String address,
                     String postalCode, String city, List<Car> cars) {

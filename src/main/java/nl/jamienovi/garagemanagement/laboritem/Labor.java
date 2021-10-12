@@ -3,7 +3,6 @@ package nl.jamienovi.garagemanagement.laboritem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.jamienovi.garagemanagement.repairorderline.Item;
 
 import javax.persistence.*;
 
@@ -14,7 +13,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Labor implements Item {
+public class Labor {
 
     @Id
     @SequenceGenerator(name = "labor_sequence",sequenceName = "labor_sequence",allocationSize = 1)

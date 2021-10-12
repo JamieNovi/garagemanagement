@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.customer;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.utils.CustomerMapper;
+import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +13,10 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     private final CustomerRepository customerRepository;
-    private CustomerMapper mapper;
+    private DtoMapper mapper;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, CustomerMapper mapper) {
+    public CustomerService(CustomerRepository customerRepository, DtoMapper mapper) {
         this.customerRepository = customerRepository;
         this.mapper = mapper;
     }

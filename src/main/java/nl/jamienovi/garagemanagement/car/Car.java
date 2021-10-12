@@ -47,7 +47,7 @@ public class Car {
     @ManyToOne(cascade = CascadeType.MERGE)
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.ALL,targetEntity = InspectionReport.class)
+    @OneToMany(cascade = CascadeType.ALL,targetEntity = InspectionReport.class,orphanRemoval = true)
     @JoinColumn(name="car_id", referencedColumnName = "id")
     private List<InspectionReport> inspectionReports;
 
