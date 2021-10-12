@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.payload.response.MessageResponse;
+import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +33,7 @@ public class CustomerController {
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
         customerService.saveCustomer(customer);
         return ResponseEntity.ok(
-                new MessageResponse(String.format("Klant succesvol aangemaakt.")));
+                new ResponseMessage(String.format("Klant succesvol aangemaakt.")));
 
     }
 
@@ -41,7 +41,7 @@ public class CustomerController {
     public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId, @RequestBody CustomerDto customerDto) {
         customerService.updateCustomer(customerId ,customerDto);
         return ResponseEntity.ok(
-                new MessageResponse(String.format("Klant succesvol aangepast.")));
+                new ResponseMessage(String.format("Klant succesvol aangepast.")));
     }
 
 
@@ -49,6 +49,6 @@ public class CustomerController {
     public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") int customerId){
         customerService.deleteCustomer(customerId);
         return ResponseEntity.ok(
-                new MessageResponse(String.format("Klant verwijderd.")));
+                new ResponseMessage(String.format("Klant verwijderd.")));
     }
 }

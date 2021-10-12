@@ -1,6 +1,6 @@
 package nl.jamienovi.garagemanagement.inspection;
 
-import nl.jamienovi.garagemanagement.payload.response.MessageResponse;
+import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +25,6 @@ public class InspectionReportController {
     @PostMapping(path = "/keuring-aanmaken/{carId}")
     public ResponseEntity<?> addInspectionReportToCar(@PathVariable("carId") int carId,@RequestBody InspectionReport newInspectionReport){
         inspectionService.addInspectionReportToCar(carId, newInspectionReport);
-        return ResponseEntity.ok(new MessageResponse("Keuringsrapport toegevoegd."));
+        return ResponseEntity.ok(new ResponseMessage("Keuringsrapport toegevoegd."));
     }
 }
