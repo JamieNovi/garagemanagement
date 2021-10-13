@@ -1,4 +1,4 @@
-package nl.jamienovi.garagemanagement.carpart;
+package nl.jamienovi.garagemanagement.part;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +22,13 @@ public class CarPartController {
     }
 
     @GetMapping(path ="/")
-    public List<CarPart> getCarParts(){
+    public List<Part> getCarParts(){
         return cartPartService.getAllCarParts();
 
     }
 
     @GetMapping(path = "/{carPartId}")
-    public CarPart getCarPart(@PathVariable("carPartId") Integer carPartId){
+    public Part getCarPart(@PathVariable("carPartId") Integer carPartId){
         return cartPartService.getCarPart(carPartId);
     }
 

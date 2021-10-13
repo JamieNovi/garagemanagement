@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.jamienovi.garagemanagement.carpart.CarPart;
 import nl.jamienovi.garagemanagement.laboritem.Labor;
+import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
 import javax.persistence.*;
@@ -32,9 +32,10 @@ public class RepairOrderLine {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "carpart_id",nullable = true)
-    private CarPart carpart;
+    private Part carpart;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+
+    @ManyToOne()
     @JoinColumn(name = "labor_id",nullable = true)
     private Labor labor;
 

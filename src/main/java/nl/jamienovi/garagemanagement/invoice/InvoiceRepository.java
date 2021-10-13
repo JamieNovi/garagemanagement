@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -51,12 +52,13 @@ public class InvoiceRepository {
                     );
             query.setParameter("id", customerId);
             List<CarPartOrderlineDto> orderLines = query.getResultList();
+            entityManager.close();
             return orderLines;
         }catch (NoResultException ex){
+            entityManager.close();
             throw new NoResultException("No results");
         }
     }
-
     @SuppressWarnings("unchecked")
     public List<CarPartOrderlineDto> getInvoiceLaborOrderLines(Integer customerid) {
         EntityManager entityManager = emf.createEntityManager();
@@ -75,6 +77,7 @@ public class InvoiceRepository {
                 );
         query.setParameter("id",customerid);
         List<CarPartOrderlineDto> orderLines = query.getResultList();
+        entityManager.close();
         return orderLines;
 
     }

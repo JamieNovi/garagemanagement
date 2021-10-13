@@ -3,16 +3,19 @@ package nl.jamienovi.garagemanagement.laboritem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.SEQUENCE;
+
 
 @Entity(name = "Labor")
 @Table(name = "handelingen")
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 public class Labor {
 
     @Id

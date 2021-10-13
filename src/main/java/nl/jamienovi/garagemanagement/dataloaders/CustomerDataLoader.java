@@ -3,14 +3,14 @@ package nl.jamienovi.garagemanagement.dataloaders;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
-import nl.jamienovi.garagemanagement.carpart.CarPart;
-import nl.jamienovi.garagemanagement.carpart.CarPartRepository;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerRepository;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.inspection.InspectionService;
 import nl.jamienovi.garagemanagement.laboritem.Labor;
 import nl.jamienovi.garagemanagement.laboritem.LaborRepository;
+import nl.jamienovi.garagemanagement.part.Part;
+import nl.jamienovi.garagemanagement.part.CarPartRepository;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderRepository;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineRepository;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineService;
@@ -98,15 +98,11 @@ public class CustomerDataLoader implements CommandLineRunner {
         customerRepository.saveAll(customers);
 
         // Add car parts to database
-        CarPart diskBrakes = new CarPart("Remschijven",49.99,15);
-        CarPart exhaust = new CarPart("Uitlaat",87.50,4);
-        CarPart oilFilter = new CarPart("Oliefilter",9.95,12);
-        CarPart sparkPlug = new CarPart("Bougie",14.34, 20);
-        CarPart headLight = new CarPart("Koplamp",50.22,2);
-
-        log.info("Seeding carparts to database");
-        carPartRepository.saveAll(List.of(
-                diskBrakes,exhaust,oilFilter,sparkPlug,headLight));
+        Part diskBrakes = new Part("Remschijven",49.99,15);
+        Part exhaust = new Part("Uitlaat",87.50,4);
+        Part oilFilter = new Part("Oliefilter",9.95,12);
+        Part sparkPlug = new Part("Bougie",14.34, 20);
+        Part headLight = new Part("Koplamp",50.22,2);
 
         // Add labor items to database
         Labor inspection = new Labor("Kosten keuring", 50.00);
@@ -122,6 +118,10 @@ public class CustomerDataLoader implements CommandLineRunner {
                 labourOilFilter,labourSparkPlug,
                 labourHeadLight
         ));
+        log.info("Seeding carparts to database");
+        carPartRepository.saveAll(List.of(
+                diskBrakes,exhaust,oilFilter,sparkPlug,headLight));
+
 
         /*
          Keuringsrapport en reparatieorder toevoegen aan auto(id=1) van klant Tom Cruise en Julie Cash(id=2).
@@ -147,31 +147,6 @@ public class CustomerDataLoader implements CommandLineRunner {
 
         log.info("Keuringsrapport toegevoegd aan auto met id 1(Tom Cruise) en Julie Cash");
 
-        /*
-            Voeg keuringstarief regel toe aan de reparatie-regels van reparatieorder(id=1)
-            van klant(id=1) Tom Cruise
-         */
-        Labor inspectionRateItem = laborRepository.getById(1);
-        repairOrderLineService.addRepairOrderLaborItem(1,inspectionRateItem);
-        ;
-        repairOrderLineService.addRepairOrderLaborItem(2,inspectionRateItem);
-
-        /*
-            Voeg onderdelen en handelingen toe aan bestel-regels
-         */
-        repairOrderLineService.addRepairOrderItem(1,carPartRepository.getById(1));
-        repairOrderLineService.addRepairOrderLaborItem(1,laborRepository.getById(2));
-
-        repairOrderLineService.addRepairOrderItem(1,carPartRepository.getById(2));
-        repairOrderLineService.addRepairOrderLaborItem(1,laborRepository.getById(3));
-
-        repairOrderLineService.addRepairOrderItem(1,carPartRepository.getById(3));
-        repairOrderLineService.addRepairOrderLaborItem(1, laborRepository.getById(3));
-
-        repairOrderLineService.addRepairOrderItem(1,carPartRepository.getById(4));
-        repairOrderLineService.addRepairOrderLaborItem(1, laborRepository.getById(4));
-
-        repairOrderLineService.addRepairOrderItem(2,carPartRepository.getById(4));
 
 
         log.info("Seeding data succeeded");

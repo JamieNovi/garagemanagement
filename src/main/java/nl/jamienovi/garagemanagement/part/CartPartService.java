@@ -1,4 +1,4 @@
-package nl.jamienovi.garagemanagement.carpart;
+package nl.jamienovi.garagemanagement.part;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +16,17 @@ public class CartPartService {
         this.carPartRepository = carPartRepository;
     }
 
-    public void addPart(CarPart carpart) {
+    public void addPart(Part carpart) {
         carPartRepository.save(carpart);   
     }
 
-    public CarPart getCarPart(Integer carPartId) {
-        CarPart part = carPartRepository.getById(carPartId);
+    public Part getCarPart(Integer carPartId) {
+        Part part = carPartRepository.getById(carPartId);
         //log.info(part.calculateTax().toString());
         return part;
     }
 
-    public List<CarPart> getAllCarParts() {
+    public List<Part> getAllCarParts() {
         return carPartRepository.findAll();
     }
 }

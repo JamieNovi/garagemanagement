@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.repairorderline;
 
-import nl.jamienovi.garagemanagement.carpart.CarPart;
 import nl.jamienovi.garagemanagement.laboritem.Labor;
+import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class RepairOrderLineService {
         return repairOrderLineRepository.findAll();
     }
 
-    public void addRepairOrderItem(Integer repairOrderId, CarPart carpartItem){
+    public void addRepairOrderItem(Integer repairOrderId, Part carpartItem){
         RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
         //Create new orderline
         RepairOrderLine line = new RepairOrderLine();
@@ -39,6 +39,7 @@ public class RepairOrderLineService {
         repairOrder.getRepairOrderLines().add(line);
         repairOrderLineRepository.save(line);
     }
+
 
     public void addRepairOrderLaborItem(Integer repairOrderId, Labor laborItem){
         RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);

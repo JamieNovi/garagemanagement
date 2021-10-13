@@ -1,4 +1,4 @@
-package nl.jamienovi.garagemanagement.carpart;
+package nl.jamienovi.garagemanagement.part;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Setter
 @NoArgsConstructor
 @ToString
-public class CarPart {
+public class Part {
 
     @Id
     @SequenceGenerator(name = "carpart_sequence",sequenceName = "carpart_sequence",allocationSize = 1)
@@ -37,12 +37,12 @@ public class CarPart {
     @Column(name = "voorraad",nullable = true)
     private Integer numberInStock;
 
-    public CarPart(String name, Double price) {
+    public Part(String name, Double price) {
         this.name = name;
         this.price = price;
     }
 
-    public CarPart(String name, Double price, Integer numberInStock) {
+    public Part(String name, Double price, Integer numberInStock) {
         this.name = name;
         this.price = price;
         this.numberInStock = numberInStock;
