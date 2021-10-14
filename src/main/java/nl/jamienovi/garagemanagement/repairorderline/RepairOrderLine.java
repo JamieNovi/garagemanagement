@@ -1,11 +1,12 @@
 package nl.jamienovi.garagemanagement.repairorderline;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.jamienovi.garagemanagement.laboritem.Labor;
-import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
 import javax.persistence.*;
@@ -17,7 +18,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonIgnoreProperties("repairOrder")
+
 public class RepairOrderLine {
 
     @Id
@@ -26,14 +27,17 @@ public class RepairOrderLine {
     @Column(name = "id", updatable = false)
     private Integer id;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+    @JsonIdentityReference(alwaysAsId=true)
     @ManyToOne(optional = false,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "repair_order_id",nullable = false,updatable = false)
+    @JoinColumn(name = "reparatie_id",nullable = false,referencedColumnName = "reparatie_id")
     private RepairOrder repairOrder;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "carpart_id",nullable = true)
-    private Part carpart;
-
+//    @JsonIgnoreProperties("numberInStock")
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "part_code",nullable = true)
+    @Column(name = "id_onderdeel")
+    private String partId;
 
     @ManyToOne()
     @JoinColumn(name = "labor_id",nullable = true)

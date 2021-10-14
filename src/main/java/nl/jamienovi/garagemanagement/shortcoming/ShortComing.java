@@ -40,6 +40,7 @@ public class ShortComing {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;
 
     public ShortComing(String description) {

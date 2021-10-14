@@ -21,9 +21,10 @@ public class RepairOrderService {
 
     public RepairOrder getSingle(Integer repairOrderId) {
         RepairOrder repairOrder = repairOrderRepository.findById(repairOrderId)
-                .orElseThrow(() -> {
-                    throw new EntityNotFoundException(RepairOrder.class,"id", repairOrderId.toString());
-                });
+                .orElseThrow(() ->  new EntityNotFoundException(
+                        RepairOrder.class,"id", repairOrderId.toString())
+                );
+
         return repairOrder;
     }
 

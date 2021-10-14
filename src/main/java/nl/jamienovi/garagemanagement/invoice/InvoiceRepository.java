@@ -46,9 +46,9 @@ public class InvoiceRepository {
                                     "ro.id, ro.customer.id, cp.name, rol.orderLinePrice, rol.orderLineQuantity)" +
                                     "FROM RepairOrder as ro " +
                                     "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
-                                    "INNER JOIN CarPart as cp on rol.carpart.id = cp.id " +
+                                    "INNER JOIN CarPart as cp on rol.partId = cp.id " +
                                     "AND ro.customer.id = :id" +
-                                    " AND cp.typeofItem = 'PART_ITEM'"
+                                    " AND cp.type = 'ONDERDEEL'"
                     );
             query.setParameter("id", customerId);
             List<CarPartOrderlineDto> orderLines = query.getResultList();
@@ -73,7 +73,7 @@ public class InvoiceRepository {
                                 "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
                                 "INNER JOIN Labor as l on rol.labor.id = l.id " +
                                 "AND ro.customer.id =:id" +
-                                " AND l.type = 'LABOR_ITEM'"
+                                " AND l.type = 'HANDELING'"
                 );
         query.setParameter("id",customerid);
         List<CarPartOrderlineDto> orderLines = query.getResultList();

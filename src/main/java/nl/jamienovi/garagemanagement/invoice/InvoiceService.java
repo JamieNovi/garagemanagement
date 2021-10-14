@@ -1,13 +1,14 @@
 package nl.jamienovi.garagemanagement.invoice;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
+@Slf4j
 @Service
-@Transactional
+//@Transactional
 public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
 
@@ -31,13 +32,15 @@ public class InvoiceService {
 
     public Double getSubtotalFromOrderLines(Integer customerId){
         List<CarPartOrderlineDto> orderLinesLaber = getInvoiceLaborOrderlines(customerId);
-        List<CarPartOrderlineDto> orderLinesParts = getInvoiceLaborOrderlines(customerId);
+        List<CarPartOrderlineDto> orderLinesParts = getCarPartOrderlines(customerId);
         Double subTotal = 0.00;
         for(CarPartOrderlineDto item: orderLinesLaber) {
             subTotal += item.getPrice();
+            log.info(subTotal.toString());
         }
         for(CarPartOrderlineDto item: orderLinesParts) {
             subTotal += item.getPrice();
+            log.info(subTotal.toString());
         }
         return subTotal;
     }

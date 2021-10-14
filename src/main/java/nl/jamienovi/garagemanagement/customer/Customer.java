@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,12 +56,16 @@ public class Customer {
     @NotBlank(message = "Woonplaats is verplicht.")
     private String city;
 
+//    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,property="id")
+//    @JsonIdentityReference(alwaysAsId=true)
     @Column(name= "cars")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude
     private List<Car> cars;
 
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,property="id")
+    @JsonIdentityReference(alwaysAsId=true)
     @OneToOne(mappedBy = "customer")
     private RepairOrder repairOrder;
 

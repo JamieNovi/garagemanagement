@@ -10,7 +10,7 @@ import nl.jamienovi.garagemanagement.inspection.InspectionService;
 import nl.jamienovi.garagemanagement.laboritem.Labor;
 import nl.jamienovi.garagemanagement.laboritem.LaborRepository;
 import nl.jamienovi.garagemanagement.part.Part;
-import nl.jamienovi.garagemanagement.part.CarPartRepository;
+import nl.jamienovi.garagemanagement.part.PartRepository;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderRepository;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineRepository;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineService;
@@ -32,7 +32,7 @@ public class CustomerDataLoader implements CommandLineRunner {
 
     private CustomerRepository customerRepository;
     private final InspectionService inspectionService;
-    private final CarPartRepository carPartRepository;
+    private final PartRepository carPartRepository;
     private final LaborRepository laborRepository;
     private final RepairOrderLineRepository repairOrderLineRepository;
     private final RepairOrderLineService repairOrderLineService;
@@ -42,7 +42,7 @@ public class CustomerDataLoader implements CommandLineRunner {
     @Autowired
     public CustomerDataLoader(CustomerRepository customerRepository,
                               InspectionService inspectionService,
-                              CarPartRepository carPartRepository,
+                              PartRepository carPartRepository,
                               LaborRepository laborRepository,
                               RepairOrderLineRepository repairOrderLineRepository,
                               RepairOrderLineService repairOrderLineService,
@@ -98,11 +98,11 @@ public class CustomerDataLoader implements CommandLineRunner {
         customerRepository.saveAll(customers);
 
         // Add car parts to database
-        Part diskBrakes = new Part("Remschijven",49.99,15);
-        Part exhaust = new Part("Uitlaat",87.50,4);
-        Part oilFilter = new Part("Oliefilter",9.95,12);
-        Part sparkPlug = new Part("Bougie",14.34, 20);
-        Part headLight = new Part("Koplamp",50.22,2);
+        Part diskBrakes = new Part("P001","Remschijven",49.99,15);
+        Part exhaust = new Part("P002","Uitlaat",87.50,4);
+        Part oilFilter = new Part("P003","Oliefilter",9.95,12);
+        Part sparkPlug = new Part("P004","Bougie",14.34, 20);
+        Part headLight = new Part("P005","Koplamp",50.22,2);
 
         // Add labor items to database
         Labor inspection = new Labor("Kosten keuring", 50.00);
@@ -128,27 +128,24 @@ public class CustomerDataLoader implements CommandLineRunner {
          Reparatieorder(id=1 voor Tom en id=2 voor Julie)
          wordt gelijk aan gemaakt om keuringstarief toe te kunnen toevoegen.
         */
-        InspectionReport report = new InspectionReport();
-        report.setCar(carsTomCruise.get(0));
-        inspectionService.addInspectionReportToCar(carsTomCruise.get(0).getId(), report);
-
-        InspectionReport report2 = new InspectionReport();
-        report2.setCar(carsJulieCash.get(0));
-        inspectionService.addInspectionReportToCar(carsJulieCash.get(0).getId(),report2);
+//        InspectionReport report = new InspectionReport();
+//        report.setCar(carsTomCruise.get(0));
+//        inspectionService.addInspectionReportToCar(carsTomCruise.get(0).getId(), report);
+//
+//        InspectionReport report2 = new InspectionReport();
+//        report2.setCar(carsJulieCash.get(0));
+//        inspectionService.addInspectionReportToCar(carsJulieCash.get(0).getId(),report2);
 
         /*
             Voeg tekortkoming toe aan keuringsrapporten
          */
 
-        shortComingService.addShortComing(1,new ShortComing("Uitlaat defect."));
-
-        shortComingService.addShortComing(2,new ShortComing("Bougies kapot"));
+//        shortComingService.addShortComing(1,new ShortComing("Uitlaat defect."));
+//
+//        shortComingService.addShortComing(2,new ShortComing("Bougies kapot"));
 
 
         log.info("Keuringsrapport toegevoegd aan auto met id 1(Tom Cruise) en Julie Cash");
-
-
-
         log.info("Seeding data succeeded");
     }
 }

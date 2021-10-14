@@ -4,6 +4,7 @@ import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarRepository;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class InspectionService {
     }
 
     public List<InspectionReport> getAllInspectionReports() {
-        return inspectionReportRepository.findAll();
+        return inspectionReportRepository.getAllInspectionReports();
     }
 
     public InspectionReport getSingleInspectionReport(Integer inspectionReportId){
@@ -42,9 +43,17 @@ public class InspectionService {
         Optional<Car> car = carRepository.findById(carId);
         Customer customerOfCar = customerService.getCustomer(car.get().getCustomer().getId());
         newInspectionReport.setCar(car.get());
-        newInspectionReport.setRepairOrder(new RepairOrder(customerOfCar));
+        //newInspectionReport.setRepairOrder(new RepairOrder(customerOfCar));
         inspectionReportRepository.save(newInspectionReport);
 
+    }
+
+    public void deleteInspectionReport(Integer inspectionReportId){
+        InspectionReport inspectionReport = inspectionReportRepository.findById(inspectionReportId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        InspectionReport.class,"id",inspectionReportId.toString()
+                ));
+        inspectionReportRepository.delete(inspectionReport);
     }
 
 

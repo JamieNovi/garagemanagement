@@ -18,9 +18,6 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
 @Entity(name = "InspectionReport")
 @Table(name = "keuringsrapport")
 @Getter
@@ -38,16 +35,16 @@ public class InspectionReport {
     @CreationTimestamp
     private LocalDate createdAt;
 
-    @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL)
-    //@JoinColumn(name= "keuringsrapport_id")
+    @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShortComing> shortcomings;
 
     @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
-    @ManyToOne(targetEntity = Car.class,cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
+    @JoinColumn(name = "car_id")
     private Car car;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = { CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.LAZY)
     @JoinColumn(name="reparatie_id",referencedColumnName = "reparatie_id")
     private RepairOrder repairOrder;
 

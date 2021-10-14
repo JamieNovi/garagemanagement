@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.car;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,7 @@ import java.util.List;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Car")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
+
 @Getter
 @Setter
 @ToString
@@ -44,11 +43,18 @@ public class Car {
     private String registrationPlate;
 
 
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @ManyToOne(cascade = CascadeType.MERGE)
     private Customer customer;
 
-    @OneToMany(cascade = CascadeType.ALL,targetEntity = InspectionReport.class,orphanRemoval = true)
-    @JoinColumn(name="car_id", referencedColumnName = "id")
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
+    @OneToMany(orphanRemoval = true,mappedBy = "car", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<InspectionReport> inspectionReports;
 
     public Car(String brand, String model, String registrationPlate) {

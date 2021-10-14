@@ -30,7 +30,7 @@ public class RepairOrder {
     @Column(name = "reparatie_id", updatable = false)
     private Integer id;
 
-    @OneToOne(mappedBy = "repairOrder", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "repairOrder", cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
     private InspectionReport inspectionReport;
 
     @Column(name = "aangemaakt_op")
@@ -44,8 +44,7 @@ public class RepairOrder {
     @Column(name = "afspraken")
     private String agreementComments = "Geen afspraken";
 
-    @JsonIgnoreProperties("repairOrder")
-    @OneToMany(mappedBy = "repairOrder")
+    @OneToMany(mappedBy = "repairOrder",orphanRemoval = true)
     private List<RepairOrderLine> repairOrderLines;
 
     @OneToOne(cascade = CascadeType.MERGE)

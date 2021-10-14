@@ -32,7 +32,7 @@ public class Labor {
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private ItemType type = ItemType.LABOR_ITEM;
+    private ItemType type = ItemType.HANDELING;
 
     public Labor(String name, Double price) {
         this.name = name;
