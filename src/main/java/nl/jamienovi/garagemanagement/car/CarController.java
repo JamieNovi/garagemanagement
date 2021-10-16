@@ -53,9 +53,4 @@ public class CarController {
            );
     }
 
-    @GetMapping(path = "test")
-    public TestDto getTestQeury(){
-            return carService.getTestQuery();
-
-    }
 }

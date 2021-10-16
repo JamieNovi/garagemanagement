@@ -63,8 +63,5 @@ public class CarService {
        carRepository.deleteById(carId);
     }
 
-    public TestDto getTestQuery() {
-       return carRepository.getKeuringEnMetAuto();
-    }
 
 }

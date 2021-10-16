@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.repairorder;
 
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,12 @@ public class RepairOrderController {
             return ResponseEntity.ok(repairOrder);
         }
 
+    }
+
+    @PostMapping(path = "/{carId}")
+    public ResponseEntity<?> create(@PathVariable Integer carId){
+        repairOrderService.addRepairOrder(carId);
+        return ResponseEntity.ok(new ResponseMessage("Reparatie toegevoegd."));
     }
 
     @PutMapping(path = "/{repairId}")

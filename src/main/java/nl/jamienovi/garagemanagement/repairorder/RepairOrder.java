@@ -1,6 +1,5 @@
 package nl.jamienovi.garagemanagement.repairorder;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +21,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @NoArgsConstructor
-@JsonIgnoreProperties("inspectionReport")
 public class RepairOrder {
     @Id
     @SequenceGenerator(name="inspection_order_sequence", sequenceName = "repair_order_sequence",allocationSize = 1)
@@ -30,7 +28,8 @@ public class RepairOrder {
     @Column(name = "reparatie_id", updatable = false)
     private Integer id;
 
-    @OneToOne(mappedBy = "repairOrder", cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JoinColumn(name = "keuringsrapport_id", referencedColumnName = "id")
     private InspectionReport inspectionReport;
 
     @Column(name = "aangemaakt_op")

@@ -43,6 +43,8 @@ public class ShortComing {
     @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;
 
+
+
     public ShortComing(String description) {
         this.description = description;
     }

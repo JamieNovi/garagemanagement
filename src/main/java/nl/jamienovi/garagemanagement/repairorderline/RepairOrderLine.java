@@ -18,7 +18,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @NoArgsConstructor
-
 public class RepairOrderLine {
 
     @Id
@@ -33,9 +32,6 @@ public class RepairOrderLine {
     @JoinColumn(name = "reparatie_id",nullable = false,referencedColumnName = "reparatie_id")
     private RepairOrder repairOrder;
 
-//    @JsonIgnoreProperties("numberInStock")
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "part_code",nullable = true)
     @Column(name = "id_onderdeel")
     private String partId;
 

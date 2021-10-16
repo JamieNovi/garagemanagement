@@ -24,8 +24,8 @@ public class InspectionReportController {
     }
 
     @PostMapping(path = "/{carId}")
-    public ResponseEntity<?> addInspectionReportToCar(@PathVariable("carId") int carId,@RequestBody InspectionReport newInspectionReport){
-        inspectionService.addInspectionReportToCar(carId, newInspectionReport);
+    public ResponseEntity<?> addInspectionReportToCar(@PathVariable("carId") Integer carId){
+        inspectionService.addInspectionReportToCar(carId);
         return ResponseEntity.ok(new ResponseMessage("Keuringsrapport toegevoegd."));
     }
 
@@ -33,5 +33,11 @@ public class InspectionReportController {
     public ResponseEntity<?> deleteInspectionReport(@PathVariable Integer inspectionReportId) throws EntityNotFoundException{
         inspectionService.deleteInspectionReport(inspectionReportId);
         return ResponseEntity.ok(new ResponseMessage("Keuringsrapport verwijderd."));
+    }
+
+    @PutMapping(path = "/{inspectionReportId}")
+    public ResponseEntity<?> setInspectionStatus(@PathVariable Integer inspectionReportId, @RequestParam("status") InspectionStatus status){
+        inspectionService.setInspectionReportStatus(inspectionReportId, status );
+        return ResponseEntity.ok(new ResponseMessage("Status keuringsrapport:" + status));
     }
 }

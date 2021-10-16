@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.appointment;
 
+import nl.jamienovi.garagemanagement.car.CarService;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
@@ -13,12 +14,15 @@ import java.util.List;
 public class AppointmentServiceImpl implements AppointmentService{
     private final AppointmentRepository appointmentRepository;
     private final CustomerService customerService;
+    private final CarService carService;
     private final DtoMapper dtoMapper;
 
+
     @Autowired
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, CustomerService customerService, DtoMapper dtoMapper) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, CustomerService customerService, CarService carService, DtoMapper dtoMapper) {
         this.appointmentRepository = appointmentRepository;
         this.customerService = customerService;
+        this.carService = carService;
         this.dtoMapper = dtoMapper;
     }
 
@@ -59,4 +63,5 @@ public class AppointmentServiceImpl implements AppointmentService{
         dtoMapper.updateAppointmentFromDto(appointmentDto,existingAppointment);
         appointmentRepository.save(existingAppointment);
     }
+
 }

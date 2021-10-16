@@ -1,9 +1,7 @@
 package nl.jamienovi.garagemanagement.inspection;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,13 +37,17 @@ public class InspectionReport {
     private List<ShortComing> shortcomings;
 
     @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
-    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "car_id")
     private Car car;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private InspectionStatus status = InspectionStatus.IN_BEHANDELING;
+
     @JsonIgnore
-    @OneToOne(cascade = { CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.LAZY)
-    @JoinColumn(name="reparatie_id",referencedColumnName = "reparatie_id")
+    @OneToOne(cascade = { CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},
+            fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
 
 
