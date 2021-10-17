@@ -1,7 +1,8 @@
 package nl.jamienovi.garagemanagement.repairorderline;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.laboritem.Labor;
+import nl.jamienovi.garagemanagement.labor.Labor;
+import nl.jamienovi.garagemanagement.labor.LaborService;
 import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.part.PartService;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
@@ -17,13 +18,16 @@ public class RepairOrderLineService {
     private final RepairOrderLineRepository repairOrderLineRepository;
     private final RepairOrderService repairOrderService;
     private final PartService partService;
+    private final LaborService laborService;
 
     @Autowired
     public RepairOrderLineService(RepairOrderLineRepository repairOrderLineRepository,
-                                  RepairOrderService repairOrderService, PartService partService) {
+                                  RepairOrderService repairOrderService, PartService partService,
+                                  LaborService laborService) {
         this.repairOrderLineRepository = repairOrderLineRepository;
         this.repairOrderService = repairOrderService;
         this.partService = partService;
+        this.laborService = laborService;
     }
 
     public List<RepairOrderLine> getAll() {
@@ -47,19 +51,30 @@ public class RepairOrderLineService {
         repairOrderLineRepository.save(line);
     }
 
-
-    public void addRepairOrderLaborItem(Integer repairOrderId, Labor laborItem){
-        RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
-        //Create new orderline
+    public RepairOrderLine buildLaborOrderline(RepairOrder repairOrder,Labor labor) {
         RepairOrderLine line = new RepairOrderLine();
-        //Set repairorder in orderline
         line.setRepairOrder(repairOrder);
-        line.setLabor(laborItem);
-        //Set price quantity and repairItem of orderline
-        line.setOrderLinePrice(laborItem.getPrice());
-        line.setOrderLineQuantity(1);
-        //add orderlines to repairorder List<repairorderlines>
+        line.setLaborId(labor.getId());
+        line.setOrderLinePrice(labor.getPrice());
         repairOrder.getRepairOrderLines().add(line);
+        return line;
+    }
+
+
+    public void addRepairOrderLaborItem(Integer repairOrderId,String laborId){
+        RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
+        Labor addedLabor = laborService.getSingle(laborId);
+
+        RepairOrderLine line =  buildLaborOrderline(repairOrder,addedLabor);
+//        //Create new orderline
+//        RepairOrderLine line = new RepairOrderLine();
+//        //Set repairorder in orderline
+//        line.setRepairOrder(repairOrder);
+//        line.setLabor(laborItem);
+//        //Set price quantity and repairItem of orderline
+//        line.setOrderLinePrice(laborItem.getPrice());KKK
+//        //add orderlines to repairorder List<repairorderlines>
+//        repairOrder.getRepairOrderLines().add(line);
         repairOrderLineRepository.save(line);
     }
 

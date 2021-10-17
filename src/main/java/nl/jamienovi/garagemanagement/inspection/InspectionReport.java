@@ -11,7 +11,7 @@ import nl.jamienovi.garagemanagement.shortcoming.ShortComing;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -29,16 +29,16 @@ public class InspectionReport {
     @Column(name = "id",updatable = false)
     private Integer id;
 
-    @Column(name = "created_at")
+    @Column(name = "afspraak")
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDateTime afspraak;
 
     @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShortComing> shortcomings;
 
     @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "car_id")
+    @JoinColumn(name = "auto_id")
     private Car car;
 
     @Column(name = "status")

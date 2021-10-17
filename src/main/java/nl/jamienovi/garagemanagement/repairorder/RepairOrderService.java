@@ -38,9 +38,7 @@ public class RepairOrderService {
     public void addRepairOrder(Integer carId) {
         Optional<InspectionReport> inspectionReport = repairOrderRepository.getInspectionReportFromCustomer(carId);
         Customer customer = customerService.getCustomer(inspectionReport.get().getCar().getCustomer().getId());
-//        if(inspectionReport.isEmpty()){
-//            throw new IllegalStateException("Auto is al in behandeling.");
-//        }
+
         RepairOrder newRepairOrder = new RepairOrder(customer);
         newRepairOrder.setInspectionReport(inspectionReport.get());
         repairOrderRepository.save(newRepairOrder);

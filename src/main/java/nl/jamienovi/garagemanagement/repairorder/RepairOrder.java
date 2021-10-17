@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -52,5 +53,6 @@ public class RepairOrder {
 
     public RepairOrder(Customer customer) {
         this.customer = customer;
+        this.repairOrderLines = new ArrayList<>();
     }
 }

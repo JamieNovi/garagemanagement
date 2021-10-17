@@ -6,6 +6,8 @@ import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarDto;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerDto;
+import nl.jamienovi.garagemanagement.labor.Labor;
+import nl.jamienovi.garagemanagement.labor.LaborDto;
 import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.part.PartDto;
 import org.mapstruct.BeanMapping;
@@ -30,5 +32,8 @@ public interface DtoMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updatePartFromDto(PartDto partDto, @MappingTarget Part entity);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateLaborFromDto(LaborDto laborDto, @MappingTarget Labor entity);
 
 }

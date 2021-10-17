@@ -21,24 +21,24 @@ public class InvoiceService {
         return invoiceRepository.getCustomerData(customerId);
     }
 
-    public List<CarPartOrderlineDto> getCarPartOrderlines(Integer customerId) {
+    public List<InvoicePartOrderlinesDto> getCarPartOrderlines(Integer customerId) {
         return invoiceRepository.getInvoiceOrderLinesCarparts(customerId);
     }
 
-    public List<CarPartOrderlineDto> getInvoiceLaborOrderlines(Integer customerId) {
+    public List<InvoicePartOrderlinesDto> getInvoiceLaborOrderlines(Integer customerId) {
         return invoiceRepository.getInvoiceLaborOrderLines(customerId);
     }
 
 
     public Double getSubtotalFromOrderLines(Integer customerId){
-        List<CarPartOrderlineDto> orderLinesLaber = getInvoiceLaborOrderlines(customerId);
-        List<CarPartOrderlineDto> orderLinesParts = getCarPartOrderlines(customerId);
+        List<InvoicePartOrderlinesDto> orderLinesLaber = getInvoiceLaborOrderlines(customerId);
+        List<InvoicePartOrderlinesDto> orderLinesParts = getCarPartOrderlines(customerId);
         Double subTotal = 0.00;
-        for(CarPartOrderlineDto item: orderLinesLaber) {
+        for(InvoicePartOrderlinesDto item: orderLinesLaber) {
             subTotal += item.getPrice();
             log.info(subTotal.toString());
         }
-        for(CarPartOrderlineDto item: orderLinesParts) {
+        for(InvoicePartOrderlinesDto item: orderLinesParts) {
             subTotal += item.getPrice();
             log.info(subTotal.toString());
         }

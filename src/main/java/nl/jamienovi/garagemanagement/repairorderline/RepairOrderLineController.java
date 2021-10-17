@@ -1,7 +1,6 @@
 package nl.jamienovi.garagemanagement.repairorderline;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.laboritem.Labor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +29,10 @@ public class RepairOrderLineController {
                                    @RequestParam("quantity") Integer quantity){
         repairOrderLineService.addRepairOrderItem(repairOrderId,partId, quantity);
     }
-    @PostMapping(path = "/handeling-toevoegen/{repairOrder}")
-    public void addRepairOrderLaborItem(@PathVariable("repairOrder") Integer repairOrderId,@RequestBody Labor laborItem){
-        repairOrderLineService.addRepairOrderLaborItem(repairOrderId,laborItem);
+    @PostMapping(path = "/handeling-toevoegen/{repairOrder}/{laborId}")
+    public void addRepairOrderLaborItem(@PathVariable("repairOrder") Integer repairOrderId,
+                                        @PathVariable("laborId") String laborId){
+        repairOrderLineService.addRepairOrderLaborItem(repairOrderId,laborId);
     }
 
 

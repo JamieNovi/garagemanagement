@@ -1,4 +1,4 @@
-package nl.jamienovi.garagemanagement.laboritem;
+package nl.jamienovi.garagemanagement.labor;
 
 public enum ItemType {
     ONDERDEEL,HANDELING

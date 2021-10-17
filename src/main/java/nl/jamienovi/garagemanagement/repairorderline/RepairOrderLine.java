@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.jamienovi.garagemanagement.laboritem.Labor;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
 import javax.persistence.*;
@@ -35,9 +34,8 @@ public class RepairOrderLine {
     @Column(name = "id_onderdeel")
     private String partId;
 
-    @ManyToOne()
-    @JoinColumn(name = "labor_id",nullable = true)
-    private Labor labor;
+    @Column(name = "id_handeling")
+    private String laborId;
 
     @Column(name = "prijs")
     private Double orderLinePrice;

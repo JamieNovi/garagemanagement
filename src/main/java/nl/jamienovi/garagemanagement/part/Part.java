@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.part;
 
 import lombok.*;
-import nl.jamienovi.garagemanagement.laboritem.ItemType;
+import nl.jamienovi.garagemanagement.labor.ItemType;
 
 import javax.persistence.*;
 

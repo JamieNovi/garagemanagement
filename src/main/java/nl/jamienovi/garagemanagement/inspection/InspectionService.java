@@ -69,19 +69,20 @@ public class InspectionService {
 
     /**
      * Controleerd of een auto al een keuring heeft openstaan,
-     * voordat er een keuring kan worden aangemaakt. Pending=in afwachting.
+     * voordat er een nieuwr keuring kan worden aangemaakt. Pending=in afwachting.
      * @param carId
      * @return Boolean true of false
      */
     public Boolean hasPendingStatus(Integer carId) {
         Car car = carRepository.getById(carId);
         Boolean carIsPending = false;
-        for(InspectionReport item : car.getInspectionReports()){
 
-            if(item.getStatus() == InspectionStatus.IN_BEHANDELING) {
-                carIsPending = true;
+        for (InspectionReport item : car.getInspectionReports()) {
+
+                if (item.getStatus() == InspectionStatus.IN_BEHANDELING) {
+                    carIsPending = true;
+                }
             }
-        }
         return carIsPending;
     }
 

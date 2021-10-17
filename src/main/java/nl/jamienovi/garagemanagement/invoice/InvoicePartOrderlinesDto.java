@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CarPartOrderlineDto {
+public class InvoicePartOrderlinesDto {
     private Integer id;
     private Integer klant_id;
     private String name;

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -36,11 +35,11 @@ public class InvoiceRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<CarPartOrderlineDto> getInvoiceOrderLinesCarparts(Integer customerId) {
+    public List<InvoicePartOrderlinesDto> getInvoiceOrderLinesCarparts(Integer customerId) {
         EntityManager entityManager = emf.createEntityManager();
 
         try {
-            TypedQuery<CarPartOrderlineDto> query = (TypedQuery<CarPartOrderlineDto>) entityManager
+            TypedQuery<InvoicePartOrderlinesDto> query = (TypedQuery<InvoicePartOrderlinesDto>) entityManager
                     .createQuery(
                             "SELECT new nl.jamienovi.garagemanagement.invoice.CarPartOrderlineDto(" +
                                     "ro.id, ro.customer.id, cp.name, rol.orderLinePrice, rol.orderLineQuantity)" +
@@ -51,7 +50,7 @@ public class InvoiceRepository {
                                     " AND cp.type = 'ONDERDEEL'"
                     );
             query.setParameter("id", customerId);
-            List<CarPartOrderlineDto> orderLines = query.getResultList();
+            List<InvoicePartOrderlinesDto> orderLines = query.getResultList();
             entityManager.close();
             return orderLines;
         }catch (NoResultException ex){
@@ -60,10 +59,10 @@ public class InvoiceRepository {
         }
     }
     @SuppressWarnings("unchecked")
-    public List<CarPartOrderlineDto> getInvoiceLaborOrderLines(Integer customerid) {
+    public List<InvoicePartOrderlinesDto> getInvoiceLaborOrderLines(Integer customerid) {
         EntityManager entityManager = emf.createEntityManager();
 
-        TypedQuery<CarPartOrderlineDto> query = (TypedQuery<CarPartOrderlineDto>) entityManager
+        TypedQuery<InvoicePartOrderlinesDto> query = (TypedQuery<InvoicePartOrderlinesDto>) entityManager
                 .createQuery(
                         "SELECT new nl.jamienovi.garagemanagement.invoice.CarPartOrderlineDto(" +
                                 "ro.id, ro.customer.id," +
@@ -76,7 +75,7 @@ public class InvoiceRepository {
                                 " AND l.type = 'HANDELING'"
                 );
         query.setParameter("id",customerid);
-        List<CarPartOrderlineDto> orderLines = query.getResultList();
+        List<InvoicePartOrderlinesDto> orderLines = query.getResultList();
         entityManager.close();
         return orderLines;
 
