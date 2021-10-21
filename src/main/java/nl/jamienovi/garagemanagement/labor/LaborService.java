@@ -44,10 +44,9 @@ public class LaborService {
     }
 
     public void deleteLabor(String laborId) {
-        Optional<Labor> laborOptional = laborRepository.findById(laborId);
-        if(laborOptional.isEmpty()) {
-            throw new IllegalStateException("Handeling bestaat niet.");
-        }
-        laborRepository.delete(laborOptional.get());
+        Labor labor = laborRepository.findById(laborId)
+                .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id", laborId));
+
+        laborRepository.delete(labor);
     }
 }

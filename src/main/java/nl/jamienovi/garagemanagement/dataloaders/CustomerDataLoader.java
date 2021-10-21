@@ -21,7 +21,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -62,51 +61,64 @@ public class CustomerDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Create cars
-        List<Customer> customers = new ArrayList<>();
-        List<Car> carsTomCruise = Arrays.asList(new Car("Ferrari","California","FJ-XZ-88"));
-        List<Car> carsLeonardo = Arrays.asList(new Car("Mercedes-Benz","GLC","DS-SJ-66"));
-        List<Car> carsJulieCash = Arrays.asList(new Car("BMW","I7","HM-XXX-69"));
+        /**
+         * Hier worden alle klanten met auto's aangemaakt die als testdata in de database
+         * worden opgeslagen. Alle endpoints zullen JSON responses teruggeven van deze testdata.
+         */
 
-        // Create customers with cars
-        customers.add(new Customer(
+        List<Customer> customers = new ArrayList<>();
+
+        Car car1 = new Car("Ferrari","California","FJ-XZ-88");
+        Car car2 = new Car("Mercedes-Benz","GLC","DS-SJ-66");
+        Car car3 =  new Car("BMW","I7","HM-XXX-69");
+
+        Customer customer1 = new Customer(
                "Tom",
                "Cruise",
                "tomcruise@hollywood.com",
                "Hollywood boulevard 131",
-               "90024", "Los Angeles",
-                carsTomCruise
-                ));
+               "90024", "Los Angeles"
+                );
+        customer1.addCar(car1);
+        customers.add(customer1);
 
-        customers.add(new Customer(
+        Customer customer2 = new Customer(
                "Leonardo",
                 "Dicaprio",
                 "leo@hollywood.com",
                 "Beverly Hills",
                 "90211",
-                "Los Angeles",
-                carsLeonardo));
+                "Los Angeles"
+                );
+        customer2.addCar(car2);
+        customers.add(customer2);
 
-        customers.add(new Customer(
+       Customer customer3 = new Customer(
                 "Julie",
                 "Cash",
                 "juliecash@bookings.com",
                 "Avenue 5",
                 "24245",
-                "Texas",
-                carsJulieCash));
+                "Texas"
+       );
+       customer3.addCar(car3);
+       customers.add(customer3);
 
-        log.info("Seeding customerdata with cars");
         customerRepository.saveAll(customers);
 
-        // Add car parts to database
+        /**
+         * Aanmaken van onderdelen en handelingen testdata.
+         */
+
         Part diskBrakes = new Part("P001","Remschijven",49.99,15);
         Part exhaust = new Part("P002","Uitlaat",87.50,4);
         Part oilFilter = new Part("P003","Oliefilter",9.95,12);
         Part sparkPlug = new Part("P004","Bougie",14.34, 20);
         Part headLight = new Part("P005","Koplamp",50.22,2);
 
-        // Add labor items to database
+        carPartRepository.saveAll(List.of(
+                diskBrakes,exhaust,oilFilter,sparkPlug,headLight));
+
         Labor inspection = new Labor("H0000","Kosten keuring", 50.00);
         Labor laborDiscBrakes = new Labor("HP001","Montagekosten Remschijven", 32.50);
         Labor laborExhaust = new Labor("HP002","Montagekosten uitlaat", 17.75);
@@ -114,16 +126,44 @@ public class CustomerDataLoader implements CommandLineRunner {
         Labor labourSparkPlug = new Labor("HP004","Montagekosten vervangen", 8.22);
         Labor labourHeadLight = new Labor("HP005","Montagekosten koplamp vervangen",34.01);
 
-        log.info("Seeding laboritems to database");
         laborRepository.saveAll(List.of(inspection,
                 laborDiscBrakes,laborExhaust,
                 labourOilFilter,labourSparkPlug,
                 labourHeadLight
         ));
-        log.info("Seeding carparts to database");
-        carPartRepository.saveAll(List.of(
-                diskBrakes,exhaust,oilFilter,sparkPlug,headLight));
 
-        log.info("Seeding data succeeded");
+
+        log.info("Testdata geladen:Klanten,auto's, onderdelen en handelingen");
+
+//        inspectionService.addInspectionReportToCar(1);
+//
+//        inspectionService.addInspectionReportToCar(2);
+//          /*
+//            Voeg keuringstarief regel toe aan de reparatie-regels van reparatieorder(id=1)
+//            van klant(id=1) Tom Cruise
+//         */
+////        Labor inspectionRateItem = laborRepository.getById("H0000");
+////        log.info(inspectionRateItem.toString());
+////        repairOrderLineService.addRepairOrderLaborItem(1,inspectionRateItem.getId());
+////        repairOrderLineService.addRepairOrderLaborItem(2,inspectionRateItem.getId());
+//
+//
+//         /*
+//            Voeg onderdelen en handelingen toe aan bestel-regels
+//         */
+//        repairOrderLineService.addRepairOrderItem(1,"P001",1);
+//        repairOrderLineService.addRepairOrderLaborItem(1,"HP002");
+//
+//        repairOrderLineService.addRepairOrderItem(1, "P002",1);
+//        repairOrderLineService.addRepairOrderLaborItem(1,"HP003");
+//
+//        repairOrderLineService.addRepairOrderItem(1, "P003",1);
+//        repairOrderLineService.addRepairOrderLaborItem(1, "HP004");
+//
+//        repairOrderLineService.addRepairOrderItem(1,"P004", 1);
+//        repairOrderLineService.addRepairOrderLaborItem(1, "HP005");
+//
+//        repairOrderLineService.addRepairOrderLaborItem(2, "H0000");
+
     }
 }

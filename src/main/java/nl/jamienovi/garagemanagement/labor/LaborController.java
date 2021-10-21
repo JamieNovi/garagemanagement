@@ -4,7 +4,9 @@ import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -27,8 +29,11 @@ public class LaborController {
     @PostMapping(path = "")
     public ResponseEntity<?> addLabor(@RequestBody Labor labor) {
         laborService.createLaborItem(labor);
-
-        return ResponseEntity.ok(new ResponseMessage("Handeling aangemaakt"));
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(labor.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(uri);
     }
 
     @PutMapping(path = "/{laborId}")

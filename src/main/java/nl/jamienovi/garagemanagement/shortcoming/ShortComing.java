@@ -43,10 +43,21 @@ public class ShortComing {
     @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;
 
-
-
     public ShortComing(String description) {
         this.description = description;
+    }
+
+    /**
+     * Voorziening om bidirectional relatie aan beide kanten te updaten
+     * @param inspectionReport
+     */
+    public void setInspectionReport(InspectionReport inspectionReport){
+        if(inspectionReport != null) {
+            inspectionReport.getShortcomings().add(this);
+        }else if(this.inspectionReport != null) {
+            this.inspectionReport.getShortcomings().remove(this);
+        }
+        this.inspectionReport = inspectionReport;
     }
 
 }

@@ -34,11 +34,11 @@ public class RepairOrderLineService {
         return repairOrderLineRepository.findAll();
     }
 
+
     public void addRepairOrderItem(Integer repairOrderId, String partCode, Integer quantity){
         RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
         Part addedPart = partService.getPart(partCode);
         //Create new orderline
-        log.info(addedPart.toString());
         RepairOrderLine line = new RepairOrderLine();
         //Set repairorder in orderline
         line.setRepairOrder(repairOrder);
@@ -66,15 +66,6 @@ public class RepairOrderLineService {
         Labor addedLabor = laborService.getSingle(laborId);
 
         RepairOrderLine line =  buildLaborOrderline(repairOrder,addedLabor);
-//        //Create new orderline
-//        RepairOrderLine line = new RepairOrderLine();
-//        //Set repairorder in orderline
-//        line.setRepairOrder(repairOrder);
-//        line.setLabor(laborItem);
-//        //Set price quantity and repairItem of orderline
-//        line.setOrderLinePrice(laborItem.getPrice());KKK
-//        //add orderlines to repairorder List<repairorderlines>
-//        repairOrder.getRepairOrderLines().add(line);
         repairOrderLineRepository.save(line);
     }
 

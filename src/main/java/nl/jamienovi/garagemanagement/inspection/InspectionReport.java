@@ -36,6 +36,7 @@ public class InspectionReport {
     @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShortComing> shortcomings;
 
+    //@Setter(AccessLevel.NONE)
     @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "auto_id")
@@ -50,7 +51,22 @@ public class InspectionReport {
             fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
 
+    /**
+     * Voorziening om bidirectional relatie aan beide kanten te updaten
+     * @param shortComing
+     */
+    public void addShortComing(final ShortComing shortComing){
+        shortComing.setInspectionReport(this);
+        this.shortcomings.add(shortComing);
+    }
 
-
+//    public void setCar(Car car) {
+//        if(car != null){
+//            car.getInspectionReports().add(this);
+//        }else if (car != null) {
+//            this.car.getInspectionReports().remove(this);
+//        }
+//        this.car = car;
+//    }
 
 }

@@ -20,12 +20,14 @@ public class PartService {
         this.mapper = mapper;
     }
 
-    public Part addPart(Part part) {
-        return partRepository.save(part);
+    public String addPart(Part part) {
+        Part newPart = partRepository.save(part);
+        return newPart.getId();
     }
 
     public Part getPart(String partId) {
-        Part part = partRepository.getById(partId);
+        Part part = partRepository.findById(partId)
+                .orElseThrow(() -> new EntityNotFoundException(Part.class,"id",partId));
         return part;
     }
 

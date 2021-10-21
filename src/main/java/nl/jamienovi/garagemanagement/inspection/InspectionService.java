@@ -9,10 +9,12 @@ import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 public class InspectionService {
     private final InspectionReportRepository inspectionReportRepository;
     private final CarRepository carRepository;
