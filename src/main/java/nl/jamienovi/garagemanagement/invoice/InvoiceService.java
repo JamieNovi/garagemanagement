@@ -25,16 +25,16 @@ public class InvoiceService {
         return invoiceRepository.getInvoiceOrderLinesCarparts(customerId);
     }
 
-    public List<InvoicePartOrderlinesDto> getInvoiceLaborOrderlines(Integer customerId) {
+    public List<InvoiceLaborOrderLinesDto> getInvoiceLaborOrderlines(Integer customerId) {
         return invoiceRepository.getInvoiceLaborOrderLines(customerId);
     }
 
 
     public Double getSubtotalFromOrderLines(Integer customerId){
-        List<InvoicePartOrderlinesDto> orderLinesLaber = getInvoiceLaborOrderlines(customerId);
+        List<InvoiceLaborOrderLinesDto> orderLinesLaber = getInvoiceLaborOrderlines(customerId);
         List<InvoicePartOrderlinesDto> orderLinesParts = getCarPartOrderlines(customerId);
         Double subTotal = 0.00;
-        for(InvoicePartOrderlinesDto item: orderLinesLaber) {
+        for(InvoiceLaborOrderLinesDto item: orderLinesLaber) {
             subTotal += item.getPrice();
             log.info(subTotal.toString());
         }

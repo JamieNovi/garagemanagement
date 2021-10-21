@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -31,9 +29,9 @@ public class ShortComing {
     @Column(name="tekortkoming_id", updatable = false)
     private Integer id;
 
-    @Column(name = "aangemaakt_op")
-    @CreationTimestamp
-    private LocalDate createdAt;
+//    @Column(name = "aangemaakt_op")
+//    @CreationTimestamp
+//    private LocalDate createdAt;
 
     @Column(name = "beschrijving")
     private String description;
@@ -43,10 +41,9 @@ public class ShortComing {
     @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;
 
-
-
     public ShortComing(String description) {
         this.description = description;
     }
+
 
 }

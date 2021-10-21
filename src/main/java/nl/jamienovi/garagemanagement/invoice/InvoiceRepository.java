@@ -41,7 +41,7 @@ public class InvoiceRepository {
         try {
             TypedQuery<InvoicePartOrderlinesDto> query = (TypedQuery<InvoicePartOrderlinesDto>) entityManager
                     .createQuery(
-                            "SELECT new nl.jamienovi.garagemanagement.invoice.CarPartOrderlineDto(" +
+                            "SELECT new nl.jamienovi.garagemanagement.invoice.InvoicePartOrderlinesDto(" +
                                     "ro.id, ro.customer.id, cp.name, rol.orderLinePrice, rol.orderLineQuantity)" +
                                     "FROM RepairOrder as ro " +
                                     "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
@@ -59,23 +59,23 @@ public class InvoiceRepository {
         }
     }
     @SuppressWarnings("unchecked")
-    public List<InvoicePartOrderlinesDto> getInvoiceLaborOrderLines(Integer customerid) {
+    public List<InvoiceLaborOrderLinesDto> getInvoiceLaborOrderLines(Integer customerid) {
         EntityManager entityManager = emf.createEntityManager();
 
-        TypedQuery<InvoicePartOrderlinesDto> query = (TypedQuery<InvoicePartOrderlinesDto>) entityManager
+        TypedQuery<InvoiceLaborOrderLinesDto> query = (TypedQuery<InvoiceLaborOrderLinesDto>) entityManager
                 .createQuery(
-                        "SELECT new nl.jamienovi.garagemanagement.invoice.CarPartOrderlineDto(" +
+                        "SELECT new nl.jamienovi.garagemanagement.invoice.InvoiceLaborOrderLinesDto(" +
                                 "ro.id, ro.customer.id," +
                                 " l.name," +
                                 " rol.orderLinePrice, rol.orderLineQuantity)" +
                                 "FROM RepairOrder as ro " +
                                 "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
-                                "INNER JOIN Labor as l on rol.labor.id = l.id " +
+                                "INNER JOIN Labor as l on rol.laborId = l.id " +
                                 "AND ro.customer.id =:id" +
                                 " AND l.type = 'HANDELING'"
                 );
         query.setParameter("id",customerid);
-        List<InvoicePartOrderlinesDto> orderLines = query.getResultList();
+        List<InvoiceLaborOrderLinesDto> orderLines = query.getResultList();
         entityManager.close();
         return orderLines;
 

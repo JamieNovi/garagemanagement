@@ -11,7 +11,6 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @AllArgsConstructor
-
 public class AppointmentDto {
     private Integer id;
     private LocalDate date;

@@ -3,10 +3,7 @@ package nl.jamienovi.garagemanagement.car;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 
@@ -22,6 +19,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class Car {
 
     @Id
@@ -63,6 +61,25 @@ public class Car {
         this.registrationPlate = registrationPlate;
     }
 
+    public Car(Integer id, String brand, String model, String registrationPlate) {
+        this.id = id;
+        this.brand = brand;
+        this.model = model;
+        this.registrationPlate = registrationPlate;
+    }
+
+/**
+     * Voorziening om bidirectional relatie aan beide kanten te updaten
+     * @param customer
+     */
+//    public void setCustomer(Customer customer) {
+//        if(customer != null) {
+//            customer.getCars().add(this);
+//        }else if (this.customer != null) {
+//            this.customer.getCars().remove(this);
+//        }
+//        this.customer = customer;
+//    }
 
 
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
@@ -16,7 +15,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Table(name = "reparatie_bestelregel")
 @Getter
 @Setter
-@NoArgsConstructor
 public class RepairOrderLine {
 
     @Id
@@ -42,5 +40,11 @@ public class RepairOrderLine {
 
     @Column(name = "aantal")
     private Integer orderLineQuantity;
+
+    public RepairOrderLine() {
+        if(orderLineQuantity == null) {
+            orderLineQuantity = 1;
+        }
+    }
 
 }

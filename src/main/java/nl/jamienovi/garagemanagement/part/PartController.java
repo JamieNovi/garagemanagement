@@ -4,13 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
@@ -36,23 +38,31 @@ public class PartController {
     }
 
     @PostMapping(path = "")
-    public ResponseEntity<Part> create(@RequestBody @Valid Part part) throws URISyntaxException {
-        Part createdPart = partService.addPart(part);
-        if(createdPart == null) {
-            return ResponseEntity.notFound().build();
-        }else {
+    public ResponseEntity<?> create(@RequestBody @Valid Part part) {
+       String id =  partService.addPart(part);
+
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(createdPart.getId())
+                    .buildAndExpand(id)
                     .toUri();
-            return ResponseEntity.created(uri).body(createdPart);
-        }
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(uri);
+        return ResponseEntity.created(uri).headers(headers).body(uri);
     }
 
     @PutMapping(path = "/{partId}")
-    public ResponseEntity<?> updatePart(@PathVariable("partId") String partId,@RequestBody PartDto partDto) {
+    public ResponseEntity<?> updatePart(@PathVariable("partId") String partId,
+                                        @RequestBody PartDto partDto,
+                                        UriComponentsBuilder uriComponentsBuilder) {
+
         partService.updatePart(partId, partDto);
-        return ResponseEntity.ok(new ResponseMessage("Part updated"));
+
+        UriComponents uriComponents = uriComponentsBuilder.path("/api/onderdelen/{id}")
+                .buildAndExpand(partId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(uriComponents.toUri());
+
+        return ResponseEntity.ok().headers(headers).body(uriComponents.toUri());
     }
 
     @DeleteMapping(path = "/{partId}")

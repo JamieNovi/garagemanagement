@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.part;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import nl.jamienovi.garagemanagement.labor.ItemType;
 
@@ -19,12 +20,15 @@ public class Part {
     @Column(name = "onderdeel_naam")
     private String name;
 
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     @Column(name = "onderdeel_prijs")
     private Double price;
 
     @Column(name = "reparatie_type")
     @Enumerated(EnumType.STRING)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private ItemType type = ItemType.ONDERDEEL;
+
 
     @Column(name = "voorraad",nullable = true)
     private Integer numberInStock;

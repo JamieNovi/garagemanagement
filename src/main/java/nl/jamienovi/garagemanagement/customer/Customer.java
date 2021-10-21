@@ -1,12 +1,9 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import nl.jamienovi.garagemanagement.appointment.Appointment;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
@@ -14,6 +11,7 @@ import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -24,6 +22,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class Customer {
     @Id
@@ -62,10 +61,11 @@ public class Customer {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude
-    private List<Car> cars;
+    private List<Car> cars = new ArrayList<>();
 
-    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,property="id")
-    @JsonIdentityReference(alwaysAsId=true)
+//    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,property="id")
+//    @JsonIdentityReference(alwaysAsId=true)
+    @JsonIgnore
     @OneToOne(mappedBy = "customer")
     private RepairOrder repairOrder;
 
@@ -73,15 +73,34 @@ public class Customer {
     private Appointment appointment;
 
     public Customer(String firstName, String lastName, String email, String address,
-                    String postalCode, String city, List<Car> cars) {
+                    String postalCode, String city) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.address = address;
         this.postalCode = postalCode;
         this.city = city;
-        this.cars = cars;
-
     }
+
+    public Customer(Integer id, String firstName, String lastName, String email, String address,
+                    String postalCode, String city) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.address = address;
+        this.postalCode = postalCode;
+        this.city = city;
+    }
+
+    /**
+     * Voorziening om bidirectional relatie aan beide kanten te updaten
+     * @param car
+     */
+    public void addCar(final Car car) {
+        car.setCustomer(this);
+        this.cars.add(car);
+    }
+
 
 }

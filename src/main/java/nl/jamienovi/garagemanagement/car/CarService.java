@@ -3,12 +3,12 @@ package nl.jamienovi.garagemanagement.car;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,37 +30,39 @@ public class CarService {
        return carRepository.findAll();
     }
 
-    public Car getCar(int carId){
-       Optional<Car> carOptional = carRepository.findById(carId);
-       if(carOptional.isEmpty())  {
-           throw new IllegalStateException("Auto bestaat niet");
-       }
-       return carOptional.get();
+    public Car getCar(Integer carId){
+       return carRepository.findById(carId)
+               .orElseThrow(() ->
+                   new EntityNotFoundException(Car.class,"id",carId.toString()));
     }
 
-    public void addCarToCustomer(int customerId,Car newCar) {
+    public Integer addCarToCustomer(Integer customerId,Car newCar) {
        Customer customer = customerService.getCustomer(customerId);
-       customer.getCars().add(newCar);
        newCar.setCustomer(customer);
-       carRepository.save(newCar);
+
+       Car car = carRepository.save(newCar);
+       return car.getId();
     }
 
-    public void updateCarCustomer(int carId, CarDto carDto){
+    public void updateCarCustomer(Integer carId, CarDto carDto){
         Car existingCar = carRepository.findById(carId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Car met id " + carDto.getId() + " bestaat niet."
-                ));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(Car.class,"id",carId.toString()));
+
         mapper.updateCarFromDto(carDto,existingCar);
+//        existingCar.setId(car.getId());
+//        existingCar.setBrand(car.getBrand());
+//        existingCar.setModel(car.getModel());
+//        existingCar.setRegistrationPlate(car.getRegistrationPlate());
+//        existingCar.setCustomer(car.getCustomer());
         carRepository.save(existingCar);
     }
 
-    public void deleteCar(int carId){
-       Optional<Car> carOptional = carRepository.findById(carId);
-       if(!carOptional.isPresent()){
-           log.info("Auto bestaat niet");
-           throw new IllegalStateException("Auto bestaat niet");
-       }
-       carRepository.deleteById(carId);
+    public void deleteCar(Integer carId){
+        Car existingCar = carRepository.findById(carId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(Car.class,"id",carId.toString()));
+       carRepository.deleteById(existingCar.getId());
     }
 
 

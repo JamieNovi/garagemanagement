@@ -3,9 +3,13 @@ package nl.jamienovi.garagemanagement.car;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @Slf4j
@@ -30,19 +34,27 @@ public class CarController {
     }
 
     @PostMapping(path = "/auto-toevoegen/{customerId}")
-    public ResponseEntity<?> addCar(@PathVariable("customerId") int customerId, @RequestBody Car car){
-        carService.addCarToCustomer(customerId,car);
-        return ResponseEntity.ok(
-                new ResponseMessage("Auto succesvol aangemaakt.")
-        );
+    public ResponseEntity<URI> addCar(@PathVariable("customerId") int customerId,
+                                      @RequestBody Car car,
+                                      UriComponentsBuilder uriComponentsBuilder){
+        Integer carId = carService.addCarToCustomer(customerId,car);
+        UriComponents uriComponents = uriComponentsBuilder.path("/api/auto/{id}")
+                .buildAndExpand(carId);
+        return ResponseEntity.created(uriComponents.toUri()).body(uriComponents.toUri());
     }
 
     @PutMapping(path = "/auto-aanpassen/{carId}")
-    public ResponseEntity<?> updateCar(@PathVariable("carId") int carId, @RequestBody CarDto carDto){
+    public ResponseEntity<URI> updateCar(@PathVariable("carId") Integer carId,
+                                       @RequestBody CarDto carDto,
+                                       UriComponentsBuilder uriComponentsBuilder){
         carService.updateCarCustomer(carId,carDto);
-        return ResponseEntity.ok(
-                new ResponseMessage("Auto met id" + carId + " is aangepast.")
-        );
+
+        UriComponents uriComponents = uriComponentsBuilder.path("/api/auto/{id}")
+                .buildAndExpand(carId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(uriComponents.toUri());
+
+        return ResponseEntity.ok().headers(headers).body(uriComponents.toUri());
     }
 
     @DeleteMapping(path = "/auto-verwijderen/{customerId}")
