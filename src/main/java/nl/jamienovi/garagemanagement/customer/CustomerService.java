@@ -47,4 +47,8 @@ public class CustomerService {
         }
         customerRepository.deleteById(customerId);
     }
+
+    public List<Customer> getCallingListOfCustomersWithStatusVoltooidOrNietUitvoeren() {
+        return customerRepository.getCallingList();
+    }
 }

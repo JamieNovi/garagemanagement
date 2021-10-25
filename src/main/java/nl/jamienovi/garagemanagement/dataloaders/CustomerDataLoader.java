@@ -9,9 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 @Order(1)
 @Slf4j
@@ -30,8 +27,6 @@ public class CustomerDataLoader implements CommandLineRunner {
          * worden opgeslagen. Alle endpoints zullen JSON responses teruggeven van deze testdata.
          */
 
-        List<Customer> customers = new ArrayList<>();
-
         Car car1 = new Car("Ferrari","California","FJ-XZ-88");
         Car car2 = new Car("Mercedes-Benz","GLC","DS-SJ-66");
         Car car3 =  new Car("BMW","I7","HM-XXX-69");
@@ -44,7 +39,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                "90024", "Los Angeles"
                 );
         customer1.addCar(car1);
-        customers.add(customer1);
+        customer1 = customerRepository.save(customer1);
 
         Customer customer2 = new Customer(
                "Leonardo",
@@ -55,7 +50,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "Los Angeles"
                 );
         customer2.addCar(car2);
-        customers.add(customer2);
+        customer2 = customerRepository.save(customer2);
 
        Customer customer3 = new Customer(
                 "Julie",
@@ -66,9 +61,16 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "Texas"
        );
        customer3.addCar(car3);
-       customers.add(customer3);
+       customer3 = customerRepository.save(customer3);
 
-        customerRepository.saveAll(customers);
+       log.info(String.format("Klant aangemaakt met klant-id: %s en auto-id: %s",
+               customer1.getId(),car1.getId()));
+
+       log.info(String.format("Klant aangemaakt met klant-id: %s en auto-id: %s",
+                customer2.getId(),car2.getId()));
+
+       log.info(String.format("Klant aangemaakt met klant-id: %s en auto-id: %s",
+                customer3.getId(),car3.getId()));
 
     }
 }

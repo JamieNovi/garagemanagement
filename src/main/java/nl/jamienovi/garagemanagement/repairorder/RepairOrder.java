@@ -1,5 +1,8 @@
 package nl.jamienovi.garagemanagement.repairorder;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +32,10 @@ public class RepairOrder {
     @Column(name = "reparatie_id", updatable = false)
     private Integer id;
 
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinColumn(name = "keuringsrapport_id", referencedColumnName = "id")
     private InspectionReport inspectionReport;
@@ -47,6 +54,10 @@ public class RepairOrder {
     @OneToMany(mappedBy = "repairOrder",orphanRemoval = true)
     private List<RepairOrderLine> repairOrderLines;
 
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "klant_id",referencedColumnName = "id")
     private Customer customer;

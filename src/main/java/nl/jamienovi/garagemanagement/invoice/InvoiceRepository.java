@@ -1,83 +1,43 @@
 package nl.jamienovi.garagemanagement.invoice;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Repository
-public class InvoiceRepository {
-    private final EntityManagerFactory emf;
+public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
-    @Autowired
-    public InvoiceRepository(EntityManagerFactory emf) {
-        this.emf = emf;
-    }
+    @Query("SELECT new nl.jamienovi.garagemanagement.invoice.InvoiceCustomerDataDto(" +
+            "k.firstName,k.lastName,k.address,k.postalCode,k.city,k.email, " +
+            "c.brand, c.model, c.registrationPlate, " +
+            "ro.id, ro.status) " +
+            "FROM Customer as k " +
+            "INNER JOIN Car c on k.id = c.customer.id " +
+            "INNER JOIN RepairOrder as ro on ro.customer.id = k.id " +
+            "WHERE k.id = ?1")
+    InvoiceCustomerDataDto getCustomerData(Integer customerId);
 
-    @SuppressWarnings("unchecked")
-    public InvoiceCustomerDataDto getCustomerData(Integer customerId){
-        EntityManager entityManager = emf.createEntityManager();
-        TypedQuery<InvoiceCustomerDataDto> query = (TypedQuery<InvoiceCustomerDataDto>) entityManager
-                .createQuery(
-                "SELECT new nl.jamienovi.garagemanagement.invoice.InvoiceCustomerDataDto(" +
-                        "k.firstName,k.lastName,k.address,k.postalCode,k.city,k.email, " +
-                        "c.brand, c.model, c.registrationPlate, " +
-                        "ro.id, ro.status) " +
-                        "FROM Customer as k " +
-                        "INNER JOIN Car c on k.id = c.customer.id " +
-                        "INNER JOIN RepairOrder as ro on ro.customer.id = k.id " +
-                        "WHERE k.id = :id"
-        );
-        query.setParameter("id",customerId);
+    @Query( "SELECT new nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto(" +
+            "ro.id, ro.customer.id, cp.name, rol.orderLinePrice, rol.orderLineQuantity)" +
+            "FROM RepairOrder as ro " +
+            "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
+            "INNER JOIN CarPart as cp on rol.partId = cp.id " +
+            "AND ro.customer.id = ?1" +
+            " AND cp.type = 'ONDERDEEL'")
+    List<RepairOrderLineDto> getInvoiceOrderLinesCarparts(Integer customerId);
 
-      return query.getSingleResult();
-    }
+    @Query("SELECT new nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto(" +
+            "ro.id, ro.customer.id, l.name, rol.orderLinePrice, rol.orderLineQuantity)" +
+            "FROM RepairOrder as ro " +
+            "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
+            "INNER JOIN Labor as l on rol.laborId = l.id " +
+            "AND ro.customer.id = ?1" +
+            " AND l.type = 'HANDELING'")
+    List<RepairOrderLineDto> getInvoiceLaborOrderLines(Integer customerid);
 
-    @SuppressWarnings("unchecked")
-    public List<InvoicePartOrderlinesDto> getInvoiceOrderLinesCarparts(Integer customerId) {
-        EntityManager entityManager = emf.createEntityManager();
 
-        try {
-            TypedQuery<InvoicePartOrderlinesDto> query = (TypedQuery<InvoicePartOrderlinesDto>) entityManager
-                    .createQuery(
-                            "SELECT new nl.jamienovi.garagemanagement.invoice.InvoicePartOrderlinesDto(" +
-                                    "ro.id, ro.customer.id, cp.name, rol.orderLinePrice, rol.orderLineQuantity)" +
-                                    "FROM RepairOrder as ro " +
-                                    "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
-                                    "INNER JOIN CarPart as cp on rol.partId = cp.id " +
-                                    "AND ro.customer.id = :id" +
-                                    " AND cp.type = 'ONDERDEEL'"
-                    );
-            query.setParameter("id", customerId);
-            List<InvoicePartOrderlinesDto> orderLines = query.getResultList();
-            entityManager.close();
-            return orderLines;
-        }catch (NoResultException ex){
-            entityManager.close();
-            throw new NoResultException("No results");
-        }
-    }
-    @SuppressWarnings("unchecked")
-    public List<InvoiceLaborOrderLinesDto> getInvoiceLaborOrderLines(Integer customerid) {
-        EntityManager entityManager = emf.createEntityManager();
 
-        TypedQuery<InvoiceLaborOrderLinesDto> query = (TypedQuery<InvoiceLaborOrderLinesDto>) entityManager
-                .createQuery(
-                        "SELECT new nl.jamienovi.garagemanagement.invoice.InvoiceLaborOrderLinesDto(" +
-                                "ro.id, ro.customer.id," +
-                                " l.name," +
-                                " rol.orderLinePrice, rol.orderLineQuantity)" +
-                                "FROM RepairOrder as ro " +
-                                "INNER JOIN RepairOrderLine as rol on ro.id = rol.repairOrder.id " +
-                                "INNER JOIN Labor as l on rol.laborId = l.id " +
-                                "AND ro.customer.id =:id" +
-                                " AND l.type = 'HANDELING'"
-                );
-        query.setParameter("id",customerid);
-        List<InvoiceLaborOrderLinesDto> orderLines = query.getResultList();
-        entityManager.close();
-        return orderLines;
-
-    }
 }

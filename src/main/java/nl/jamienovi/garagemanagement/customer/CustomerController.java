@@ -35,6 +35,11 @@ public class CustomerController {
         return ResponseEntity.ok().body(customer);
     }
 
+    @GetMapping(path = "klanten/opbellen")
+    public List<Customer> getCustomerCallingList() {
+        return customerService.getCallingListOfCustomersWithStatusVoltooidOrNietUitvoeren();
+    }
+
     @PostMapping(path = "/klanten")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
         Customer newCustomer = customerService.saveCustomer(customer);

@@ -1,4 +1,4 @@
-package nl.jamienovi.garagemanagement.invoice;
+package nl.jamienovi.garagemanagement.repairorderline;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class InvoiceLaborOrderLinesDto {
+public class RepairOrderLineDto {
     private Integer id;
     private Integer klant_id;
     private String name;

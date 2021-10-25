@@ -40,4 +40,11 @@ public class InspectionReportController {
         inspectionService.setInspectionReportStatus(inspectionReportId, status );
         return ResponseEntity.ok(new ResponseMessage("Status keuringsrapport:" + status));
     }
+
+    @PutMapping(path = "/repareren/{inspectionReportId}")
+    public ResponseEntity<?> setApprovalRepair(@PathVariable Integer inspectionReportId,
+                                               @RequestParam("akkoord") ApprovalStatus status){
+        inspectionService.setApprovalRepair(inspectionReportId,status);
+        return ResponseEntity.ok(new ResponseMessage("akkoord niet akkoord in systeem gezet"));
+    }
 }

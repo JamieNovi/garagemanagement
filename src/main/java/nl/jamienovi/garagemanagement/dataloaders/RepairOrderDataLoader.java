@@ -87,16 +87,28 @@ public class RepairOrderDataLoader implements CommandLineRunner {
          */
 
         inspectionService.addInspectionReportToCar(2);
+        repairOrderLineService.addRepairOrderLaborItem(2,"H0000");
         inspectionService.setInspectionReportStatus(2,InspectionStatus.GOEDGEKEURD);
-        repairOrderService.setStatus(2,RepairStatus.VOLTOOID);
+        //repairOrderService.setStatus(2,RepairStatus.VOLTOOID);
 
         /*
         Auto van klant 3
          */
 
         inspectionService.addInspectionReportToCar(3);
+
+        // Toevoegen keuringstarief
+        repairOrderLineService.addRepairOrderLaborItem(3,"H0000");
+
+        //Monteur keurt auto af en zet dat in het rapport
         inspectionService.setInspectionReportStatus(3,InspectionStatus.AFGEKEURD);
-        repairOrderService.setStatus(3,RepairStatus.NIET_UITVOEREN);
+
+        //Monteur zet in het systeem dat klant niet akkoord gaat.
+        //Reparatie wordt door event op NIET_UITVOEREN Gezet
+
+        //inspectionService.setApprovalRepair(3, ApprovalStatus.NIETAKKOORD);
+        //Factuur wordt automatisch opgeslagen door event vanuit repairorder
+
 
     }
 

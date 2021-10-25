@@ -1,7 +1,8 @@
 package nl.jamienovi.garagemanagement.inspection;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,7 +38,11 @@ public class InspectionReport {
     private List<ShortComing> shortcomings;
 
     //@Setter(AccessLevel.NONE)
-    @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
+//    @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "auto_id")
     private Car car;
@@ -46,7 +51,14 @@ public class InspectionReport {
     @Enumerated(EnumType.STRING)
     private InspectionStatus status = InspectionStatus.IN_BEHANDELING;
 
-    @JsonIgnore
+    @Column(name = "akkoord_reparatie")
+    @Enumerated(EnumType.STRING)
+    private ApprovalStatus approvalStatus;
+
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @OneToOne(cascade = { CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},
             fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
@@ -59,14 +71,5 @@ public class InspectionReport {
         shortComing.setInspectionReport(this);
         this.shortcomings.add(shortComing);
     }
-
-//    public void setCar(Car car) {
-//        if(car != null){
-//            car.getInspectionReports().add(this);
-//        }else if (car != null) {
-//            this.car.getInspectionReports().remove(this);
-//        }
-//        this.car = car;
-//    }
 
 }

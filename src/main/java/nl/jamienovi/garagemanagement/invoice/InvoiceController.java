@@ -3,7 +3,6 @@ package nl.jamienovi.garagemanagement.invoice;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.customer.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -50,8 +50,8 @@ public class InvoiceController {
             throw new IllegalStateException("Entity not found");
         }else{
             model.addAttribute("customer",invoiceService.getCustomerData(customerId));
-            model.addAttribute("carparts",invoiceService.getCarPartOrderlines(customerId));
-            model.addAttribute("labors", invoiceService.getInvoiceLaborOrderlines(customerId));
+            model.addAttribute("carparts",invoiceService.getPartOrderlines(customerId));
+            model.addAttribute("labors", invoiceService.getLaborOrderlines(customerId));
             model.addAttribute("subTotal", invoiceService.getSubtotalFromOrderLines(customerId));
 
             return "customer-invoice";
@@ -67,8 +67,8 @@ public class InvoiceController {
 
         WebContext context = new WebContext(request,response,servletContext);
         context.setVariable("customer", invoiceService.getCustomerData(customerId));
-        context.setVariable("carparts",invoiceService.getCarPartOrderlines(customerId));
-        context.setVariable("labors", invoiceService.getInvoiceLaborOrderlines(customerId));
+        context.setVariable("carparts",invoiceService.getPartOrderlines(customerId));
+        context.setVariable("labors", invoiceService.getLaborOrderlines(customerId));
         context.setVariable("subTotal", invoiceService.getSubtotalFromOrderLines(customerId));
         String invoiceHtml = templateEngine.process("customer-invoice",context);
 
@@ -92,6 +92,13 @@ public class InvoiceController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Factuur.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(bytes);
+    }
+
+    @PostMapping(path = "/invoice/{customerId}/{repairId}")
+    public ResponseEntity<?> createInvoice(@PathVariable(name = "customerId") Integer customerId,
+                                           @PathVariable(name = "repairId") Integer repairId){
+        invoiceService.createInvoice(customerId,repairId);
+        return ResponseEntity.ok().body("Factuur gemaakt en opgeslagen in de database");
     }
 
 }

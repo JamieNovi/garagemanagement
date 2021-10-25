@@ -34,12 +34,15 @@ public class CarController {
     }
 
     @PostMapping(path = "/auto-toevoegen/{customerId}")
-    public ResponseEntity<URI> addCar(@PathVariable("customerId") int customerId,
+    public ResponseEntity<URI> addCar(@PathVariable("customerId") Integer customerId,
                                       @RequestBody Car car,
                                       UriComponentsBuilder uriComponentsBuilder){
+
         Integer carId = carService.addCarToCustomer(customerId,car);
+
         UriComponents uriComponents = uriComponentsBuilder.path("/api/auto/{id}")
                 .buildAndExpand(carId);
+
         return ResponseEntity.created(uriComponents.toUri()).body(uriComponents.toUri());
     }
 

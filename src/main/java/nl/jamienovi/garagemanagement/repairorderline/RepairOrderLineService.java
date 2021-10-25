@@ -69,5 +69,4 @@ public class RepairOrderLineService {
         repairOrderLineRepository.save(line);
     }
 
-
 }

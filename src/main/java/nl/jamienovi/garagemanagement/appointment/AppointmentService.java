@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.appointment;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final CustomerService customerService;
@@ -40,6 +42,12 @@ public class AppointmentService {
         customer.setAppointment(appointment);
         appointment.setCustomer(customer);
         appointmentRepository.save(appointment);
+        log.info(logMessage(customer,appointment));
+    }
+
+    private String logMessage(Customer customer,Appointment appointment) {
+        return String.format("Afspraak aangemaakt voor klant met id: %s, datum : %s ,tijd : %s",
+                customer.getId(),appointment.getDate(),appointment.getTime());
     }
 
     public void delete(Integer appointmentId) {

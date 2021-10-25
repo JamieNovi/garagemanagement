@@ -39,7 +39,6 @@ public class CarService {
     public Integer addCarToCustomer(Integer customerId,Car newCar) {
        Customer customer = customerService.getCustomer(customerId);
        newCar.setCustomer(customer);
-
        Car car = carRepository.save(newCar);
        return car.getId();
     }
