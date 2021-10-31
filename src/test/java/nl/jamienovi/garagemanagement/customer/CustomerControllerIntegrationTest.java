@@ -5,6 +5,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +36,7 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void getSingleCustomerTest() {
         Customer customer = testRestTemplate.getForObject(
                 "http://localhost:" + port + "/api/klanten/1",Customer.class);
@@ -72,6 +74,7 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void shouldUpdateCustomer() {
         ExtractableResponse<Response> response = RestAssured
                 .given()

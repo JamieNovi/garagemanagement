@@ -5,12 +5,10 @@ import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarRepository;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.eventmanager.AddApprovalStatusEvent;
-import nl.jamienovi.garagemanagement.eventmanager.ChangeInspectionStatusEvent;
-import nl.jamienovi.garagemanagement.eventmanager.EventManager;
-import nl.jamienovi.garagemanagement.eventmanager.AddInspectionReportEvent;
+import nl.jamienovi.garagemanagement.eventmanager.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -24,8 +22,6 @@ public class InspectionService {
     private final CarRepository carRepository;
     private final EventManager events;
     private final ApplicationEventPublisher applicationEventPublisher;
-
-
 
     @Autowired
     public InspectionService(InspectionReportRepository inspectionReportRepository,
@@ -56,19 +52,23 @@ public class InspectionService {
         if(hasPendingStatus(existingCar.getId())){
             log.info("Auto heeft al een keuring openstaan");
             throw new IllegalStateException("Auto heeft al een keuring openstaan");
+        }else {
+
+            InspectionReport newInspectionReport = new InspectionReport();
+            newInspectionReport.setCar(existingCar);
+            newInspectionReport = inspectionReportRepository.save(newInspectionReport);
+            log.info(
+                    String.format("Keuringsrapport-id: %s aangemaakt auto met id : %s van klant-id: %s",
+                            newInspectionReport.getId(),
+                            existingCar.getId(),
+                            existingCar.getCustomer().getId())
+            );
+            // == EVENT voor reparatieservice, aanmaken reparatie Order ==
+
+            AddInspectionReportEvent event = new AddInspectionReportEvent(this,carId);
+            applicationEventPublisher.publishEvent(event);
         }
 
-        InspectionReport newInspectionReport = new InspectionReport();
-        newInspectionReport.setCar(existingCar);
-        inspectionReportRepository.save(newInspectionReport);
-        log.info(
-                String.format("Keuringsrapport aangemaakt auto met id : %s van klant-id: %s toegevoegd",
-                        existingCar.getId(),existingCar.getCustomer().getId())
-        );
-
-        //Publiseert event zodat er een reparatie wordt aangemaakt in RepairOrderService
-        AddInspectionReportEvent event = new AddInspectionReportEvent(this,carId);
-        applicationEventPublisher.publishEvent(event);
     }
 
     public void deleteInspectionReport(Integer inspectionReportId){
@@ -80,40 +80,66 @@ public class InspectionService {
     }
 
     public void setInspectionReportStatus(Integer inspectionReportId,InspectionStatus status){
+
         InspectionReport report = inspectionReportRepository.getById(inspectionReportId);
         report.setStatus(status);
         inspectionReportRepository.save(report);
 
-        //Zet reparatie op voltooid als auto is goedgekeurd. Repairorder wordt op VOLTOOID gezet.
-        if(status == InspectionStatus.GOEDGEKEURD) {
-            ChangeInspectionStatusEvent event = new ChangeInspectionStatusEvent(this,inspectionReportId );
-            applicationEventPublisher.publishEvent(event);
+        //Stuur event naar repairorder om status te wijzigen naar VOLTOOID
 
-            log.info(String.format("Auto met klant-id: %s en auto-id %s is %s",
-                    report.getCar().getCustomer().getId(),
-                    report.getCar().getId(),
-                    status));
-        }else {
-            log.info("Auto van klant-id: "+
-                    report.getCar().getCustomer().getId() + " is : " + status.toString() + ". Contact opnemen met klant");
+        switch(status) {
+            case GOEDGEKEURD:
+                ChangeInspectionStatusEvent eventInspectionStatus = new ChangeInspectionStatusEvent(this,inspectionReportId );
+                applicationEventPublisher.publishEvent(eventInspectionStatus);
+
+                log.info(String.format("Auto met klant-id: %s en auto-id %s is %s",
+                        report.getCar().getCustomer().getId(),
+                        report.getCar().getId(),
+                        status));
+                break;
+            case AFGEKEURD:
+                log.info("Auto van klant-id: "+
+                        report.getCar().getCustomer().getId() + " is : " + status.toString() + ". Contact opnemen met klant");
         }
-
     }
 
-    public void setApprovalRepair(Integer inspectionReportId, ApprovalStatus status) {
+    public void setIsRepaired(Integer inspectionReportId) {
+        InspectionReport updateInspectionReport = inspectionReportRepository.getById(inspectionReportId);
+        updateInspectionReport.setIsRepaired(true);
+        inspectionReportRepository.save(updateInspectionReport);
+    }
+
+    public void setApprovalRepair(Integer inspectionReportId, RepairApprovalStatus status) {
         InspectionReport report = inspectionReportRepository.getById(inspectionReportId);
-        report.setApprovalStatus(status);
+        Integer carIdOfInspectionReport = report.getCar().getId();
+
+        report.setRepairApprovalStatus(status);
 
         inspectionReportRepository.save(report);
-        if(status == ApprovalStatus.NIETAKKOORD){
+        if(status == RepairApprovalStatus.NIETAKKOORD){
 
-            AddApprovalStatusEvent event = new AddApprovalStatusEvent(this, inspectionReportId);
+            AddApprovalStatusEvent event = new AddApprovalStatusEvent(
+                    this,
+                    inspectionReportId,
+                    RepairApprovalStatus.NIETAKKOORD);
             applicationEventPublisher.publishEvent(event);
 
-            log.info(setApprovalLogMessage(report,status));
+//            ChangeCarStatusEvent eventCarStatus = new ChangeCarStatusEvent(
+//                    this,carIdOfInspectionReport);
+//            applicationEventPublisher.publishEvent(eventCarStatus);
+
+           // log.info(setApprovalLogMessage(report,status));
 
         }else{
-            log.info("Reparatie met id: " + report.getRepairOrder().getId() + " is : " + status.toString());
+
+            log.info("Keuringsrapport-id: " + report.getId() + " is : " + status.toString()+ " met reparatie.");
+
+            AddApprovalStatusEvent event = new AddApprovalStatusEvent(
+                    this,
+                    inspectionReportId,
+                    RepairApprovalStatus.AKKOORD);
+
+            applicationEventPublisher.publishEvent(event);
         }
     }
 
@@ -129,14 +155,22 @@ public class InspectionService {
 
         for (InspectionReport item : car.getInspectionReports()) {
 
-                if (item.getStatus() == InspectionStatus.IN_BEHANDELING) {
-                    carIsPending = true;
+                switch(item.getStatus()){
+                    case IN_BEHANDELING:
+                        carIsPending = true;
+                        break;
+                    case AFGEKEURD:
+                        carIsPending = true;
+                        break;
+                    case GOEDGEKEURD:
+                        carIsPending = true;
+
                 }
             }
         return carIsPending;
     }
 
-    private String setApprovalLogMessage(InspectionReport report, ApprovalStatus status){
+    private String setApprovalLogMessage(InspectionReport report, RepairApprovalStatus status){
         return String.format(
                 "Klant-id:%s met naam: %s, auto-id: %s, keuringsrapport-id: %s en reparatie-id: %s gaat niet %s met de reparatie\n",
                 report.getCar().getCustomer().getId(),
@@ -154,5 +188,10 @@ public class InspectionService {
 //    }
     public EventManager getEvents() {
         return events;
+    }
+
+    @EventListener
+    public void handleRepairOrderStatusEvent(RepairOrderCompletedEvent event) {
+        setIsRepaired(event.getInspectionReportId());
     }
 }

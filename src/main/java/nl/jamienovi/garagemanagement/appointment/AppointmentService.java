@@ -1,7 +1,8 @@
 package nl.jamienovi.garagemanagement.appointment;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.customer.Customer;
+import nl.jamienovi.garagemanagement.car.Car;
+import nl.jamienovi.garagemanagement.car.CarService;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
@@ -16,13 +17,15 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final CustomerService customerService;
     private final DtoMapper dtoMapper;
+    private final CarService carService;
 
 
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerService customerService, DtoMapper dtoMapper) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerService customerService, DtoMapper dtoMapper, CarService carService) {
         this.appointmentRepository = appointmentRepository;
         this.customerService = customerService;
         this.dtoMapper = dtoMapper;
+        this.carService = carService;
     }
 
     public List<Appointment> getAll() {
@@ -37,17 +40,17 @@ public class AppointmentService {
         return appointment;
     }
 
-    public void save(Integer customerId,Appointment appointment) throws EntityNotFoundException {
-        Customer customer = customerService.getCustomer(customerId);
-        customer.setAppointment(appointment);
-        appointment.setCustomer(customer);
+    public void save(Integer carId,Appointment appointment) throws EntityNotFoundException {
+        Car car = carService.getCar(carId);
+        car.setAppointment(appointment);
+        appointment.setCar(car);
         appointmentRepository.save(appointment);
-        log.info(logMessage(customer,appointment));
+        log.info(logMessage(car,appointment));
     }
 
-    private String logMessage(Customer customer,Appointment appointment) {
-        return String.format("Afspraak aangemaakt voor klant met id: %s, datum : %s ,tijd : %s",
-                customer.getId(),appointment.getDate(),appointment.getTime());
+    private String logMessage(Car car,Appointment appointment) {
+        return String.format("Afspraak aangemaakt voor auto met id: %s, datum : %s ,tijd : %s",
+                car.getId(),appointment.getDate(),appointment.getTime());
     }
 
     public void delete(Integer appointmentId) {

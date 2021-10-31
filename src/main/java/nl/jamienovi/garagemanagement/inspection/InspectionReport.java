@@ -9,6 +9,7 @@ import lombok.Setter;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import nl.jamienovi.garagemanagement.shortcoming.ShortComing;
+import nl.jamienovi.garagemanagement.utils.BooleanJaNeeConverter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -53,7 +54,7 @@ public class InspectionReport {
 
     @Column(name = "akkoord_reparatie")
     @Enumerated(EnumType.STRING)
-    private ApprovalStatus approvalStatus;
+    private RepairApprovalStatus repairApprovalStatus;
 
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -62,6 +63,11 @@ public class InspectionReport {
     @OneToOne(cascade = { CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},
             fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
+
+    @Column(name = "Gerepareerd")
+    @Convert(converter = BooleanJaNeeConverter.class)
+    private Boolean isRepaired = false;
+
 
     /**
      * Voorziening om bidirectional relatie aan beide kanten te updaten

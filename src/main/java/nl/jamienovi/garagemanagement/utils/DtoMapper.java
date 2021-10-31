@@ -5,15 +5,15 @@ import nl.jamienovi.garagemanagement.appointment.AppointmentDto;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarDto;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerDto;
+import nl.jamienovi.garagemanagement.customer.CustomerUpdateDto;
+import nl.jamienovi.garagemanagement.customer.CustomerGetDto;
 import nl.jamienovi.garagemanagement.labor.Labor;
 import nl.jamienovi.garagemanagement.labor.LaborDto;
 import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.part.PartDto;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
+import nl.jamienovi.garagemanagement.repairorder.RepairOrderDto;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -22,7 +22,7 @@ public interface DtoMapper {
     DtoMapper INSTANCE = Mappers.getMapper(DtoMapper.class);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateCustomerFromDto(CustomerDto dto, @MappingTarget Customer entity);
+    void updateCustomerFromDto(CustomerUpdateDto dto, @MappingTarget Customer entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateCarFromDto(CarDto car,@MappingTarget Car entity);
@@ -35,5 +35,19 @@ public interface DtoMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateLaborFromDto(LaborDto laborDto, @MappingTarget Labor entity);
+
+
+//    @Mapping(target = "id",ignore = true)
+//    @Mapping(target = "inspectionReport" ,ignore = true)
+//    @Mapping(target = "createdAt",ignore = true)
+//    @Mapping(target = "status",ignore = true)
+//    @Mapping(target = "repairOrderLines",ignore = true)
+//    @Mapping(target = "customer",ignore = true)
+
+   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateRepairOrderFromDto(RepairOrderDto dto, @MappingTarget RepairOrder entity);
+
+
+    CustomerGetDto customerToDto(Customer customer);
 
 }

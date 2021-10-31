@@ -1,11 +1,11 @@
 package nl.jamienovi.garagemanagement.utils;
 
-import nl.jamienovi.garagemanagement.inspection.ApprovalStatus;
+import nl.jamienovi.garagemanagement.inspection.RepairApprovalStatus;
 import org.springframework.core.convert.converter.Converter;
 
-public class StringApprovalRepairEnumConverter implements Converter<String, ApprovalStatus> {
+public class StringApprovalRepairEnumConverter implements Converter<String, RepairApprovalStatus> {
     @Override
-    public ApprovalStatus convert(String source) {
-        return ApprovalStatus.valueOf(source.toUpperCase());
+    public RepairApprovalStatus convert(String source) {
+        return RepairApprovalStatus.valueOf(source.toUpperCase());
     }
 }

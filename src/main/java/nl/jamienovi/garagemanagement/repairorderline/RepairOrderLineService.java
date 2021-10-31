@@ -37,18 +37,25 @@ public class RepairOrderLineService {
 
     public void addRepairOrderItem(Integer repairOrderId, String partCode, Integer quantity){
         RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
+
         Part addedPart = partService.getPart(partCode);
+
         //Create new orderline
         RepairOrderLine line = new RepairOrderLine();
+
         //Set repairorder in orderline
         line.setRepairOrder(repairOrder);
+
         line.setPartId(addedPart.getId());
+
         //Set price quantity and repairItem of orderline
         line.setOrderLinePrice(addedPart.getPrice() * quantity);
         line.setOrderLineQuantity(quantity);
         //add orderlines to repairorder List<repairorderlines>
         repairOrder.getRepairOrderLines().add(line);
         repairOrderLineRepository.save(line);
+
+        log.info("Onderdeel: {} toegevoegd aan reparatie-order: {}",addedPart.getName(),repairOrderId);
     }
 
     public RepairOrderLine buildLaborOrderline(RepairOrder repairOrder,Labor labor) {
@@ -67,6 +74,8 @@ public class RepairOrderLineService {
 
         RepairOrderLine line =  buildLaborOrderline(repairOrder,addedLabor);
         repairOrderLineRepository.save(line);
+
+        log.info("Handeling: {} toegevoegd aan reparatie-order: {} ",addedLabor.getName(),repairOrderId);
     }
 
 }

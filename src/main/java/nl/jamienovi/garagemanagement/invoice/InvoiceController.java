@@ -1,104 +1,154 @@
 package nl.jamienovi.garagemanagement.invoice;
 
-import com.itextpdf.html2pdf.ConverterProperties;
-import com.itextpdf.html2pdf.HtmlConverter;
 import lombok.extern.slf4j.Slf4j;
+import nl.jamienovi.garagemanagement.car.Car;
+import nl.jamienovi.garagemanagement.car.CarService;
+import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.util.Optional;
-
-// Add springboot starter thymeleaf
 
 @Slf4j
 @Controller
 @RequestMapping(path = "/api")
 public class InvoiceController {
     private final InvoiceService invoiceService;
-
-    private final ServletContext servletContext;
-
-
-    private final TemplateEngine templateEngine;
+    private final CarService carService;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, ServletContext servletContext,
-                             TemplateEngine templateEngine) {
+    public InvoiceController(InvoiceService invoiceService,
+                             ServletContext servletContext,
+                             TemplateEngine templateEngine, CarService carService) {
         this.invoiceService = invoiceService;
-        this.servletContext = servletContext;
-        this.templateEngine = templateEngine;
+        this.carService = carService;
     }
 
-    @GetMapping(path = "invoice/{customerId}")
-    public String getInvoice(@PathVariable("customerId") Integer customerId, Model model){
-        Optional<InvoiceCustomerDataDto> customerOptional = Optional.ofNullable(invoiceService.getCustomerData(customerId));
+    @GetMapping(path="factuur/{customerId}")
+    public ResponseEntity<byte[]> getInvoice(@PathVariable Integer customerId){
+        InvoicePdf invoicePdf =  invoiceService.getInvoice(customerId);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=Factuur_klant_id"+ customerId +".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(invoicePdf.getData());
+    }
+//    @PutMapping(path = "/factuur/{customerId}")
+//    public ResponseEntity<?> setInvoiceStatus(@PathVariable("customerId") Integer customerId,
+//                                              @RequestParam("status") InvoiceStatus newStatus) {
+//        invoiceService.setInvoiceStatusToBetaald(customerId,newStatus);
+//        InvoicePdf updatedInvoice = invoiceService.getInvoice(customerId);
+//        return ResponseEntity.ok().body(updatedInvoice);
+//    }
+
+    @GetMapping(path = "factuur/generate/{carId}")
+    public String generateInvoice(@PathVariable Integer carId, Model model){
+        Optional<InvoiceCustomerDataDto> customerOptional = Optional.ofNullable(invoiceService.getCustomerData(carId));
+
         if(customerOptional.isEmpty()){
             throw new IllegalStateException("Entity not found");
         }else{
-            model.addAttribute("customer",invoiceService.getCustomerData(customerId));
-            model.addAttribute("carparts",invoiceService.getPartOrderlines(customerId));
-            model.addAttribute("labors", invoiceService.getLaborOrderlines(customerId));
-            model.addAttribute("subTotal", invoiceService.getSubtotalFromOrderLines(customerId));
 
+
+            model.addAttribute("customer",invoiceService.getCustomerData(carId));
+            model.addAttribute("carparts",invoiceService.getPartOrderlines(carId));
+            model.addAttribute("labors", invoiceService.getLaborOrderlines(carId));
+            model.addAttribute("subTotal", invoiceService.getSubtotalFromOrderLines(carId));
+
+            log.info("Factuur gegenereerd.");
             return "customer-invoice";
         }
-
     }
 
-    @GetMapping(path = "invoice-pdf/{customerId}")
-    public ResponseEntity<?> getInvoicePdf(HttpServletRequest request,
-                                           HttpServletResponse response,
-                                           @PathVariable("customerId") Integer customerId){
+    /**
+     * Html factuur template omzetten naar pdf en opslaan in database
+     * @param request
+     * @param response
+     * @param carId
+     * @return
+     */
 
+    @PostMapping(path = "/factuur/{carId}")
+    public ResponseEntity<?> saveInvoice(HttpServletRequest request, HttpServletResponse response,
+                                         @PathVariable("carId") Integer carId,
+                                         UriComponentsBuilder uriComponentsBuilder) {
 
-        WebContext context = new WebContext(request,response,servletContext);
-        context.setVariable("customer", invoiceService.getCustomerData(customerId));
-        context.setVariable("carparts",invoiceService.getPartOrderlines(customerId));
-        context.setVariable("labors", invoiceService.getLaborOrderlines(customerId));
-        context.setVariable("subTotal", invoiceService.getSubtotalFromOrderLines(customerId));
-        String invoiceHtml = templateEngine.process("customer-invoice",context);
+        Car car  = carService.getCar(carId);
+        Integer customerId = car.getCustomer().getId();
 
-        /* Setup Source and target I/O streams */
+        String invoiceHtml = invoiceService.setWebContext(request,response,carId);
 
-        ByteArrayOutputStream target = new ByteArrayOutputStream();
+        byte[] data = invoiceService.setUpSourceAndTargetIOStreams(invoiceHtml);
 
-        /*Setup converter properties. */
-        ConverterProperties converterProperties = new ConverterProperties();
-        converterProperties.setBaseUri("http://localhost:8080");
-
-        /* Call convert method */
-        HtmlConverter.convertToPdf(invoiceHtml, target, converterProperties);
-
-        /* extract output as bytes */
-        byte[] bytes = target.toByteArray();
-
-        /* Send the response as downloadable PDF */
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Factuur.pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(bytes);
+        String message = "";
+        try{
+            invoiceService.storeInvoicePdf(customerId,data);
+            UriComponents uriComponents = uriComponentsBuilder.path("/api/factuur/{id}")
+                    .buildAndExpand(customerId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(uriComponents.toUri());
+            log.info("Factuur van klant-id {} is opgeslagen",customerId);
+            return ResponseEntity.created(uriComponents.toUri()).body(uriComponents.toUri());
+        }catch (Exception e ) {
+            message = "Opslaan factuur niet gelukt.";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+        }
     }
 
-    @PostMapping(path = "/invoice/{customerId}/{repairId}")
-    public ResponseEntity<?> createInvoice(@PathVariable(name = "customerId") Integer customerId,
-                                           @PathVariable(name = "repairId") Integer repairId){
-        invoiceService.createInvoice(customerId,repairId);
-        return ResponseEntity.ok().body("Factuur gemaakt en opgeslagen in de database");
-    }
 
+
+
+
+//    private String setWebContext(HttpServletRequest request, HttpServletResponse response,
+//                               @PathVariable("customerId") Integer customerId) {
+//        WebContext context = new WebContext(request,response,servletContext);
+//        context.setVariable("customer", invoiceService.getCustomerData(customerId));
+//        context.setVariable("carparts",invoiceService.getPartOrderlines(customerId));
+//        context.setVariable("labors", invoiceService.getLaborOrderlines(customerId));
+//        context.setVariable("subTotal", invoiceService.getSubtotalFromOrderLines(customerId));
+//        String invoiceHtml = templateEngine.process("customer-invoice",context);
+//        return invoiceHtml;
+//    }
+
+//    @GetMapping(path = "factuur/pdf/{customerId}")
+//    public ResponseEntity<?> getInvoicePdf(HttpServletRequest request,
+//                                           HttpServletResponse response,
+//                                           @PathVariable("customerId") Integer customerId){
+//
+//
+//        String invoiceHtml = setWebContext(request, response, customerId);
+//
+//        /* Setup Source and target I/O streams */
+//
+//        ByteArrayOutputStream target = new ByteArrayOutputStream();
+//
+//        /*Setup converter properties. */
+//        ConverterProperties converterProperties = new ConverterProperties();
+//        converterProperties.setBaseUri("http://localhost:8080");
+//
+//        /* Zet string -> invoiceHtml om naar een pdf als ByteArrayOutputStream -> target*/
+//        HtmlConverter.convertToPdf(invoiceHtml, target, converterProperties);
+//
+//        /* extract output as bytes */
+//        byte[] bytes = target.toByteArray();
+//
+//        /* Send the response as downloadable PDF */
+//
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Factuur.pdf")
+//                .contentType(MediaType.APPLICATION_PDF)
+//                .body(bytes);
+//    }
 }

@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/klanten")
 public class CustomerController {
     private CustomerService customerService;
 
@@ -24,23 +24,23 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/klanten")
+    @GetMapping("")
     public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
-    @GetMapping(path = "/klanten/{customerId}")
+    @GetMapping(path = "/{customerId}")
     public ResponseEntity<Customer> getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
         Customer customer= customerService.getCustomer(customerId);
         return ResponseEntity.ok().body(customer);
     }
 
-    @GetMapping(path = "klanten/opbellen")
+    @GetMapping(path = "opbellen")
     public List<Customer> getCustomerCallingList() {
         return customerService.getCallingListOfCustomersWithStatusVoltooidOrNietUitvoeren();
     }
 
-    @PostMapping(path = "/klanten")
+    @PostMapping(path = "")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
         Customer newCustomer = customerService.saveCustomer(customer);
 
@@ -49,23 +49,20 @@ public class CustomerController {
                 .buildAndExpand(newCustomer.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(uri);
-
     }
 
-    @PutMapping(path="/klanten/{customerId}")
+    @PutMapping(path="/{customerId}")
     public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId,
-                                            @RequestBody CustomerDto customerDto,
+                                            @RequestBody CustomerUpdateDto customerUpdateDto,
                                             UriComponentsBuilder uriComponentsBuilder) {
-        customerService.updateCustomer(customerId ,customerDto);
+        customerService.updateCustomer(customerId , customerUpdateDto);
         UriComponents uriComponents = uriComponentsBuilder.path("/api/klanten/{id}").buildAndExpand(customerId);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
-//        return new ResponseEntity<>(headers, HttpStatus.OK)
         return ResponseEntity.ok().headers(headers).body(uriComponents.toUri());
     }
 
-
-    @DeleteMapping(path = "/klanten/{customerId}")
+    @DeleteMapping(path = "/{customerId}")
     public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") int customerId){
         customerService.deleteCustomer(customerId);
         return ResponseEntity.ok(

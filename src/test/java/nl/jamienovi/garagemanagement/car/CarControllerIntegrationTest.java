@@ -8,6 +8,7 @@ import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +39,7 @@ public class CarControllerIntegrationTest {
     };
 
     @Test
+    @Disabled
     void shouldGetAllCars() {
         RestAssured
                 .given()
@@ -50,6 +52,7 @@ public class CarControllerIntegrationTest {
     }
 
     @Test
+    @Disabled
     void shouldGetSingleCar() {
 
         carService.addCarToCustomer(customer.getId(),createCar());

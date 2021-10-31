@@ -23,8 +23,8 @@ public class RepairOrderLineController {
         return repairOrderLineService.getAll();
     }
 
-    @PostMapping(path = "/onderdeel-toevoegen/{repairOrder}/{partId}")
-    public void addRepairOrderItem(@PathVariable("repairOrder") Integer repairOrderId,
+    @PostMapping(path = "/onderdeel-toevoegen/{repairOrderId}/{partId}")
+    public void addRepairOrderItem(@PathVariable("repairOrderId") Integer repairOrderId,
                                    @PathVariable("partId") String partId,
                                    @RequestParam("quantity") Integer quantity){
         repairOrderLineService.addRepairOrderItem(repairOrderId,partId, quantity);

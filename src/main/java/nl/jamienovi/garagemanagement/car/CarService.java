@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.eventmanager.ChangeCarStatusEvent;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,6 +42,9 @@ public class CarService {
        Customer customer = customerService.getCustomer(customerId);
        newCar.setCustomer(customer);
        Car car = carRepository.save(newCar);
+
+       log.info("Auto-id : {} aangemaakt voor klant-id: {}",
+               car.getId(),customerId);
        return car.getId();
     }
 
@@ -63,6 +68,28 @@ public class CarService {
                         new EntityNotFoundException(Car.class,"id",carId.toString()));
        carRepository.deleteById(existingCar.getId());
     }
+
+    @EventListener
+    public void changeCarStatusOnInspectionCreated(ChangeCarStatusEvent event) {
+       Car statusOfCarToBeChanged = carRepository.getById((event.getCarId()));
+       statusOfCarToBeChanged.setStatus(CarStatus.IN_AFWACHTING);
+       carRepository.save(statusOfCarToBeChanged);
+
+       log.info("Auto-id: {} Nieuwe status: {}",
+               statusOfCarToBeChanged.getId(),
+               statusOfCarToBeChanged.getStatus());
+    }
+
+//    @EventListener
+//    public void changeCarStatusWhenRepairIsDoneOrNotAuthorized(ChangeCarStatusEvent event){
+//       Car statusOfCarToBeChanged = carRepository.getById(event.getCarId());
+//       statusOfCarToBeChanged.setStatus(CarStatus.VERWERKT);
+//       statusOfCarToBeChanged = carRepository.save(statusOfCarToBeChanged);
+//
+//        log.info("Auto-id: {} Nieuwe status: {}",
+//                statusOfCarToBeChanged.getId(),
+//                statusOfCarToBeChanged.getStatus());
+//    }
 
 
 }

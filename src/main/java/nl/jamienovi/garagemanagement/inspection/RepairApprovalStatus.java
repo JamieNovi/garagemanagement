@@ -1,5 +1,5 @@
 package nl.jamienovi.garagemanagement.inspection;
 
-public enum ApprovalStatus {
+public enum RepairApprovalStatus {
     AKKOORD,NIETAKKOORD
 }

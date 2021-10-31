@@ -1,10 +1,13 @@
 package nl.jamienovi.garagemanagement.appointment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import nl.jamienovi.garagemanagement.customer.Customer;
+import nl.jamienovi.garagemanagement.car.Car;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -35,7 +38,21 @@ public class Appointment {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
     private AppointmentType type;
 
+//    @OneToOne(cascade = CascadeType.MERGE)
+//    @JoinColumn(name ="klant_id", referencedColumnName = "id")
+//    private Customer customer;
+
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name ="klant_id", referencedColumnName = "id")
-    private Customer customer;
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
+
+    public Appointment(LocalDate date, LocalTime time, AppointmentType type) {
+        this.date = date;
+        this.time = time;
+        this.type = type;
+    }
 }

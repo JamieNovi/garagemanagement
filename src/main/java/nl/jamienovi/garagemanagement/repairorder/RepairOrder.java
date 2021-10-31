@@ -46,7 +46,7 @@ public class RepairOrder {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private RepairStatus status = RepairStatus.NIEUW;
+    private RepairStatus status = RepairStatus.IN_AFWACHTING;
 
     @Column(name = "afspraken")
     private String agreementComments = "Geen afspraken";
@@ -58,7 +58,7 @@ public class RepairOrder {
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @OneToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "klant_id",referencedColumnName = "id")
     private Customer customer;
 

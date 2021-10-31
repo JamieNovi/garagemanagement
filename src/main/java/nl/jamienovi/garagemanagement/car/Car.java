@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
+import nl.jamienovi.garagemanagement.appointment.Appointment;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 
@@ -14,7 +15,6 @@ import java.util.List;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Car")
-
 @Getter
 @Setter
 @ToString
@@ -40,6 +40,10 @@ public class Car {
     @NotBlank(message = "Kenteken invoeren verplicht.")
     private String registrationPlate;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private CarStatus status = CarStatus.AANGEMAAKT;
+
 
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -52,8 +56,11 @@ public class Car {
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @OneToMany(orphanRemoval = true,mappedBy = "car", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true,mappedBy = "car", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<InspectionReport> inspectionReports;
+
+    @OneToOne(mappedBy = "car")
+    private Appointment appointment;
 
     public Car(String brand, String model, String registrationPlate) {
         this.brand = brand;

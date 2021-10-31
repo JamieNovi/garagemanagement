@@ -2,22 +2,35 @@ package nl.jamienovi.garagemanagement.dataloaders;
 
 
 import lombok.extern.slf4j.Slf4j;
+import nl.jamienovi.garagemanagement.appointment.Appointment;
+import nl.jamienovi.garagemanagement.appointment.AppointmentService;
+import nl.jamienovi.garagemanagement.appointment.AppointmentType;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerRepository;
+import nl.jamienovi.garagemanagement.invoice.InvoiceService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Component
-@Order(1)
+@Order(2)
 @Slf4j
+@Transactional
 public class CustomerDataLoader implements CommandLineRunner {
 
     private final CustomerRepository customerRepository;
+    private final InvoiceService invoiceService;
+    private final AppointmentService appointmentService;
 
-    public CustomerDataLoader(CustomerRepository customerRepository) {
+    public CustomerDataLoader(CustomerRepository customerRepository, InvoiceService invoiceService, AppointmentService appointmentService) {
         this.customerRepository = customerRepository;
+        this.invoiceService = invoiceService;
+        this.appointmentService = appointmentService;
     }
 
     @Override
@@ -30,6 +43,8 @@ public class CustomerDataLoader implements CommandLineRunner {
         Car car1 = new Car("Ferrari","California","FJ-XZ-88");
         Car car2 = new Car("Mercedes-Benz","GLC","DS-SJ-66");
         Car car3 =  new Car("BMW","I7","HM-XXX-69");
+        Car car4 = new Car("Audi","R8","87-23-WE");
+        Car car5 = new Car("Ford","Mustang","HM-00-JJ");
 
         Customer customer1 = new Customer(
                "Tom",
@@ -39,7 +54,14 @@ public class CustomerDataLoader implements CommandLineRunner {
                "90024", "Los Angeles"
                 );
         customer1.addCar(car1);
+        customer1.addCar(car2);
         customer1 = customerRepository.save(customer1);
+
+        appointmentService.save(1,new Appointment(
+                LocalDate.of(2021,10,27),
+                LocalTime.of(10,15,00),
+                AppointmentType.KEURING
+        ));
 
         Customer customer2 = new Customer(
                "Leonardo",
@@ -49,10 +71,16 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "90211",
                 "Los Angeles"
                 );
-        customer2.addCar(car2);
+        customer2.addCar(car3);
         customer2 = customerRepository.save(customer2);
 
-       Customer customer3 = new Customer(
+        appointmentService.save(3,new Appointment(
+                LocalDate.of(2021,11,11),
+                LocalTime.of(10,15,00),
+                AppointmentType.KEURING
+        ));
+
+        Customer customer3 = new Customer(
                 "Julie",
                 "Cash",
                 "juliecash@bookings.com",
@@ -60,17 +88,23 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "24245",
                 "Texas"
        );
-       customer3.addCar(car3);
-       customer3 = customerRepository.save(customer3);
+        customer3.addCar(car4);
+        customer3.addCar(car5);
+        customer3 = customerRepository.save(customer3);
 
-       log.info(String.format("Klant aangemaakt met klant-id: %s en auto-id: %s",
-               customer1.getId(),car1.getId()));
+        appointmentService.save(4,new Appointment(
+                LocalDate.of(2021,11,11),
+                LocalTime.of(12,30,00),
+                AppointmentType.KEURING
+        ));
 
-       log.info(String.format("Klant aangemaakt met klant-id: %s en auto-id: %s",
-                customer2.getId(),car2.getId()));
+        appointmentService.save(5,new Appointment(
+                LocalDate.of(2021,10,31),
+                LocalTime.of(18,30,00),
+                AppointmentType.KEURING
+        ));
 
-       log.info(String.format("Klant aangemaakt met klant-id: %s en auto-id: %s",
-                customer3.getId(),car3.getId()));
+
 
     }
 }

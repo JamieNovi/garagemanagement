@@ -1,10 +1,9 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
-import nl.jamienovi.garagemanagement.appointment.Appointment;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
@@ -18,7 +17,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Customer")
 @Table(name = "Klanten")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -55,22 +53,21 @@ public class Customer {
     @NotBlank(message = "Woonplaats is verplicht.")
     private String city;
 
-//    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,property="id")
-//    @JsonIdentityReference(alwaysAsId=true)
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
+    @JsonIdentityReference(alwaysAsId=true)
     @Column(name= "cars")
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     @ToString.Exclude
     private List<Car> cars = new ArrayList<>();
 
-//    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class,property="id")
-//    @JsonIdentityReference(alwaysAsId=true)
-    @JsonIgnore
-    @OneToOne(mappedBy = "customer")
-    private RepairOrder repairOrder;
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
+    @JsonIdentityReference(alwaysAsId=true)
+    @OneToMany(mappedBy = "customer")
+    private List<RepairOrder> repairOrders;
 
-    @OneToOne(mappedBy = "customer")
-    private Appointment appointment;
+//    @OneToOne(mappedBy = "customer")
+//    private Appointment appointment;
 
     public Customer(String firstName, String lastName, String email, String address,
                     String postalCode, String city) {
@@ -93,14 +90,9 @@ public class Customer {
         this.city = city;
     }
 
-    /**
-     * Voorziening om bidirectional relatie aan beide kanten te updaten
-     * @param car
-     */
     public void addCar(final Car car) {
         car.setCustomer(this);
         this.cars.add(car);
     }
-
 
 }

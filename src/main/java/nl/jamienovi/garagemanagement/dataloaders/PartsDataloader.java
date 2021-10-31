@@ -9,10 +9,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Component
-@Order(2)
+@Order(1)
+@Transactional
 public class PartsDataloader implements CommandLineRunner {
 
     private final PartRepository partRepository;
@@ -36,11 +38,11 @@ public class PartsDataloader implements CommandLineRunner {
                 diskBrakes,exhaust,oilFilter,sparkPlug,headLight));
 
         Labor inspection = new Labor("H0000","Kosten keuring", 50.00);
-        Labor laborDiscBrakes = new Labor("HP001","Montagekosten Remschijven", 32.50);
-        Labor laborExhaust = new Labor("HP002","Montagekosten uitlaat", 17.75);
-        Labor labourOilFilter = new Labor("HP003","Montagekosten oliefilter vervangen",12.99);
-        Labor labourSparkPlug = new Labor("HP004","Montagekosten vervangen", 8.22);
-        Labor labourHeadLight = new Labor("HP005","Montagekosten koplamp vervangen",34.01);
+        Labor laborDiscBrakes = new Labor("HP001","Arbeid Remschijven", 32.50);
+        Labor laborExhaust = new Labor("HP002","Arbeid uitlaat", 17.75);
+        Labor labourOilFilter = new Labor("HP003","Arbeid oliefilter ",12.99);
+        Labor labourSparkPlug = new Labor("HP004","Arbeid bougies", 8.22);
+        Labor labourHeadLight = new Labor("HP005","Arbeid koplamp ",34.01);
 
         laborRepository.saveAll(List.of(inspection,
                 laborDiscBrakes,laborExhaust,

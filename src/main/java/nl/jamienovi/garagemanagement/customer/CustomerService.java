@@ -20,6 +20,9 @@ public class CustomerService {
     }
 
     public Customer getCustomer(Integer customerId) {
+//        Customer customer = customerRepository.getById(customerId);
+//        CustomerGetDto dto = DtoMapper.INSTANCE.customerToDto(customer);
+//        log.info(dto.toString());
        return customerRepository.findById(customerId)
                .orElseThrow(() -> new EntityNotFoundException(Customer.class,"id", customerId.toString()));
     }
@@ -28,14 +31,19 @@ public class CustomerService {
         if(customerRepository.emailAlreadyExists(customer.getEmail())) {
             throw new IllegalStateException("Email bestaat al in het systeem!");
         }
+        log.info(String.format("Klant aangemaakt met klant-id:",
+                customer.getId()));
        return customerRepository.save(customer);
     }
 
-    public void updateCustomer(Integer customerId, CustomerDto customerDto) {
+    public void updateCustomer(Integer customerId, CustomerUpdateDto customerUpdateDto) {
                Customer existingCustomer = customerRepository.findById(customerId)
-               .orElseThrow(() -> new EntityNotFoundException(Customer.class,"id", customerId.toString()));
+               .orElseThrow(() -> new EntityNotFoundException(
+                       Customer.class,"id",
+                       customerId.toString())
+               );
 
-               mapper.updateCustomerFromDto(customerDto,existingCustomer);
+               mapper.updateCustomerFromDto(customerUpdateDto,existingCustomer);
                customerRepository.save(existingCustomer);
     }
 

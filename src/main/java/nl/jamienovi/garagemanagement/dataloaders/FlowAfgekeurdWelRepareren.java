@@ -1,11 +1,13 @@
 package nl.jamienovi.garagemanagement.dataloaders;
 
 import lombok.extern.slf4j.Slf4j;
+import nl.jamienovi.garagemanagement.car.Car;
+import nl.jamienovi.garagemanagement.customer.Customer;
+import nl.jamienovi.garagemanagement.customer.CustomerRepository;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.inspection.InspectionService;
 import nl.jamienovi.garagemanagement.inspection.InspectionStatus;
 import nl.jamienovi.garagemanagement.inspection.RepairApprovalStatus;
-import nl.jamienovi.garagemanagement.invoice.InvoiceController;
 import nl.jamienovi.garagemanagement.invoice.InvoiceService;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderDto;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
@@ -15,41 +17,53 @@ import nl.jamienovi.garagemanagement.shortcoming.ShortComing;
 import nl.jamienovi.garagemanagement.shortcoming.ShortComingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
-@Component
 @Slf4j
-@Order(3)
-@Transactional
-public class RepairOrderDataLoader implements CommandLineRunner {
-    private final RepairOrderLineService repairOrderLineService;
+//@Component
+//@Order(2)
+//@Transactional
+public class FlowAfgekeurdWelRepareren implements CommandLineRunner {
+
+    private final CustomerRepository customerRepository;
+    private final InvoiceService invoiceService;
     private final InspectionService inspectionService;
     private final ShortComingRepository shortComingRepository;
+    private final RepairOrderLineService repairOrderLineService;
     private final RepairOrderService repairOrderService;
-    private final InvoiceService invoiceService;
-    private final InvoiceController invoiceController;
 
     @Autowired
-    public RepairOrderDataLoader(RepairOrderLineService repairOrderLineService,
-                                 InspectionService inspectionService,
-                                 ShortComingRepository shortComingRepository,
-                                 RepairOrderService repairOrderService,
-                                 InvoiceService invoiceService, InvoiceController invoiceController) {
-        this.repairOrderLineService = repairOrderLineService;
+    public FlowAfgekeurdWelRepareren(CustomerRepository customerRepository, InvoiceService invoiceService,
+                                     InspectionService inspectionService,
+                                     ShortComingRepository shortComingRepository,
+                                     RepairOrderLineService repairOrderLineService,
+                                     RepairOrderService repairOrderService) {
+        this.customerRepository = customerRepository;
+        this.invoiceService = invoiceService;
         this.inspectionService = inspectionService;
         this.shortComingRepository = shortComingRepository;
+        this.repairOrderLineService = repairOrderLineService;
         this.repairOrderService = repairOrderService;
-        this.invoiceService = invoiceService;
-        this.invoiceController = invoiceController;
     }
-
 
     @Override
     public void run(String... args) throws Exception {
+        // Klant toevoegen met twee auto's
+                Car car1 = new Car("Ferrari","California","FJ-XZ-88");
+        Car car4 = new Car("Audi","R8","87-23-WE");
+
+        Customer customer1 = new Customer(
+                "Tom",
+                "Cruise",
+                "tomcruise@hollywood.com",
+                "Hollywood boulevard 131",
+                "90024", "Los Angeles"
+        );
+        customer1.addCar(car1);
+        customer1.addCar(car4);
+        customer1 = customerRepository.save(customer1);
+
 
         inspectionService.addInspectionReportToCar(1);
         InspectionReport inspectionReport = inspectionService.getSingleInspectionReport(1);
@@ -72,19 +86,19 @@ public class RepairOrderDataLoader implements CommandLineRunner {
         shortComingRepository.saveAll(List.of(shortComing1,shortComing2,shortComing3,shortComing4,
                 shortComing5));
 
-        inspectionService.setInspectionReportStatus(1,InspectionStatus.AFGEKEURD);
+        inspectionService.setInspectionReportStatus(1, InspectionStatus.AFGEKEURD);
 
-        inspectionService.setApprovalRepair(1,RepairApprovalStatus.AKKOORD);
+        inspectionService.setApprovalRepair(1, RepairApprovalStatus.AKKOORD);
 
         repairOrderService.addAgreement(new RepairOrderDto(null,
                 "Alles repareren",null
-                ),1);
+        ),1);
 
         repairOrderLineService.addRepairOrderLaborItem(1,"H0000");
 
         log.info("Monteur is de de auto aan het repareren");
 
-         /*
+          /*
             Voeg onderdelen en handelingen toe aan bestel-regels aan klant met id klantid 1
          */
         log.info("Monteur heeft de reparatie voltooid en voegt onderdelen toe aan de reparatieorder");
@@ -102,37 +116,5 @@ public class RepairOrderDataLoader implements CommandLineRunner {
         repairOrderLineService.addRepairOrderLaborItem(1, "HP004");
 
         repairOrderService.setStatus(1, RepairStatus.VOLTOOID);
-
-//        /*
-//        Auto van klant 2
-//         */
-//
-        inspectionService.addInspectionReportToCar(3);
-
-        repairOrderLineService.addRepairOrderLaborItem(2,"H0000");
-        inspectionService.setInspectionReportStatus(2,InspectionStatus.GOEDGEKEURD);
-
-        /*
-        Auto van klant 3
-         */
-
-        inspectionService.addInspectionReportToCar(4);
-//        inspectionService.addInspectionReportToCar(5);
-
-        // Toevoegen keuringstarief
-        repairOrderLineService.addRepairOrderLaborItem(3,"H0000");
-
-        //Monteur keurt auto af en zet dat in het rapport
-        inspectionService.setInspectionReportStatus(3,InspectionStatus.AFGEKEURD);
-
-        //Monteur zet in het systeem dat klant niet akkoord gaat.
-        //Reparatie wordt door event op NIET_UITVOEREN Gezet
-
-        inspectionService.setApprovalRepair(3, RepairApprovalStatus.NIETAKKOORD);
-        //Factuur wordt automatisch opgeslagen door event vanuit repairorder
-
-
     }
-
-
 }

@@ -44,4 +44,11 @@ public class RepairOrderController {
     public RepairOrder setRepairOrderStatus(@PathVariable()Integer repairId, @RequestParam("status") RepairStatus status) throws EntityNotFoundException {
         return repairOrderService.setStatus(repairId,status);
     }
+
+    @PutMapping(path = "/afspraken/{repairId}")
+    public ResponseEntity<RepairOrder> addRepairAgreementComment(@PathVariable Integer repairId,
+                                                                @RequestBody RepairOrderDto repairOrderDto) {
+        RepairOrder repairOrder = repairOrderService.addAgreement(repairOrderDto,repairId);
+        return ResponseEntity.ok().body(repairOrder);
+    }
 }

@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.invoice;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Invoice")
 @Table(name = "Factuur")
+@Getter
 @NoArgsConstructor
 public class Invoice {
     @Id

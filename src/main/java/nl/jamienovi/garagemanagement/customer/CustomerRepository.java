@@ -19,4 +19,5 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
             "INNER JOIN RepairOrder as ro on ro.customer.id = c.id " +
             "WHERE ro.status ='VOLTOOID' or ro.status = 'NIET_UITVOEREN'")
     List<Customer> getCallingList();
+
 }

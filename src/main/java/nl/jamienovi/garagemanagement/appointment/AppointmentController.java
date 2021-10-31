@@ -27,9 +27,9 @@ public class AppointmentController {
         return appointmentService.getSingle(appointmentId);
     }
 
-    @PostMapping(path = "/{customerId}")
-    public ResponseEntity<?> addAppointment(@PathVariable("customerId") Integer customerId, @Valid @RequestBody Appointment appointment){
-        appointmentService.save(customerId,appointment);
+    @PostMapping(path = "/{carId}")
+    public ResponseEntity<?> addAppointment(@PathVariable("carId") Integer carId, @Valid @RequestBody Appointment appointment){
+        appointmentService.save(carId,appointment);
         return ResponseEntity.ok(new ResponseMessage("Afspraak toegevoegd."));
     }
 
