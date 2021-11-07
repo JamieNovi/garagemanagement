@@ -19,15 +19,4 @@ public class CustomerUpdateDto {
       private String postalCode;
       private String city;
       private List<Car> cars;
-
-      public CustomerUpdateDto(int id, String firstName, String lastName, String email, String address,
-                               String postalCode, String city) {
-            this.id = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.address = address;
-            this.postalCode = postalCode;
-            this.city = city;
-      }
 }

@@ -20,7 +20,6 @@ import java.util.List;
 public class InspectionService {
     private final InspectionReportRepository inspectionReportRepository;
     private final CarRepository carRepository;
-    private final EventManager events;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
@@ -31,7 +30,6 @@ public class InspectionService {
         this.inspectionReportRepository = inspectionReportRepository;
         this.carRepository = carRepository;
         this.applicationEventPublisher = applicationEventPublisher;
-        this.events = new EventManager("GOEDGEKEURD", "NIET_UITVOEREN");
     }
 
     public List<InspectionReport> getAllInspectionReports() {
@@ -53,7 +51,6 @@ public class InspectionService {
             log.info("Auto heeft al een keuring openstaan");
             throw new IllegalStateException("Auto heeft al een keuring openstaan");
         }else {
-
             InspectionReport newInspectionReport = new InspectionReport();
             newInspectionReport.setCar(existingCar);
             newInspectionReport = inspectionReportRepository.save(newInspectionReport);
@@ -124,11 +121,7 @@ public class InspectionService {
                     RepairApprovalStatus.NIETAKKOORD);
             applicationEventPublisher.publishEvent(event);
 
-//            ChangeCarStatusEvent eventCarStatus = new ChangeCarStatusEvent(
-//                    this,carIdOfInspectionReport);
-//            applicationEventPublisher.publishEvent(eventCarStatus);
-
-           // log.info(setApprovalLogMessage(report,status));
+//            log.info(setApprovalLogMessage(report,status));
 
         }else{
 
@@ -170,25 +163,17 @@ public class InspectionService {
         return carIsPending;
     }
 
-    private String setApprovalLogMessage(InspectionReport report, RepairApprovalStatus status){
-        return String.format(
-                "Klant-id:%s met naam: %s, auto-id: %s, keuringsrapport-id: %s en reparatie-id: %s gaat niet %s met de reparatie\n",
-                report.getCar().getCustomer().getId(),
-                report.getCar().getCustomer().getFirstName(),
-                report.getCar().getId(),
-                report.getId(),
-                report.getRepairOrder().getId(),
-                status.toString()
-        );
-    }
-
-//    private String inspectionReportStatusLogMessage(InspectionReport, InspectionStatus){
-//        return String.format()
-//
+//    private String setApprovalLogMessage(InspectionReport report, RepairApprovalStatus status){
+//        return String.format(
+//                "Klant-id:%s met naam: %s, auto-id: %s, keuringsrapport-id: %s en reparatie-id: %s gaat niet %s met de reparatie\n",
+//                report.getCar().getCustomer().getId(),
+//                report.getCar().getCustomer().getFirstName(),
+//                report.getCar().getId(),
+//                report.getId(),
+//                report.getRepairOrder().getId(),
+//                status.toString()
+//        );
 //    }
-    public EventManager getEvents() {
-        return events;
-    }
 
     @EventListener
     public void handleRepairOrderStatusEvent(RepairOrderCompletedEvent event) {

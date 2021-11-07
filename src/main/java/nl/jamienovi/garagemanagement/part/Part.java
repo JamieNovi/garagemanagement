@@ -29,7 +29,6 @@ public class Part {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private ItemType type = ItemType.ONDERDEEL;
 
-
     @Column(name = "voorraad",nullable = true)
     private Integer numberInStock;
 

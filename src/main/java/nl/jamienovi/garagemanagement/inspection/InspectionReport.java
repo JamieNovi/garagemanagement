@@ -38,8 +38,6 @@ public class InspectionReport {
     @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShortComing> shortcomings;
 
-    //@Setter(AccessLevel.NONE)
-//    @JsonIgnoreProperties({"customer","brand","model","registrationPlate","inspectionReports"})
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -67,15 +65,5 @@ public class InspectionReport {
     @Column(name = "Gerepareerd")
     @Convert(converter = BooleanJaNeeConverter.class)
     private Boolean isRepaired = false;
-
-
-    /**
-     * Voorziening om bidirectional relatie aan beide kanten te updaten
-     * @param shortComing
-     */
-    public void addShortComing(final ShortComing shortComing){
-        shortComing.setInspectionReport(this);
-        this.shortcomings.add(shortComing);
-    }
 
 }

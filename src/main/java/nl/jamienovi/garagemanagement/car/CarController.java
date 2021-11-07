@@ -5,6 +5,7 @@ import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -24,16 +25,19 @@ public class CarController {
     }
 
     @GetMapping(path = "/auto")
+    @PreAuthorize("hasAnyAuthority('car:read','car:write')")
     public List<Car> getAllCars() {
         return carService.getAllCars();
     }
 
     @GetMapping(path = "/auto/{carId}")
+    @PreAuthorize("hasAnyAuthority('car:read','car:write')")
     public Car getCar(@PathVariable("carId") int carId) {
         return carService.getCar(carId);
     }
 
-    @PostMapping(path = "/auto-toevoegen/{customerId}")
+    @PreAuthorize("hasAuthority('car:write')")
+    @PostMapping(path = "/auto/{customerId}")
     public ResponseEntity<URI> addCar(@PathVariable("customerId") Integer customerId,
                                       @RequestBody Car car,
                                       UriComponentsBuilder uriComponentsBuilder){
@@ -46,10 +50,12 @@ public class CarController {
         return ResponseEntity.created(uriComponents.toUri()).body(uriComponents.toUri());
     }
 
-    @PutMapping(path = "/auto-aanpassen/{carId}")
+
+    @PutMapping(path = "/auto/{carId}")
+    @PreAuthorize("hasAuthority('car:write')")
     public ResponseEntity<URI> updateCar(@PathVariable("carId") Integer carId,
-                                       @RequestBody CarDto carDto,
-                                       UriComponentsBuilder uriComponentsBuilder){
+                                         @RequestBody CarDto carDto,
+                                         UriComponentsBuilder uriComponentsBuilder){
         carService.updateCarCustomer(carId,carDto);
 
         UriComponents uriComponents = uriComponentsBuilder.path("/api/auto/{id}")
@@ -60,7 +66,8 @@ public class CarController {
         return ResponseEntity.ok().headers(headers).body(uriComponents.toUri());
     }
 
-    @DeleteMapping(path = "/auto-verwijderen/{customerId}")
+    @DeleteMapping(path = "/auto/{customerId}")
+    @PreAuthorize("hasAuthority('car:write')")
        public ResponseEntity<?> deleteCar(@PathVariable("customerId") int customerId) {
            carService.deleteCar(customerId);
            return ResponseEntity.ok(

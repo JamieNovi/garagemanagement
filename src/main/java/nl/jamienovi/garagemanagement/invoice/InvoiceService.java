@@ -21,7 +21,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-//@Transactional
 public class InvoiceService  {
 
     private final InvoiceRepository invoiceRepository;
@@ -43,10 +42,6 @@ public class InvoiceService  {
 
     public InvoiceCustomerDataDto getCustomerData(Integer carId){
 
-//        List<Car> cars = invoiceRepository.getListOfCarsFromCustomer(customerId);
-//        for(Car car:cars){
-//            log.info("From getCustomerData.InvoiceService"+ car.toString());
-//        }
         return invoiceRepository.getCustomerAndCarData(carId);
 
     }
@@ -72,18 +67,6 @@ public class InvoiceService  {
     public InvoicePdf getInvoice(Integer customerId) {
         return invoiceRepository.getById(customerId);
     }
-
-//    public InvoiceStatus setInvoiceStatusToBetaald(Integer invoiceId,InvoiceStatus newStatus) {
-//        InvoicePdf updatedInvoice = invoiceRepository.findById(invoiceId)
-//                .orElseThrow(() -> new EntityNotFoundException(InvoicePdf.class,"id",invoiceId.toString())
-//                );
-//        updatedInvoice.setStatus(newStatus);
-//        updatedInvoice = invoiceRepository.save(updatedInvoice);
-//        InvoicePaidEvent event = new InvoicePaidEvent(this,newStatus);
-//        applicationEventPublisher.publishEvent(event);
-//        return updatedInvoice.getStatus();
-//
-//    }
 
     // == Business logic operations ==
 

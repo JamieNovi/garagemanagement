@@ -6,6 +6,7 @@ import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
@@ -27,16 +28,19 @@ public class PartController {
         this.partService = partService;
     }
 
+    @PreAuthorize("hasAnyAuthority('part:read','part:write')")
     @GetMapping(path ="")
     public List<Part> getAllParts(){
         return partService.getAllCarParts();
     }
 
+    @PreAuthorize("hasAnyAuthority('part:read','part:write')")
     @GetMapping(path = "/{partId}")
     public Part getCarPart(@PathVariable("partId") String partId){
         return partService.getPart(partId);
     }
 
+    @PreAuthorize("hasAnyAuthority('part:write')")
     @PostMapping(path = "")
     public ResponseEntity<?> create(@RequestBody @Valid Part part) {
        String id =  partService.addPart(part);
@@ -50,6 +54,7 @@ public class PartController {
         return ResponseEntity.created(uri).headers(headers).body(uri);
     }
 
+    @PreAuthorize("hasAnyAuthority('part:write')")
     @PutMapping(path = "/{partId}")
     public ResponseEntity<?> updatePart(@PathVariable("partId") String partId,
                                         @RequestBody PartDto partDto,
@@ -65,12 +70,11 @@ public class PartController {
         return ResponseEntity.ok().headers(headers).body(uriComponents.toUri());
     }
 
+    @PreAuthorize("hasAnyAuthority('part:write')")
     @DeleteMapping(path = "/{partId}")
     public ResponseEntity<?> deletePart(@PathVariable("partId") String partId) throws EntityNotFoundException
     {
         partService.deletePart(partId);
         return ResponseEntity.ok(new ResponseMessage(String.format("Onderdeel met id %s verwijderd",partId)));
     }
-
-
 }

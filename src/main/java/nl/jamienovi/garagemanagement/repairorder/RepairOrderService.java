@@ -22,7 +22,6 @@ public class RepairOrderService {
     private final RepairOrderRepository repairOrderRepository;
     private final CustomerService customerService;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final EventManager events;
     private final DtoMapper mapper;
 
 
@@ -34,7 +33,6 @@ public class RepairOrderService {
         this.customerService = customerService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.mapper = mapper;
-        this.events = new EventManager("VOLTOOID","NIET_UITVOEREN");
     }
 
     public List<RepairOrder> getAll() {
@@ -87,9 +85,6 @@ public class RepairOrderService {
             currentRepairOrder.setStatus(status);
             switch(status){
                 case BETAALD:
-//                   InvoicePaidEvent event = new InvoicePaidEvent(this, InvoiceStatus.BETAALD);
-//                   applicationEventPublisher.publishEvent(event);
-
                     log.info("RepairOrder-id : {} STATUS {}",
                             repairOrderId,status);
                 case VOLTOOID:
@@ -102,10 +97,6 @@ public class RepairOrderService {
                 repairOrderId,
                 RepairStatus.VOLTOOID);
             return repairOrderRepository.save(currentRepairOrder);
-    }
-
-    public EventManager getEvents() {
-        return events;
     }
 
     @EventListener

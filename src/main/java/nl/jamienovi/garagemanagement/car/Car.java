@@ -40,11 +40,6 @@ public class Car {
     @NotBlank(message = "Kenteken invoeren verplicht.")
     private String registrationPlate;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private CarStatus status = CarStatus.AANGEMAAKT;
-
-
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -74,20 +69,5 @@ public class Car {
         this.model = model;
         this.registrationPlate = registrationPlate;
     }
-
-/**
-     * Voorziening om bidirectional relatie aan beide kanten te updaten
-     * @param customer
-     */
-//    public void setCustomer(Customer customer) {
-//        if(customer != null) {
-//            customer.getCars().add(this);
-//        }else if (this.customer != null) {
-//            this.customer.getCars().remove(this);
-//        }
-//        this.customer = customer;
-//    }
-
-
 
 }

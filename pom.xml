@@ -17,23 +17,10 @@
 		<java.version>11</java.version>
 		<groovy.version>3.0.8</groovy.version>
 		<rest-assured.version>4.4.0</rest-assured.version>
+		<spring-statemachine.version>3.0.1</spring-statemachine.version>
 	</properties>
 	<dependencies>
 
-
-
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>spring-web-test-client</artifactId>
-			<version>4.4.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.rest-assured</groupId>
-			<artifactId>rest-assured-all</artifactId>
-			<version>4.4.0</version>
-			<scope>test</scope>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -96,7 +83,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-
 		</dependency>
 
 		<!--		Pdf generating libraries-->
@@ -105,6 +91,7 @@
 			<artifactId>html2pdf</artifactId>
 			<version>3.0.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>kernel</artifactId>
@@ -119,8 +106,40 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+<!-- Hulp methodes-->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>28.1-jre</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-web-test-client</artifactId>
+			<version>4.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured-all</artifactId>
+			<version>4.4.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>spring-mock-mvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 

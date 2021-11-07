@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.appointment.Appointment;
 import nl.jamienovi.garagemanagement.appointment.AppointmentService;
 import nl.jamienovi.garagemanagement.appointment.AppointmentType;
+import nl.jamienovi.garagemanagement.authentication.ApplicationUser;
+import nl.jamienovi.garagemanagement.authentication.ApplicationUserRepository;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerRepository;
-import nl.jamienovi.garagemanagement.invoice.InvoiceService;
+import nl.jamienovi.garagemanagement.security.UserRole;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -24,17 +27,23 @@ import java.time.LocalTime;
 public class CustomerDataLoader implements CommandLineRunner {
 
     private final CustomerRepository customerRepository;
-    private final InvoiceService invoiceService;
     private final AppointmentService appointmentService;
+    private final ApplicationUserRepository applicationUserRepository;
+    private final PasswordEncoder encoder;
 
-    public CustomerDataLoader(CustomerRepository customerRepository, InvoiceService invoiceService, AppointmentService appointmentService) {
+    public CustomerDataLoader(CustomerRepository customerRepository,
+                              AppointmentService appointmentService,
+                              ApplicationUserRepository applicationUserRepository,
+                              PasswordEncoder encoder) {
         this.customerRepository = customerRepository;
-        this.invoiceService = invoiceService;
         this.appointmentService = appointmentService;
+        this.applicationUserRepository = applicationUserRepository;
+        this.encoder = encoder;
     }
 
     @Override
     public void run(String... args) throws Exception {
+
         /**
          * Hier worden alle klanten met auto's aangemaakt die als testdata in de database
          * worden opgeslagen. Alle endpoints zullen JSON responses teruggeven van deze testdata.
@@ -103,6 +112,38 @@ public class CustomerDataLoader implements CommandLineRunner {
                 LocalTime.of(18,30,00),
                 AppointmentType.KEURING
         ));
+
+
+        ApplicationUser frontOfficeMedewerker = new ApplicationUser(
+                "front-office",
+                encoder.encode("1234"),
+                UserRole.FRONTOFFICE
+        );
+        applicationUserRepository.save(frontOfficeMedewerker);
+
+        ApplicationUser administratieMedewerker = new ApplicationUser(
+                "administratie",
+                encoder.encode("1234"),
+                UserRole.ADMIN
+        );
+
+        applicationUserRepository.save(administratieMedewerker);
+
+        ApplicationUser monteur = new ApplicationUser(
+                "monteur",
+                encoder.encode("1234"),
+                UserRole.MECHANIC
+        );
+
+        applicationUserRepository.save(monteur);
+
+        ApplicationUser backOfficeMedewerker = new ApplicationUser(
+                "back-office",
+                encoder.encode("1234"),
+                UserRole.BACKOFFICE
+        );
+
+        applicationUserRepository.save(backOfficeMedewerker);
 
 
 

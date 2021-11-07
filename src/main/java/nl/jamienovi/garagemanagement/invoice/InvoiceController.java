@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,9 @@ public class InvoiceController {
         this.carService = carService;
     }
 
+
     @GetMapping(path="factuur/{customerId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_FRONTOFFICE')")
     public ResponseEntity<byte[]> getInvoice(@PathVariable Integer customerId){
         InvoicePdf invoicePdf =  invoiceService.getInvoice(customerId);
         return ResponseEntity.ok()
@@ -45,15 +48,9 @@ public class InvoiceController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(invoicePdf.getData());
     }
-//    @PutMapping(path = "/factuur/{customerId}")
-//    public ResponseEntity<?> setInvoiceStatus(@PathVariable("customerId") Integer customerId,
-//                                              @RequestParam("status") InvoiceStatus newStatus) {
-//        invoiceService.setInvoiceStatusToBetaald(customerId,newStatus);
-//        InvoicePdf updatedInvoice = invoiceService.getInvoice(customerId);
-//        return ResponseEntity.ok().body(updatedInvoice);
-//    }
 
     @GetMapping(path = "factuur/generate/{carId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_FRONTOFFICE')")
     public String generateInvoice(@PathVariable Integer carId, Model model){
         Optional<InvoiceCustomerDataDto> customerOptional = Optional.ofNullable(invoiceService.getCustomerData(carId));
 

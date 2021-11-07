@@ -5,6 +5,7 @@ import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
@@ -25,22 +26,26 @@ public class CustomerController {
     }
 
     @GetMapping("")
+    @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
     @GetMapping(path = "/{customerId}")
+    @PreAuthorize("hasAnyAuthority('customer:read')")
     public ResponseEntity<Customer> getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
         Customer customer= customerService.getCustomer(customerId);
         return ResponseEntity.ok().body(customer);
     }
 
     @GetMapping(path = "opbellen")
+    @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getCustomerCallingList() {
         return customerService.getCallingListOfCustomersWithStatusVoltooidOrNietUitvoeren();
     }
 
     @PostMapping(path = "")
+    @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
         Customer newCustomer = customerService.saveCustomer(customer);
 
@@ -52,6 +57,7 @@ public class CustomerController {
     }
 
     @PutMapping(path="/{customerId}")
+    @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId,
                                             @RequestBody CustomerUpdateDto customerUpdateDto,
                                             UriComponentsBuilder uriComponentsBuilder) {
@@ -63,6 +69,7 @@ public class CustomerController {
     }
 
     @DeleteMapping(path = "/{customerId}")
+    @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") int customerId){
         customerService.deleteCustomer(customerId);
         return ResponseEntity.ok(

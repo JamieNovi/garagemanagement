@@ -22,10 +22,6 @@ public class InvoicePdf {
     @Lob
     private byte[] data;
 
-//    @Column(name = "status")
-//    @Enumerated(EnumType.STRING)
-//    private InvoiceStatus status = InvoiceStatus.OPEN;
-
     public InvoicePdf(Integer id, byte[] data) {
         this.id = id;
         this.data = data;

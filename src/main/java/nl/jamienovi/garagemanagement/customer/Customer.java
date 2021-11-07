@@ -66,9 +66,6 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private List<RepairOrder> repairOrders;
 
-//    @OneToOne(mappedBy = "customer")
-//    private Appointment appointment;
-
     public Customer(String firstName, String lastName, String email, String address,
                     String postalCode, String city) {
         this.firstName = firstName;

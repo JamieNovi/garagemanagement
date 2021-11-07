@@ -38,10 +38,6 @@ public class Appointment {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
     private AppointmentType type;
 
-//    @OneToOne(cascade = CascadeType.MERGE)
-//    @JoinColumn(name ="klant_id", referencedColumnName = "id")
-//    private Customer customer;
-
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")

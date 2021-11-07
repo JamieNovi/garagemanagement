@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ public class FileController {
         this.fileStorageService = fileStorageService;
     }
 
+    @PreAuthorize("hasAuthority('files:write')")
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file")MultipartFile file) {
         String message = "";
@@ -46,6 +48,7 @@ public class FileController {
      * @return ResponseEntity met lijst van ResponseFile objects
      */
 
+    @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     @RequestMapping(path = "/")
     public ResponseEntity<List<ResponseFile>> getAll() {
         List<ResponseFile> files = fileStorageService.getAllFiles().map(dbFile -> {
@@ -73,6 +76,7 @@ public class FileController {
      */
 
     @GetMapping( path = "/{id}")
+    @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     public ResponseEntity<byte[]> getSingle(@PathVariable("id") String id){
         FileDB fileDb = fileStorageService.getFile(id);
 
