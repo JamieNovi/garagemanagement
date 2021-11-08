@@ -31,7 +31,7 @@ class PartServiceTest {
         Part exhaust = new Part("P002","Uitlaat",87.50,4);
         parts.addAll(List.of(exhaust,this.diskbrakes));
     }
-
+//
 //    @Test
 //    void addPart() {
 //        partService.addPart(diskbrakes);

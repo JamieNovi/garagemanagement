@@ -26,6 +26,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping(path = "/api")
 public class InvoiceController {
+
     private final InvoiceService invoiceService;
     private final CarService carService;
 
@@ -36,7 +37,6 @@ public class InvoiceController {
         this.invoiceService = invoiceService;
         this.carService = carService;
     }
-
 
     @GetMapping(path="factuur/{customerId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_FRONTOFFICE')")
@@ -103,49 +103,4 @@ public class InvoiceController {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
-
-
-
-
-
-//    private String setWebContext(HttpServletRequest request, HttpServletResponse response,
-//                               @PathVariable("customerId") Integer customerId) {
-//        WebContext context = new WebContext(request,response,servletContext);
-//        context.setVariable("customer", invoiceService.getCustomerData(customerId));
-//        context.setVariable("carparts",invoiceService.getPartOrderlines(customerId));
-//        context.setVariable("labors", invoiceService.getLaborOrderlines(customerId));
-//        context.setVariable("subTotal", invoiceService.getSubtotalFromOrderLines(customerId));
-//        String invoiceHtml = templateEngine.process("customer-invoice",context);
-//        return invoiceHtml;
-//    }
-
-//    @GetMapping(path = "factuur/pdf/{customerId}")
-//    public ResponseEntity<?> getInvoicePdf(HttpServletRequest request,
-//                                           HttpServletResponse response,
-//                                           @PathVariable("customerId") Integer customerId){
-//
-//
-//        String invoiceHtml = setWebContext(request, response, customerId);
-//
-//        /* Setup Source and target I/O streams */
-//
-//        ByteArrayOutputStream target = new ByteArrayOutputStream();
-//
-//        /*Setup converter properties. */
-//        ConverterProperties converterProperties = new ConverterProperties();
-//        converterProperties.setBaseUri("http://localhost:8080");
-//
-//        /* Zet string -> invoiceHtml om naar een pdf als ByteArrayOutputStream -> target*/
-//        HtmlConverter.convertToPdf(invoiceHtml, target, converterProperties);
-//
-//        /* extract output as bytes */
-//        byte[] bytes = target.toByteArray();
-//
-//        /* Send the response as downloadable PDF */
-//
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Factuur.pdf")
-//                .contentType(MediaType.APPLICATION_PDF)
-//                .body(bytes);
-//    }
 }

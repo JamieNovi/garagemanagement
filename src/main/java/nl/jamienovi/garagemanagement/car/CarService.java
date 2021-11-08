@@ -16,14 +16,11 @@ public class CarService {
 
    private final CarRepository carRepository;
    private final CustomerService  customerService;
-   private final DtoMapper mapper;
 
    @Autowired
-   public CarService(CarRepository carRepository, CustomerService customerService,
-                     DtoMapper mapper) {
+   public CarService(CarRepository carRepository, CustomerService customerService) {
         this.carRepository = carRepository;
         this.customerService = customerService;
-       this.mapper = mapper;
    }
 
     public List<Car> getAllCars() {
@@ -50,7 +47,7 @@ public class CarService {
         Car existingCar = carRepository.findById(carId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(Car.class,"id",carId.toString()));
-        mapper.updateCarFromDto(carDto,existingCar);
+        DtoMapper.INSTANCE.updateCarFromDto(carDto,existingCar);
         carRepository.save(existingCar);
     }
 

@@ -47,11 +47,11 @@ public class CustomerController {
     @PostMapping(path = "")
     @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
-        Customer newCustomer = customerService.saveCustomer(customer);
+        Integer customerId = customerService.saveCustomer(customer);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(newCustomer.getId())
+                .buildAndExpand(customerId)
                 .toUri();
         return ResponseEntity.created(uri).body(uri);
     }

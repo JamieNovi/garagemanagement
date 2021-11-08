@@ -27,13 +27,14 @@ public class CustomerService {
                .orElseThrow(() -> new EntityNotFoundException(Customer.class,"id", customerId.toString()));
     }
 
-    public Customer saveCustomer(Customer customer) {
+    public Integer saveCustomer(Customer customer) {
         if(customerRepository.emailAlreadyExists(customer.getEmail())) {
             throw new IllegalStateException("Email bestaat al in het systeem!");
         }
         log.info(String.format("Klant aangemaakt met klant-id:",
                 customer.getId()));
-       return customerRepository.save(customer);
+       Customer newCustomer = customerRepository.save(customer);
+       return newCustomer.getId();
     }
 
     public void updateCustomer(Integer customerId, CustomerUpdateDto customerUpdateDto) {

@@ -4,18 +4,11 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ActiveProfiles("it")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -24,33 +17,37 @@ class CustomerControllerIntegrationTest {
     @LocalServerPort
     private Integer port;
 
-    @Autowired
-    private TestRestTemplate testRestTemplate;
-
     @Test
     void getCustomersTest() {
-        List<Customer> customers = testRestTemplate.getForObject(
-                "http://localhost:" + port + "/api/klanten", List.class);
-        Assertions.assertNotNull(customers);
-       // assertEquals(4,customers.size());
+        RestAssured
+                .given()
+                .auth().basic("administratie","1234")
+                .when()
+                .get("http://localhost:" + port + "/api/klanten")
+                .then()
+                .statusCode(200);
+
     }
 
     @Test
-    @Disabled
     void getSingleCustomerTest() {
-        Customer customer = testRestTemplate.getForObject(
-                "http://localhost:" + port + "/api/klanten/1",Customer.class);
-
-        assertEquals(1,customer.getId());
-        assertEquals("Tom",customer.getFirstName());
-        assertEquals("Cruise", customer.getLastName());
+      RestAssured
+              .given()
+              .auth().basic("administratie","1234")
+              .when()
+              .get("http://localhost:" + port + "/api/klanten/2")
+              .then()
+              .statusCode(200)
+              .body("firstName",Matchers.equalTo("Leonardo"))
+              .body("lastName",Matchers.equalTo("Dicaprio"))
+              .body("city",Matchers.equalTo("Los Angeles"));
     }
 
     @Test
     void shouldCreateCustomer() {
-
         ExtractableResponse<Response> response = RestAssured
                 .given()
+                .auth().basic("administratie","1234")
                 .contentType("application/json")
                 .body("{\"firstName\": \"Jamie\", \"lastName\": \"Wallace\", \"email\": \"jamie@mail.com\", " +
                         "\"address\": \"Het Schip 148\"," +
@@ -62,7 +59,8 @@ class CustomerControllerIntegrationTest {
                 .extract();
 
         RestAssured
-                .when()
+                .given()
+                .auth().basic("administratie","1234")
                 .get(response.header("Location"))
                 .then()
                 .statusCode(200)
@@ -74,10 +72,10 @@ class CustomerControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
     void shouldUpdateCustomer() {
         ExtractableResponse<Response> response = RestAssured
                 .given()
+                .auth().basic("administratie","1234")
                 .contentType("application/json")
                 .body("{\"id\": \"1\", \"firstName\": \"Tom\", \"lastName\": \"Cruise\", \"address\": \"Hollywood Boulevard 131\"," +
                         "\"postalCode\": \"90024\", \"city\": \"Garden Grove\"}")
@@ -88,6 +86,8 @@ class CustomerControllerIntegrationTest {
                 .extract();
 
         RestAssured
+                .given()
+                .auth().basic("administratie","1234")
                 .when()
                 .get(response.header("Location"))
                 .then()
@@ -96,6 +96,4 @@ class CustomerControllerIntegrationTest {
                 .body("city", Matchers.equalTo("Garden Grove"));
 
     }
-
-
 }

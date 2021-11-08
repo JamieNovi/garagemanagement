@@ -37,6 +37,7 @@ public class PartControllerIntegrationTest {
     void shouldGetPart() {
          RestAssured
                 .given()
+                 .auth().basic("monteur","1234")
                 .contentType("application/json")
                 .when()
                 .get("http://localhost:" + port + "/api/onderdelen/P007")
@@ -56,6 +57,7 @@ public class PartControllerIntegrationTest {
 
         ExtractableResponse<Response> response = RestAssured
                 .given()
+                .auth().basic("monteur","1234")
                 .contentType("application/json")
                 .body("{\"id\": \"P006\", \"name\": \"Katalysator\", \"price\": \"160.95\", " +
                         "\"type\": \"onderdeel\", \"numberInStock\": \"2\"}")
@@ -66,6 +68,8 @@ public class PartControllerIntegrationTest {
                 .extract();
 
         RestAssured
+                .given()
+                .auth().basic("monteur","1234")
                 .when()
                 .get(response.header("Location"))
                 .then()
@@ -82,6 +86,7 @@ public class PartControllerIntegrationTest {
 
         ExtractableResponse<Response> response = RestAssured
                 .given()
+                .auth().basic("monteur","1234")
                 .contentType("application/json")
                 .body("{\"id\": \"P007\", \"name\": \"Brandstoffilter\", \"price\": \"19.95\", " +
                         "\"type\": \"onderdeel\", \"numberInStock\": \"2\"}")
@@ -92,6 +97,8 @@ public class PartControllerIntegrationTest {
                 .extract();
 
         RestAssured
+                .given()
+                .auth().basic("monteur","1234")
                 .when()
                 .get(response.header("Location"))
                 .then()
