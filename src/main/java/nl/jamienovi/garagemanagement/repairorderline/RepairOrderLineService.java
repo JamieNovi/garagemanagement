@@ -3,7 +3,6 @@ package nl.jamienovi.garagemanagement.repairorderline;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.labor.Labor;
 import nl.jamienovi.garagemanagement.labor.LaborService;
-import nl.jamienovi.garagemanagement.part.Item;
 import nl.jamienovi.garagemanagement.part.Part;
 import nl.jamienovi.garagemanagement.part.PartService;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
@@ -54,37 +53,46 @@ public class RepairOrderLineService {
 //        repairOrder.getRepairOrderLines().add(line);
 //
 //        repairOrderLineRepository.save(line);
-        RepairOrderLine line = buildOrderline(repairOrder, addedPart);
+        RepairOrderLine line = buildPartOrderline(repairOrder, addedPart,quantity);
         repairOrderLineRepository.save(line);
 
         log.info("Onderdeel: {} toegevoegd aan reparatie-order: {}",addedPart.getName(),repairOrderId);
     }
 
-//    public RepairOrderLine buildLaborOrderline(RepairOrder repairOrder,Labor labor) {
-//        RepairOrderLine line = new RepairOrderLine();
-//        line.setRepairOrder(repairOrder);
-//        line.setLaborId(labor.getId());
-//        line.setOrderLinePrice(labor.getPrice());
-//        repairOrder.getRepairOrderLines().add(line);
-//        return line;
-//    }
-
-    public RepairOrderLine buildOrderline(RepairOrder repairOrder, Item item) {
+    public RepairOrderLine buildLaborOrderline(RepairOrder repairOrder,Labor labor) {
         RepairOrderLine line = new RepairOrderLine();
         line.setRepairOrder(repairOrder);
-        line.setLaborId(item.getId());
-        line.setPartId(item.getId());
-        line.setOrderLinePrice(item.getPrice());
+        line.setLaborId(labor.getId());
+        line.setOrderLinePrice(labor.getPrice());
         repairOrder.getRepairOrderLines().add(line);
         return line;
     }
+    public RepairOrderLine buildPartOrderline(RepairOrder repairOrder,Part part,Integer quantity) {
+        RepairOrderLine line = new RepairOrderLine();
+        line.setRepairOrder(repairOrder);
+        line.setPartId(part.getId());
+        line.setOrderLinePrice(part.getPrice() * quantity);
+        line.setOrderLineQuantity(quantity);
+        repairOrder.getRepairOrderLines().add(line);
+        return line;
+    }
+
+//    public RepairOrderLine buildOrderline(RepairOrder repairOrder, Item item) {
+//        RepairOrderLine line = new RepairOrderLine();
+//        line.setRepairOrder(repairOrder);
+//        line.setLaborId(item.getId());
+//        line.setPartId(item.getId());
+//        line.setOrderLinePrice(item.getPrice());
+//        repairOrder.getRepairOrderLines().add(line);
+//        return line;
+//    }
 
 
     public void addRepairOrderLaborItem(Integer repairOrderId,String laborId){
         RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
         Labor addedLabor = laborService.getSingle(laborId);
 
-        RepairOrderLine line =  buildOrderline(repairOrder,addedLabor);
+        RepairOrderLine line =  buildLaborOrderline(repairOrder,addedLabor);
         repairOrderLineRepository.save(line);
 
         log.info("Handeling: {} toegevoegd aan reparatie-order: {} ",addedLabor.getName(),repairOrderId);

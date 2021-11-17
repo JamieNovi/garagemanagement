@@ -58,7 +58,7 @@ public class InvoiceController {
             throw new IllegalStateException("Entity not found");
         }else{
             /*
-            Hieronder wordt de data opgehaal op de factuur op te bouwen
+            Hieronder wordt de data opgehaald om de factuur op te bouwen
              */
 
             model.addAttribute("customer",invoiceService.getCustomerData(carId));

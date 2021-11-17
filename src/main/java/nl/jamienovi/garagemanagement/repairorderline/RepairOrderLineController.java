@@ -20,7 +20,7 @@ public class RepairOrderLineController {
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:read','repairorderline:write')")
-    @GetMapping(path = "/reparatie-regels/")
+    @GetMapping(path = "/reparatie-regels")
     public List<RepairOrderLine> getAll() {
         return repairOrderLineService.getAll();
     }

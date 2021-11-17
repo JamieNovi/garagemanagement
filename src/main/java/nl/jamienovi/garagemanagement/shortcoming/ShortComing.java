@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.shortcoming;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +31,10 @@ public class ShortComing {
     @Column(name = "beschrijving")
     private String description;
 
-    @JsonIgnore
+    @JsonIdentityInfo(
+            generator = ObjectIdGenerators.PropertyGenerator.class,
+            property = "id")
+    @JsonIdentityReference(alwaysAsId=true)
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;

@@ -64,7 +64,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                "90024", "Los Angeles"
                 );
         customer1.addCar(car1);
-        customer1.addCar(car2);
+//        customer1.addCar(car2);
         customerRepository.saveCustomer(customer1);
 
         appointmentService.save(1,new Appointment(

@@ -6,7 +6,6 @@ import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -49,7 +48,6 @@ public class CustomerService {
                customerRepository.save(existingCustomer);
     }
 
-    @Transactional
     public void deleteCustomer(Integer customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException(

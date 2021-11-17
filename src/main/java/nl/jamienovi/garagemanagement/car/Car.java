@@ -44,7 +44,7 @@ public class Car {
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Customer customer;
 
     @JsonIdentityInfo(
@@ -54,7 +54,7 @@ public class Car {
     @OneToMany(orphanRemoval = true,mappedBy = "car",cascade = CascadeType.ALL)
     private List<InspectionReport> inspectionReports;
 
-    @OneToOne(mappedBy = "car")
+    @OneToOne(mappedBy = "car", cascade = CascadeType.ALL)
     private Appointment appointment;
 
     public Car(String brand, String model, String registrationPlate) {
