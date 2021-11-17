@@ -9,7 +9,7 @@ import nl.jamienovi.garagemanagement.authentication.ApplicationUser;
 import nl.jamienovi.garagemanagement.authentication.ApplicationUserRepository;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerRepository;
+import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.security.UserRole;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -26,12 +26,12 @@ import java.time.LocalTime;
 @Transactional
 public class CustomerDataLoader implements CommandLineRunner {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerRepository;
     private final AppointmentService appointmentService;
     private final ApplicationUserRepository applicationUserRepository;
     private final PasswordEncoder encoder;
 
-    public CustomerDataLoader(CustomerRepository customerRepository,
+    public CustomerDataLoader(CustomerService customerRepository,
                               AppointmentService appointmentService,
                               ApplicationUserRepository applicationUserRepository,
                               PasswordEncoder encoder) {
@@ -58,13 +58,14 @@ public class CustomerDataLoader implements CommandLineRunner {
         Customer customer1 = new Customer(
                "Tom",
                "Cruise",
+               "06-43244244",
                "tomcruise@hollywood.com",
                "Hollywood boulevard 131",
                "90024", "Los Angeles"
                 );
         customer1.addCar(car1);
         customer1.addCar(car2);
-        customer1 = customerRepository.save(customer1);
+        customerRepository.saveCustomer(customer1);
 
         appointmentService.save(1,new Appointment(
                 LocalDate.of(2021,10,27),
@@ -75,13 +76,14 @@ public class CustomerDataLoader implements CommandLineRunner {
         Customer customer2 = new Customer(
                "Leonardo",
                 "Dicaprio",
+                "06-23423424",
                 "leo@hollywood.com",
                 "Beverly Hills",
                 "90211",
                 "Los Angeles"
                 );
         customer2.addCar(car3);
-        customer2 = customerRepository.save(customer2);
+        customerRepository.saveCustomer(customer2);
 
         appointmentService.save(3,new Appointment(
                 LocalDate.of(2021,11,11),
@@ -92,6 +94,7 @@ public class CustomerDataLoader implements CommandLineRunner {
         Customer customer3 = new Customer(
                 "Julie",
                 "Cash",
+                "089-2342424",
                 "juliecash@bookings.com",
                 "Avenue 5",
                 "24245",
@@ -99,7 +102,7 @@ public class CustomerDataLoader implements CommandLineRunner {
        );
         customer3.addCar(car4);
         customer3.addCar(car5);
-        customer3 = customerRepository.save(customer3);
+        customerRepository.saveCustomer(customer3);
 
         appointmentService.save(4,new Appointment(
                 LocalDate.of(2021,11,11),

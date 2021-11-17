@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.shortcoming;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
-import nl.jamienovi.garagemanagement.inspection.InspectionService;
+import nl.jamienovi.garagemanagement.inspection.InspectionReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +12,13 @@ import java.util.List;
 @Service
 public class ShortComingService {
     private final ShortComingRepository shortComingRepository;
-    private final InspectionService inspectionService;
+    private final InspectionReportService inspectionReportService;
 
     @Autowired
     public ShortComingService(ShortComingRepository shortComingRepository,
-                              InspectionService inspectionService) {
+                              InspectionReportService inspectionReportService) {
         this.shortComingRepository = shortComingRepository;
-        this.inspectionService = inspectionService;
+        this.inspectionReportService = inspectionReportService;
     }
 
     public List<ShortComing> getAll() {
@@ -26,7 +26,7 @@ public class ShortComingService {
     }
 
     public void addShortComing(Integer inspectionReportId, ShortComing shortComing) {
-        InspectionReport inspectionReport = inspectionService.getSingleInspectionReport(inspectionReportId);
+        InspectionReport inspectionReport = inspectionReportService.getInspectionReport(inspectionReportId);
         shortComing.setInspectionReport(inspectionReport);
         shortComingRepository.save(shortComing);
 

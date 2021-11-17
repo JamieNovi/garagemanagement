@@ -31,20 +31,21 @@ public class InspectionReport {
     @Column(name = "id",updatable = false)
     private Integer id;
 
-    @Column(name = "afspraak")
+    @Column(name = "datum_rapport")
     @CreationTimestamp
-    private LocalDateTime afspraak;
-
-    @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShortComing> shortcomings;
+    private LocalDateTime reportCreatedAt;
 
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "auto_id")
     private Car car;
+
+    @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShortComing> shortcomings;
+
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -54,6 +55,10 @@ public class InspectionReport {
     @Enumerated(EnumType.STRING)
     private RepairApprovalStatus repairApprovalStatus;
 
+    @Column(name = "Gerepareerd")
+    @Convert(converter = BooleanJaNeeConverter.class)
+    private Boolean isRepaired = false;
+
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -62,8 +67,5 @@ public class InspectionReport {
             fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
 
-    @Column(name = "Gerepareerd")
-    @Convert(converter = BooleanJaNeeConverter.class)
-    private Boolean isRepaired = false;
 
 }

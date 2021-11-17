@@ -20,21 +20,21 @@ public class RepairOrderLineController {
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:read','repairorderline:write')")
-    @GetMapping(path = "/reparatie-items")
+    @GetMapping(path = "/reparatie-regels/")
     public List<RepairOrderLine> getAll() {
         return repairOrderLineService.getAll();
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:write')")
-    @PostMapping(path = "/onderdeel-toevoegen/{repairOrderId}/{partId}")
-    public void addRepairOrderItem(@PathVariable("repairOrderId") Integer repairOrderId,
-                                   @PathVariable("partId") String partId,
-                                   @RequestParam("quantity") Integer quantity){
-        repairOrderLineService.addRepairOrderItem(repairOrderId,partId, quantity);
+    @PostMapping(path = "/reparatie-onderdeel/{repairOrderId}/{partId}")
+    public void addRepairOrderPartItem(@PathVariable("repairOrderId") Integer repairOrderId,
+                                       @PathVariable("partId") String partId,
+                                       @RequestParam("quantity") Integer quantity){
+        repairOrderLineService.addRepairOrderPartItem(repairOrderId,partId, quantity);
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:write')")
-    @PostMapping(path = "/handeling-toevoegen/{repairOrder}/{laborId}")
+    @PostMapping(path = "/reparatie-handeling/{repairOrder}/{laborId}")
     public void addRepairOrderLaborItem(@PathVariable("repairOrder") Integer repairOrderId,
                                         @PathVariable("laborId") String laborId){
         repairOrderLineService.addRepairOrderLaborItem(repairOrderId,laborId);

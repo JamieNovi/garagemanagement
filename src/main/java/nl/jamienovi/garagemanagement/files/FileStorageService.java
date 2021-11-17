@@ -26,7 +26,7 @@ public class FileStorageService {
      * @throws IOException
      */
 
-    public FileDB store(MultipartFile file) throws IOException {
+    public FileDB storeFile(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         FileDB fileDb = new FileDB(fileName,file.getContentType(),file.getBytes());
 

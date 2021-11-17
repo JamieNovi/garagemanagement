@@ -42,7 +42,7 @@ public class PartController {
 
     @PreAuthorize("hasAnyAuthority('part:write')")
     @PostMapping(path = "")
-    public ResponseEntity<?> create(@RequestBody @Valid Part part) {
+    public ResponseEntity<?> createPart(@RequestBody @Valid Part part) {
        String id =  partService.addPart(part);
 
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()

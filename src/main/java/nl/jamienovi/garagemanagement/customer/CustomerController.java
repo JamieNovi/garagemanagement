@@ -38,10 +38,10 @@ public class CustomerController {
         return ResponseEntity.ok().body(customer);
     }
 
-    @GetMapping(path = "opbellen")
+    @GetMapping(path = "contact")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getCustomerCallingList() {
-        return customerService.getCallingListOfCustomersWithStatusVoltooidOrNietUitvoeren();
+        return customerService.getCustomerCallingList();
     }
 
     @PostMapping(path = "")

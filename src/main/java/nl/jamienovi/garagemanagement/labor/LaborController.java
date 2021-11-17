@@ -32,7 +32,7 @@ public class LaborController {
 
     @PostMapping(path = "")
     @PreAuthorize("hasAnyAuthority('labor:write')")
-    public ResponseEntity<?> addLabor(@RequestBody Labor labor) {
+    public ResponseEntity<?> addLaborItem(@RequestBody Labor labor) {
         laborService.createLaborItem(labor);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

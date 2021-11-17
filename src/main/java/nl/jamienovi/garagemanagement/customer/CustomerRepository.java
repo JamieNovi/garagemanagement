@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer,Integer> {
+interface CustomerRepository extends JpaRepository<Customer,Integer> {
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN " +
             "TRUE ELSE FALSE END " +

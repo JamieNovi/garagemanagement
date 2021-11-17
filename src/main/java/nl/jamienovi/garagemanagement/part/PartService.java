@@ -21,7 +21,8 @@ public class PartService {
     }
 
     public String addPart(Part part) {
-        Part newPart = partRepository.save(part);
+        Part newPart;
+        newPart = partRepository.save(part);
         return newPart.getId();
     }
 

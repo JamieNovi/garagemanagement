@@ -51,9 +51,9 @@ public class RepairOrderController {
 
     @PreAuthorize("hasAnyAuthority('repairorder:write')")
     @PutMapping(path = "/afspraken/{repairId}")
-    public ResponseEntity<RepairOrder> addRepairAgreementComment(@PathVariable Integer repairId,
-                                                                @RequestBody RepairOrderDto repairOrderDto) {
-        RepairOrder repairOrder = repairOrderService.addAgreement(repairOrderDto,repairId);
+    public ResponseEntity<RepairOrder> addRepairAgreements(@PathVariable Integer repairId,
+                                                           @RequestBody RepairOrderDto repairOrderDto) {
+        RepairOrder repairOrder = repairOrderService.saveAgreements(repairOrderDto,repairId);
         return ResponseEntity.ok().body(repairOrder);
     }
 }

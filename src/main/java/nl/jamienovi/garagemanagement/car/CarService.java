@@ -55,6 +55,7 @@ public class CarService {
         Car existingCar = carRepository.findById(carId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(Car.class,"id",carId.toString()));
-       carRepository.deleteById(existingCar.getId());
+        log.info(existingCar.getId().toString());
+       carRepository.deleteById(1);
     }
 }

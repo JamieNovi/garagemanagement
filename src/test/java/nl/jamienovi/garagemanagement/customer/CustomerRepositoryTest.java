@@ -25,6 +25,7 @@ class CustomerRepositoryTest {
         Customer customer = new Customer(
                 "Famke",
                 "Janssen",
+                "234202342",
                 email,
                 "Keizersgracht 10",
                 "1002 AB",

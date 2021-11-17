@@ -1,0 +1,40 @@
+openapi: 3.0.0
+
+info:
+  version: "1.0"
+  title: Garagemanagement
+  description: project
+
+tags:
+  - name: "GarageManagement"
+
+paths:
+
+  /api/klanten:
+    get:
+      summary: Ophalen klanten
+      tags:
+        - "Garagemanagement"
+      description: Ophalen van klanten
+      operationId: getCustomers
+      responses:
+        "200":
+          description: Klanten ophalen gelukt
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+
+
+components:
+
+  schemas:
+
+    Customer:
+      description: Dit is het klant model
+      type: object
+      properties:
+        name:
+          description: Naam van de klant

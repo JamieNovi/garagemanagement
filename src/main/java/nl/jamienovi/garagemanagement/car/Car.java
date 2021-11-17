@@ -21,7 +21,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Car {
-
+    
     @Id
     @SequenceGenerator(name = "car_sequence", sequenceName = "car_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "car_sequence")
@@ -44,14 +44,14 @@ public class Car {
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     private Customer customer;
 
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @OneToMany(orphanRemoval = true,mappedBy = "car", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true,mappedBy = "car",cascade = CascadeType.ALL)
     private List<InspectionReport> inspectionReports;
 
     @OneToOne(mappedBy = "car")

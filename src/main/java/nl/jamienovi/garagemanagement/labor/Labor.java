@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.labor;
 
 import lombok.*;
+import nl.jamienovi.garagemanagement.part.Item;
 
 import javax.persistence.*;
 
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Labor {
+public class Labor extends Item {
 
     @Id
     @Column(name = "handeling_id")

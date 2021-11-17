@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Part {
+public class Part extends Item{
     @Id
     @Column(name = "id",unique = true)
     private String id;

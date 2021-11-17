@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum UserPermission {
     APPOINTMENT_READ("appointment:read"),
-    APPOINTMENT_WRITE("appointement:write"),
+    APPOINTMENT_WRITE("appointment:write"),
     CUSTOMER_READ("customer:read"),
     CUSTOMER_WRITE("customer:write"),
     CAR_READ("car:read"),

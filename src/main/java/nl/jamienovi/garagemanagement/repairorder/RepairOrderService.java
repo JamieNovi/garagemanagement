@@ -68,14 +68,15 @@ public class RepairOrderService {
 
     }
 
-    public RepairOrder addAgreement(RepairOrderDto dto, Integer repairOrderId) {
+    public RepairOrder saveAgreements(RepairOrderDto dto, Integer repairOrderId) {
         RepairOrder repairOrder= repairOrderRepository.findById(repairOrderId)
                 .orElseThrow(() ->new EntityNotFoundException(
                         RepairOrder.class,"id",repairOrderId.toString())
                 );
         mapper.updateRepairOrderFromDto(dto,repairOrder);
         log.info("Afspraak toegevoegd aan reparatieorder: {}",dto.getAgreementComments());
-        return repairOrderRepository.save(repairOrder);
+        repairOrderRepository.save(repairOrder);
+        return repairOrder;
     }
 
     public RepairOrder setStatus(Integer repairOrderId, RepairStatus status){
@@ -130,11 +131,6 @@ public class RepairOrderService {
         );
 
         setStatus(repairOrder.getId(),RepairStatus.NIET_UITVOEREN);
-
-    }
-
-    @EventListener
-    public void handleInvoiceStatusEvent(InvoicePaidEvent paid){
 
     }
 }

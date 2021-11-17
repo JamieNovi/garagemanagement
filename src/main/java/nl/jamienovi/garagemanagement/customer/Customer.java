@@ -10,8 +10,9 @@ import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -37,6 +38,10 @@ public class Customer {
     @NotBlank(message = "Achternaam is verplicht.")
     private String lastName;
 
+    @Column(name = "telefoonnr")
+    @NotBlank(message = "Telefoonnummer verplicht.")
+    private String phoneNumber;
+
     @Column(name = "email")
     @Email(message = "Geen geldig emailadres ingevoerd.")
     private String email;
@@ -56,17 +61,16 @@ public class Customer {
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
     @JsonIdentityReference(alwaysAsId=true)
     @Column(name= "cars")
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    @ToString.Exclude
-    private List<Car> cars = new ArrayList<>();
+    private Set<Car> cars = new HashSet<>();
 
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
     @JsonIdentityReference(alwaysAsId=true)
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.REMOVE,orphanRemoval = true)
     private List<RepairOrder> repairOrders;
 
-    public Customer(String firstName, String lastName, String email, String address,
+    public Customer(String firstName, String lastName,String phoneNumber ,String email, String address,
                     String postalCode, String city) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -74,7 +78,10 @@ public class Customer {
         this.address = address;
         this.postalCode = postalCode;
         this.city = city;
+        this.phoneNumber = phoneNumber;
     }
+
+    // == Cunstructor voor unit en integratie tests ==
 
     public Customer(Integer id, String firstName, String lastName, String email, String address,
                     String postalCode, String city) {
@@ -85,6 +92,7 @@ public class Customer {
         this.address = address;
         this.postalCode = postalCode;
         this.city = city;
+
     }
 
     public void addCar(final Car car) {

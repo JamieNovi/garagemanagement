@@ -3,6 +3,7 @@ package nl.jamienovi.garagemanagement.inspection;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarRepository;
+import nl.jamienovi.garagemanagement.car.CarService;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.eventmanager.*;
@@ -17,18 +18,20 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class InspectionService {
+public class InspectionReportService {
     private final InspectionReportRepository inspectionReportRepository;
     private final CarRepository carRepository;
+    private final CarService carService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public InspectionService(InspectionReportRepository inspectionReportRepository,
-                             CarRepository carRepository,
-                             CustomerService customerService,
-                             ApplicationEventPublisher applicationEventPublisher) {
+    public InspectionReportService(InspectionReportRepository inspectionReportRepository,
+                                   CarRepository carRepository,
+                                   CustomerService customerService,
+                                   CarService carService, ApplicationEventPublisher applicationEventPublisher) {
         this.inspectionReportRepository = inspectionReportRepository;
         this.carRepository = carRepository;
+        this.carService = carService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -36,16 +39,16 @@ public class InspectionService {
         return inspectionReportRepository.findAll();
     }
 
-    public InspectionReport getSingleInspectionReport(Integer inspectionReportId){
+    public InspectionReport getInspectionReport(Integer inspectionReportId){
         return inspectionReportRepository.getById(inspectionReportId);
     }
 
-    public void addInspectionReportToCar(Integer carId){
-
-        Car existingCar = carRepository.findById(carId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        Car.class,"id",carId.toString()
-                ));
+    public void addInspectionReport(Integer carId){
+        Car existingCar = carService.getCar(carId);
+//        Car existingCar = carRepository.findById(carId)
+//                .orElseThrow(() -> new EntityNotFoundException(
+//                        Car.class,"id",carId.toString()
+//                ));
 
         if(hasPendingStatus(existingCar.getId())){
             log.info("Auto heeft al een keuring openstaan");

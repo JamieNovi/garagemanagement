@@ -78,6 +78,7 @@ class CustomerControllerTest {
         Customer customer = new Customer(
                 "Danni",
                 "Banks",
+                "054-242342",
                 "danni@instagram.com",
                 "2nd street",
                 "93992",

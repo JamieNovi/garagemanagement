@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 
 import javax.persistence.*;
@@ -21,7 +20,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class ShortComing {
 
     @Id
@@ -34,7 +32,7 @@ public class ShortComing {
     private String description;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;
 

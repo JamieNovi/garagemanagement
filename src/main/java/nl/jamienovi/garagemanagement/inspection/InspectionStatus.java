@@ -1,10 +1,9 @@
 package nl.jamienovi.garagemanagement.inspection;
 
 public enum InspectionStatus {
-    GOEDGEKEURD("Goed gekeurd"),
-    AFGEKEURD("Afgekeurd"),
     IN_BEHANDELING("In behandeling"),
-    VOLTOOID("Voltooid");
+    GOEDGEKEURD("Goed gekeurd"),
+    AFGEKEURD("Afgekeurd");
 
     final private String value;
 

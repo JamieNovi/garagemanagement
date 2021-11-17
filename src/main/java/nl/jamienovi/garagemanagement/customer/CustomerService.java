@@ -6,6 +6,7 @@ import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Slf4j
@@ -48,16 +49,22 @@ public class CustomerService {
                customerRepository.save(existingCustomer);
     }
 
+    @Transactional
     public void deleteCustomer(Integer customerId) {
-        boolean exists = customerRepository.existsById(customerId);
-        if(!exists) {
-            throw new EntityNotFoundException(Customer.class,"id", customerId.toString());
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Customer.class,
+                        "id",
+                        customerId.toString())
+                );
+//        if(!exists) {
+//            throw new EntityNotFoundException(Customer.class,"id", customerId.toString());
 
-        }
-        customerRepository.deleteById(customerId);
+        customerRepository.delete(customer);
+
     }
 
-    public List<Customer> getCallingListOfCustomersWithStatusVoltooidOrNietUitvoeren() {
+    public List<Customer> getCustomerCallingList() {
         return customerRepository.getCallingList();
     }
 }

@@ -15,15 +15,15 @@ public class InvoicePdf {
 
     @Id
     @Column(name = "klant_id")
-    private Integer id;
+    private Integer customerId;
 
     private String type = "pdf";
 
     @Lob
     private byte[] data;
 
-    public InvoicePdf(Integer id, byte[] data) {
-        this.id = id;
+    public InvoicePdf(Integer customerId, byte[] data) {
+        this.customerId = customerId;
         this.data = data;
     }
 }

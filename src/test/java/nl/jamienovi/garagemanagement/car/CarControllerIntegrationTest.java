@@ -81,6 +81,7 @@ public class CarControllerIntegrationTest {
         CarDto car = new CarDto(1,"Ferrari","Berlinetta","11-22-99",new Customer(
                 "Tom",
                 "Cruise",
+                "053-35345435",
                 "tomcruise@hollywood.com",
                 "Hollywood boulevard 131",
                 "90024", "Los Angeles"

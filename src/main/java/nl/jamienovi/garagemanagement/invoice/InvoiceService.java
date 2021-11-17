@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.thymeleaf.TemplateEngine;
@@ -26,16 +25,14 @@ public class InvoiceService  {
     private final InvoiceRepository invoiceRepository;
     private final ServletContext servletContext;
     private final TemplateEngine templateEngine;
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     public InvoiceService(InvoiceRepository invoiceRepository, ServletContext servletContext,
-                          TemplateEngine templateEngine,
-                          ApplicationEventPublisher applicationEventPublisher) {
+                          TemplateEngine templateEngine) {
         this.invoiceRepository = invoiceRepository;
         this.servletContext = servletContext;
         this.templateEngine = templateEngine;
-        this.applicationEventPublisher = applicationEventPublisher;
+
     }
 
     // == Data repository operations ==
@@ -47,11 +44,11 @@ public class InvoiceService  {
     }
 
     public List<RepairOrderLineDto> getPartOrderlines(Integer carId) {
-        return invoiceRepository.getInvoiceOrderLinesCarparts(carId);
+        return invoiceRepository.getPartOrderLines(carId);
     }
 
     public List<RepairOrderLineDto> getLaborOrderlines(Integer customerId) {
-        return invoiceRepository.getInvoiceLaborOrderLines(customerId);
+        return invoiceRepository.getLaborOrderLines(customerId);
     }
 
     public InvoicePdf storeInvoicePdf(Integer customerId, byte[] data) throws IOException {

@@ -30,7 +30,7 @@ public class FileController {
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file")MultipartFile file) {
         String message = "";
         try{
-            fileStorageService.store(file);
+            fileStorageService.storeFile(file);
             message = "Uploaden van autopapieren gelukt: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         }catch (Exception e) {

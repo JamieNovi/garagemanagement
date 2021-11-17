@@ -51,14 +51,14 @@ public class RepairOrder {
     @Column(name = "afspraken")
     private String agreementComments = "Geen afspraken";
 
-    @OneToMany(mappedBy = "repairOrder",orphanRemoval = true)
+    @OneToMany(mappedBy = "repairOrder",cascade = CascadeType.ALL)
     private List<RepairOrderLine> repairOrderLines;
 
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "klant_id",referencedColumnName = "id")
     private Customer customer;
 

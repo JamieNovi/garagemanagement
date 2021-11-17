@@ -29,7 +29,7 @@ public interface InvoiceRepository extends JpaRepository<InvoicePdf, Integer> {
             "INNER JOIN InspectionReport as report on report.id = ro.inspectionReport.id " +
             "AND report.car.id = ?1 " +
             "AND cp.type = 'ONDERDEEL'")
-    List<RepairOrderLineDto> getInvoiceOrderLinesCarparts(Integer carId);
+    List<RepairOrderLineDto> getPartOrderLines(Integer carId);
 
     @Query("SELECT new nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto(" +
             "ro.id, ro.customer.id, l.name, rol.orderLinePrice, rol.orderLineQuantity)" +
@@ -39,7 +39,7 @@ public interface InvoiceRepository extends JpaRepository<InvoicePdf, Integer> {
             "INNER JOIN InspectionReport as report on report.id = ro.inspectionReport.id " +
             "AND report.car.id = ?1 " +
             "AND l.type = 'HANDELING'")
-    List<RepairOrderLineDto> getInvoiceLaborOrderLines(Integer carId);
+    List<RepairOrderLineDto> getLaborOrderLines(Integer carId);
 
     @Query("SELECT c FROM Car c WHERE c.customer.id = ?1")
     List<Car> getListOfCarsFromCustomer(Integer customerId);
