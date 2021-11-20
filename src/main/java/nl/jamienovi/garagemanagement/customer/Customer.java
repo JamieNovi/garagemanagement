@@ -31,7 +31,7 @@ public class Customer {
 
     @Id
     @SequenceGenerator(name = "customer_sequence",sequenceName = "customer_sequence",allocationSize = 1)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_sequence")
     @Column(name = "id",updatable = false)
     private Integer id;
 
@@ -67,8 +67,8 @@ public class Customer {
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
     @JsonIdentityReference(alwaysAsId=true)
     @Column(name= "cars")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "customer")
-    //@JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Set<Car> cars = new HashSet<>();
 
     // Serialize Object by its id instead of full POJO
