@@ -40,18 +40,14 @@ public class FileController {
     }
 
     /**
-     * Retourneerd lijst met Uri strings van de bestanden vanuit database.
-     * Eerst worden de records naar String opgebouwd: "localhost:8080/bestanden/{id-bestand}
-     * Vervolgens wordt er een ResponseFile van gemaakt(URI-string) en middels collect()
-     * in de lijst met files en retourneerd
-     *
-     * @return ResponseEntity met lijst van ResponseFile objects
+     * Method returns list of uri strings of files in database.
+     * @return ResponseEntity
      */
-
     @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     @RequestMapping(path = "/")
     public ResponseEntity<List<ResponseFile>> getAll() {
         List<ResponseFile> files = fileStorageService.getAllFiles().map(dbFile -> {
+            //Build Uri strings from all files retrieved.
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
                     .path("/api/documenten/")
@@ -62,29 +58,23 @@ public class FileController {
                     dbFile.getName(),
                     fileDownloadUri,
                     dbFile.getType(),
-                    dbFile.getData().length);
-
-        }).collect(Collectors.toList());
+                    dbFile.getData().length
+                );
+            }
+        ).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(files);
     }
-
-    /**
-     * Retourneerd een bestand vanuit de database met id als param
-     * @param id
-     * @return List of bytes
-     */
 
     @GetMapping( path = "/{id}")
     @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     public ResponseEntity<byte[]> getSingle(@PathVariable("id") String id){
         FileDB fileDb = fileStorageService.getFile(id);
-
         return ResponseEntity.ok()
                 .header(
-                        HttpHeaders.CONTENT_DISPOSITION, "attachment; filename= \" " + fileDb.getName() + "\" ")
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename= \" " + fileDb.getName() + "\" "
+                )
                 .body(fileDb.getData());
     }
-
-
 }

@@ -3,7 +3,6 @@ package nl.jamienovi.garagemanagement.car;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import nl.jamienovi.garagemanagement.customer.Customer;
 
 @Getter
 @Setter
@@ -13,5 +12,4 @@ public class CarDto {
     private String brand;
     private String model;
     private String registrationPlate;
-    private Customer customer;
 }

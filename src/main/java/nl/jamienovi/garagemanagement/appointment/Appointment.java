@@ -15,6 +15,11 @@ import java.time.LocalTime;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+/**
+ * Class represents core information about Appointment entity
+ * @version 1 30 Oct 2021
+ * @author Jamie Spekman
+ */
 @Entity(name = "Appointment")
 @Table(name = "afspraken")
 @Getter
@@ -38,6 +43,7 @@ public class Appointment {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
     private AppointmentType type;
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")

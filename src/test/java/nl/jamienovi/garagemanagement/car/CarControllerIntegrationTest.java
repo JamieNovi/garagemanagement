@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import nl.jamienovi.garagemanagement.customer.Customer;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +20,7 @@ public class CarControllerIntegrationTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+
     @Test
     void shouldGetAllCars() {
         RestAssured
@@ -31,7 +31,7 @@ public class CarControllerIntegrationTest {
                 .get("http://localhost:" + port + "/api/auto")
                 .then()
                 .statusCode(200)
-                .body("$.size()", Matchers.equalTo(5));
+                .body("$.size()", Matchers.equalTo(3));
     }
 
     @Test
@@ -78,14 +78,15 @@ public class CarControllerIntegrationTest {
 
     @Test
     void shouldUpdateCar() throws Exception {
-        CarDto car = new CarDto(1,"Ferrari","Berlinetta","11-22-99",new Customer(
-                "Tom",
-                "Cruise",
-                "053-35345435",
-                "tomcruise@hollywood.com",
-                "Hollywood boulevard 131",
-                "90024", "Los Angeles"
-        ));
+        CarDto car = new CarDto(1,"Ferrari","Berlinetta","11-22-99");
+//                new Customer(
+//                "Tom",
+//                "Cruise",
+//                "053-35345435",
+//                "tomcruise@hollywood.com",
+//                "Hollywood boulevard 131",
+//                "90024", "Los Angeles"
+//        ));
         ExtractableResponse<Response> response = RestAssured
                 .given()
                 .auth().basic("administratie","1234")

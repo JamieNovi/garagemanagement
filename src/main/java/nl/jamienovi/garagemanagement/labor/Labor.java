@@ -5,7 +5,6 @@ import nl.jamienovi.garagemanagement.part.Item;
 
 import javax.persistence.*;
 
-
 @Entity(name = "Labor")
 @Table(name = "handelingen")
 @Getter
@@ -13,7 +12,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 public class Labor extends Item {
-
     @Id
     @Column(name = "handeling_id")
     private String id;

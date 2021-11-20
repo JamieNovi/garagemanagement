@@ -3,7 +3,6 @@ package nl.jamienovi.garagemanagement.invoice;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +17,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Class represents bussines logic of all operations related to invoice class.
+ * @version 1.3 20 Oct 2021
+ * @author Jamie Spekman
+ */
 @Slf4j
 @Service
 public class InvoiceService  {
-
     private final InvoiceRepository invoiceRepository;
     private final ServletContext servletContext;
     private final TemplateEngine templateEngine;
@@ -32,15 +35,14 @@ public class InvoiceService  {
         this.invoiceRepository = invoiceRepository;
         this.servletContext = servletContext;
         this.templateEngine = templateEngine;
-
     }
 
-    // == Data repository operations ==
+    public InvoicePdf getInvoice(Integer customerId) {
+        return invoiceRepository.getById(customerId);
+    }
 
     public InvoiceCustomerDataDto getCustomerData(Integer carId){
-
         return invoiceRepository.getCustomerAndCarData(carId);
-
     }
 
     public List<RepairOrderLineDto> getPartOrderlines(Integer carId) {
@@ -61,20 +63,11 @@ public class InvoiceService  {
        }
     }
 
-    public InvoicePdf getInvoice(Integer customerId) {
-        return invoiceRepository.getById(customerId);
-    }
-
-    // == Business logic operations ==
-
-    public List<Car> getCarListFromCustomer(Integer customerId) {
-        List<Car> cars = invoiceRepository.getListOfCarsFromCustomer(customerId);
-        for(Car car :cars) {
-            log.info(car.toString());
-        }
-        return cars;
-    }
-
+    /**
+     * Helper method to calculate total price Part and Labor orderlines for the invoice
+     * @param customerId
+     * @return
+     */
     public Double getSubtotalFromOrderLines(Integer customerId){
         Double subtotal = 0.00;
         subtotal += getLaborOrderlinesTotalPrice(customerId);
@@ -82,6 +75,11 @@ public class InvoiceService  {
         return subtotal;
     }
 
+    /**
+     * Calculate totalprice of the labor orderlines
+     * @param carId
+     * @return
+     */
     private double getLaborOrderlinesTotalPrice(Integer carId){
         Double total = 0.00;
         List<RepairOrderLineDto> orderLinesLabor = getLaborOrderlines(carId);
@@ -91,6 +89,11 @@ public class InvoiceService  {
         return total;
     }
 
+    /**
+     * Calculate totalprice of part orderlines
+     * @param carId
+     * @return
+     */
     private double getPartOrderlinesTotalPrice(Integer carId){
         Double total = 0.00;
         List<RepairOrderLineDto> orderLinesParts = getPartOrderlines(carId);
@@ -100,6 +103,13 @@ public class InvoiceService  {
         return total;
     }
 
+    /**
+     * Method to create context for template processing of invoice.
+     * @param request
+     * @param response
+     * @param carId
+     * @return
+     */
     public String setWebContext(HttpServletRequest request, HttpServletResponse response,
                                 @PathVariable("customerId") Integer carId) {
         WebContext context = new WebContext(request,response,servletContext);
@@ -111,6 +121,11 @@ public class InvoiceService  {
         return invoiceHtml;
     }
 
+    /**
+     * Method to convert string containing html to outputstream containing pdf
+     * @param invoiceHtml
+     * @return
+     */
     public byte[] setUpSourceAndTargetIOStreams(String invoiceHtml){
         ByteArrayOutputStream target = new ByteArrayOutputStream();
 

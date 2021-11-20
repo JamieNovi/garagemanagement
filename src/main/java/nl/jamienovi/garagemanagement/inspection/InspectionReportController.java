@@ -29,7 +29,7 @@ public class InspectionReportController {
     @PostMapping(path = "/{carId}")
     public ResponseEntity<?> addInspectionReport(@PathVariable("carId") Integer carId){
         inspectionReportService.addInspectionReport(carId);
-        return ResponseEntity.ok(new ResponseMessage("Keuringsrapport toegevoegd."));
+        return ResponseEntity.ok(new ResponseMessage("Keuringsrapport toegevoegd en reparatieorder toegevoegd."));
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:write')")

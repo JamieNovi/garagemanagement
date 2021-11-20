@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.customer;
 
+import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping(path = "/api/klanten")
 public class CustomerController {

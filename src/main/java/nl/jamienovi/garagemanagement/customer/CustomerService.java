@@ -1,19 +1,30 @@
 package nl.jamienovi.garagemanagement.customer;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Class represents business logic for all Customer operations
+ *
+ * @version 1 10 Sept 2021
+ * @author Jamie Spekman
+ */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final DtoMapper mapper;
+
+    @Autowired
+    public CustomerService(CustomerRepository customerRepository, DtoMapper mapper) {
+        this.customerRepository = customerRepository;
+        this.mapper = mapper;
+    }
 
     public List<Customer> getAllCustomers(){
         return customerRepository.findAll();
@@ -55,11 +66,7 @@ public class CustomerService {
                         "id",
                         customerId.toString())
                 );
-//        if(!exists) {
-//            throw new EntityNotFoundException(Customer.class,"id", customerId.toString());
-
         customerRepository.delete(customer);
-
     }
 
     public List<Customer> getCustomerCallingList() {

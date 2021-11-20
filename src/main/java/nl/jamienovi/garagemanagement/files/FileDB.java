@@ -7,6 +7,12 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+/**
+ * Class represents information about uploaded files
+ *
+ * @version 1 10 Oct 2021
+ * @author Jamie Spekman
+ */
 @Entity(name = "FileDB")
 @Table(name = "Autodocumenten")
 @Getter

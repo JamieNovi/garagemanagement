@@ -21,7 +21,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @CrossOrigin()
 @Entity(name = "RepairOrder")
-@Table(name = "repair_orders")
+@Table(name = "reparatie_orders")
 @Getter
 @Setter
 @NoArgsConstructor

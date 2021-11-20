@@ -15,6 +15,12 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Class represents bussines logic for all operations related to InspectionReport
+ *
+ * @version 1.1 20 Sept 2021
+ * @author Jamie Spekman
+ */
 @Slf4j
 @Service
 @Transactional
@@ -28,7 +34,8 @@ public class InspectionReportService {
     public InspectionReportService(InspectionReportRepository inspectionReportRepository,
                                    CarRepository carRepository,
                                    CustomerService customerService,
-                                   CarService carService, ApplicationEventPublisher applicationEventPublisher) {
+                                   CarService carService,
+                                   ApplicationEventPublisher applicationEventPublisher) {
         this.inspectionReportRepository = inspectionReportRepository;
         this.carRepository = carRepository;
         this.carService = carService;
@@ -44,14 +51,12 @@ public class InspectionReportService {
     }
 
     public void addInspectionReport(Integer carId){
-        Car existingCar = carService.getCar(carId);
-//        Car existingCar = carRepository.findById(carId)
-//                .orElseThrow(() -> new EntityNotFoundException(
-//                        Car.class,"id",carId.toString()
-//                ));
+        Car existingCar = carRepository.findById(carId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        Car.class,"id",carId.toString()
+                ));
 
-        if(hasPendingStatus(existingCar.getId())){
-            log.info("Auto heeft al een keuring openstaan");
+        if(hasPendingStatus(existingCar.getId())){ // check if car has pending inspectionreport
             throw new IllegalStateException("Auto heeft al een keuring openstaan");
         }else {
             InspectionReport newInspectionReport = new InspectionReport();
@@ -63,12 +68,15 @@ public class InspectionReportService {
                             existingCar.getId(),
                             existingCar.getCustomer().getId())
             );
-            // == EVENT voor reparatieservice, aanmaken reparatie Order ==
+
+            /*
+             * Publish event for RepairOrderService to create repairorder
+             * after inspectionreport is created
+             */
 
             AddInspectionReportEvent event = new AddInspectionReportEvent(this,carId);
             applicationEventPublisher.publishEvent(event);
         }
-
     }
 
     public void deleteInspectionReport(Integer inspectionReportId){
@@ -80,7 +88,6 @@ public class InspectionReportService {
     }
 
     public void setInspectionReportStatus(Integer inspectionReportId,InspectionStatus status){
-
         InspectionReport report = inspectionReportRepository.getById(inspectionReportId);
         report.setStatus(status);
         inspectionReportRepository.save(report);
@@ -89,6 +96,7 @@ public class InspectionReportService {
 
         switch(status) {
             case GOEDGEKEURD:
+                // Publish event for RepairOrderService to change status to NIET_UITVOEREN
                 ChangeInspectionStatusEvent eventInspectionStatus = new ChangeInspectionStatusEvent(this,inspectionReportId );
                 applicationEventPublisher.publishEvent(eventInspectionStatus);
 
@@ -104,44 +112,35 @@ public class InspectionReportService {
     }
 
     public void setIsRepaired(Integer inspectionReportId) {
-        InspectionReport updateInspectionReport = inspectionReportRepository.getById(inspectionReportId);
+        InspectionReport updateInspectionReport = inspectionReportRepository
+                .getById(inspectionReportId);
         updateInspectionReport.setIsRepaired(true);
         inspectionReportRepository.save(updateInspectionReport);
     }
 
     public void setApprovalRepair(Integer inspectionReportId, RepairApprovalStatus status) {
         InspectionReport report = inspectionReportRepository.getById(inspectionReportId);
-        Integer carIdOfInspectionReport = report.getCar().getId();
-
         report.setRepairApprovalStatus(status);
-
         inspectionReportRepository.save(report);
         if(status == RepairApprovalStatus.NIETAKKOORD){
-
             AddApprovalStatusEvent event = new AddApprovalStatusEvent(
                     this,
                     inspectionReportId,
                     RepairApprovalStatus.NIETAKKOORD);
             applicationEventPublisher.publishEvent(event);
-
-//            log.info(setApprovalLogMessage(report,status));
-
         }else{
-
             log.info("Keuringsrapport-id: " + report.getId() + " is : " + status.toString()+ " met reparatie.");
-
             AddApprovalStatusEvent event = new AddApprovalStatusEvent(
                     this,
                     inspectionReportId,
                     RepairApprovalStatus.AKKOORD);
-
             applicationEventPublisher.publishEvent(event);
         }
     }
 
     /**
-     * Controleert of een auto al een keuring heeft openstaan,
-     * voordat er een nieuwe keuring kan worden aangemaakt. Pending=in afwachting.
+     *
+     * Checks if car has a pending inspection before mechanic adds a new inspectionreport
      * @param carId
      * @return Boolean true of false
      */
@@ -150,7 +149,6 @@ public class InspectionReportService {
         Boolean carIsPending = false;
 
         for (InspectionReport item : car.getInspectionReports()) {
-
                 switch(item.getStatus()){
                     case IN_BEHANDELING:
                         carIsPending = true;
@@ -160,23 +158,10 @@ public class InspectionReportService {
                         break;
                     case GOEDGEKEURD:
                         carIsPending = true;
-
                 }
             }
         return carIsPending;
     }
-
-//    private String setApprovalLogMessage(InspectionReport report, RepairApprovalStatus status){
-//        return String.format(
-//                "Klant-id:%s met naam: %s, auto-id: %s, keuringsrapport-id: %s en reparatie-id: %s gaat niet %s met de reparatie\n",
-//                report.getCar().getCustomer().getId(),
-//                report.getCar().getCustomer().getFirstName(),
-//                report.getCar().getId(),
-//                report.getId(),
-//                report.getRepairOrder().getId(),
-//                status.toString()
-//        );
-//    }
 
     @EventListener
     public void handleRepairOrderStatusEvent(RepairOrderCompletedEvent event) {

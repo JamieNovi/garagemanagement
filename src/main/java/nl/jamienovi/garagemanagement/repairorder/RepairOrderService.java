@@ -129,8 +129,7 @@ public class RepairOrderService {
         RepairOrder repairOrder = repairOrderRepository.getRepairOrderWithInspectionReportId(
                 event.getInspectionReportId()
         );
-
         setStatus(repairOrder.getId(),RepairStatus.NIET_UITVOEREN);
-
     }
+
 }

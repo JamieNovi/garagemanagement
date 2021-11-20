@@ -12,7 +12,7 @@ import javax.persistence.*;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "RepairOrderLine")
-@Table(name = "reparatie_bestelregel")
+@Table(name = "reparatie_bestelregels")
 @Getter
 @Setter
 public class RepairOrderLine {
@@ -40,6 +40,9 @@ public class RepairOrderLine {
 
     @Column(name = "aantal")
     private Integer orderLineQuantity;
+
+    @Column(name = "omschrijving")
+    private String description;
 
     public RepairOrderLine() {
         if(orderLineQuantity == null) {

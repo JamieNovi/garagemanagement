@@ -18,13 +18,19 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+/**
+ * Class represents core information about the InspectionReport model
+ * @version 20 Sept 2021
+ * @author Jamie Spekman
+ */
 @Entity(name = "InspectionReport")
-@Table(name = "keuringsrapport")
+@Table(name = "keuringsrapporten")
 @Getter
 @Setter
 @NoArgsConstructor
 public class InspectionReport {
 
+    // Serialize Object by its id instead of full POJO
     @Id
     @SequenceGenerator(name="inspection_report_sequence", sequenceName = "inspection_report_sequence",allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "inspection_report_sequence")
@@ -35,6 +41,7 @@ public class InspectionReport {
     @CreationTimestamp
     private LocalDateTime reportCreatedAt;
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -59,6 +66,7 @@ public class InspectionReport {
     @Convert(converter = BooleanJaNeeConverter.class)
     private Boolean isRepaired = false;
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")

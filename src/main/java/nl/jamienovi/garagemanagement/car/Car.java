@@ -14,7 +14,13 @@ import java.util.List;
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
+/**
+ * Class represents core information about the Car entity
+ *
+ * @version 1.1 10 Sept 2021
+ */
 @Entity(name = "Car")
+@Table(name = "auto")
 @Getter
 @Setter
 @ToString
@@ -40,6 +46,7 @@ public class Car {
     @NotBlank(message = "Kenteken invoeren verplicht.")
     private String registrationPlate;
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
@@ -47,6 +54,7 @@ public class Car {
     @ManyToOne(cascade = CascadeType.MERGE)
     private Customer customer;
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")

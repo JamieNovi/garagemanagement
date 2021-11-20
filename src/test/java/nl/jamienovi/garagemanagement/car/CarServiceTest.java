@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.car;
 
 import nl.jamienovi.garagemanagement.customer.Customer;
+import nl.jamienovi.garagemanagement.customer.CustomerBuilder;
 import nl.jamienovi.garagemanagement.customer.CustomerService;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
@@ -95,8 +96,7 @@ class CarServiceTest {
         CarDto dto = new CarDto(1,
                 "Mini",
                 "Cooper",
-                "EE-22-22",
-                createCustomer()
+                "EE-22-22"
         );
         return dto;
     }
@@ -111,14 +111,14 @@ class CarServiceTest {
         return car;
     }
     private Customer createCustomer() {
-        Customer customer = new Customer();
-        customer.setId(1);
-        customer.setFirstName("John");
-        customer.setLastName("Wick");
-        customer.setEmail("wick@parabellum.com");
-        customer.setAddress("High road 10");
-        customer.setPostalCode("33992");
-        customer.setCity("New York");
+        Customer customer = new CustomerBuilder()
+                .setId(1)
+                .setFirstName("John")
+                .setLastName("Wick")
+                .setEmail("wick@parabellum.com")
+                .setAddress("High road 10")
+                .setPostalCode("33992")
+                .setCity("New York").build();
 
         return customer;
     }

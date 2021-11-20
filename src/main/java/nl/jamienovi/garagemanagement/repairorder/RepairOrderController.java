@@ -45,7 +45,9 @@ public class RepairOrderController {
 
     @PreAuthorize("hasAnyAuthority('repairorder:write')")
     @PutMapping(path = "/{repairId}")
-    public RepairOrder setRepairOrderStatus(@PathVariable()Integer repairId, @RequestParam("status") RepairStatus status) throws EntityNotFoundException {
+    public RepairOrder setRepairOrderStatus(@PathVariable()Integer repairId,
+                                            @RequestParam("status") RepairStatus status) throws EntityNotFoundException {
+
         return repairOrderService.setStatus(repairId,status);
     }
 

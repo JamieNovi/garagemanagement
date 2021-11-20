@@ -14,19 +14,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static javax.persistence.GenerationType.SEQUENCE;
-
+/**
+ * Class represents core information about the customer
+ *
+ * @version 1.1 10 Sept 2021
+ * @author Jamie Spekman
+ */
 @Entity(name = "Customer")
-@Table(name = "Klanten")
+@Table(name = "klanten")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Customer {
+
     @Id
-    @SequenceGenerator(name = "customer_sequence",sequenceName = "customer_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "customer_sequence")
+    @SequenceGenerator(name = "customer_sequence",sequenceName = "customer_sequence",allocationSize = 1)
+    @GeneratedValue
     @Column(name = "id",updatable = false)
     private Integer id;
 
@@ -58,6 +63,7 @@ public class Customer {
     @NotBlank(message = "Woonplaats is verplicht.")
     private String city;
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
     @JsonIdentityReference(alwaysAsId=true)
     @Column(name= "cars")
@@ -65,6 +71,7 @@ public class Customer {
     //@JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Set<Car> cars = new HashSet<>();
 
+    // Serialize Object by its id instead of full POJO
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
     @JsonIdentityReference(alwaysAsId=true)
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
@@ -74,25 +81,24 @@ public class Customer {
                     String postalCode, String city) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
         this.postalCode = postalCode;
         this.city = city;
-        this.phoneNumber = phoneNumber;
     }
 
-    // == Cunstructor voor unit en integratie tests ==
-
-    public Customer(Integer id, String firstName, String lastName, String email, String address,
+    // Constructor for unit and integration tests
+    public Customer(Integer id, String firstName, String lastName,String phoneNumber ,String email, String address,
                     String postalCode, String city) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.address = address;
         this.postalCode = postalCode;
         this.city = city;
-
     }
 
     public void addCar(final Car car) {

@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // Testing weblayer
@@ -34,14 +33,25 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(authorities = {"customer:read"})
     void shouldReturnListOfCustomers() throws Exception {
+        Customer customer = new CustomerBuilder()
+                .setFirstName("Danni")
+                .setLastName("Banks")
+                .setPhoneNumber("234234")
+                .setEmail("danni@instagram.com")
+                .setAddress("2nd Street").setPostalCode("93992")
+                .setCity("Malibu").build();
         when(customerService.getAllCustomers())
-                .thenReturn(List.of(new Customer(3,
-                        "Danni",
-                        "Banks",
-                        "danni@instagram.com",
-                        "2nd street",
-                        "93992",
-                        "Malibu")));
+                .thenReturn(List.of(customer));
+
+//        when(customerService.getAllCustomers())
+//                .thenReturn(List.of(new CustomerBuilder()
+//
+////                        "Danni",
+////                        "Banks",
+////                        "danni@instagram.com",
+////                        "2nd street",
+////                        "93992",
+////                        "Malibu")));
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/api/klanten"))
@@ -54,14 +64,24 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(authorities = {"customer:read"})
     void shouldGetSingleCustomer() throws Exception {
+        Customer customer = new CustomerBuilder()
+                .setId(3)
+                .setFirstName("Danni")
+                .setLastName("Banks")
+                .setPhoneNumber("234234")
+                .setEmail("danni@instagram.com")
+                .setAddress("2nd Street").setPostalCode("93992")
+                .setCity("Malibu").build();
         when(customerService.getCustomer(3))
-                .thenReturn(new Customer(3,
-                        "Danni",
-                        "Banks",
-                        "danni@instagram.com",
-                        "2nd street",
-                        "93992",
-                        "Malibu"));
+                .thenReturn(customer);
+//        when(customerService.getCustomer(3))
+//                .thenReturn(new Customer(3,
+//                        "Danni",
+//                        "Banks",
+//                        "danni@instagram.com",
+//                        "2nd street",
+//                        "93992",
+//                        "Malibu"));
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/api/klanten/3"))

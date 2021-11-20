@@ -107,7 +107,7 @@ public class RepairOrderDataLoader implements CommandLineRunner {
 //        Auto van klant 2
 //         */
 //
-        inspectionReportService.addInspectionReport(3);
+        inspectionReportService.addInspectionReport(2);
 
         repairOrderLineService.addRepairOrderLaborItem(2,"H0000");
         inspectionReportService.setInspectionReportStatus(2,InspectionStatus.GOEDGEKEURD);
@@ -116,8 +116,7 @@ public class RepairOrderDataLoader implements CommandLineRunner {
         Auto van klant 3
          */
 
-        inspectionReportService.addInspectionReport(4);
-//        inspectionService.addInspectionReportToCar(5);
+        inspectionReportService.addInspectionReport(3);
 
         // Toevoegen keuringstarief
         repairOrderLineService.addRepairOrderLaborItem(3,"H0000");
@@ -129,10 +128,5 @@ public class RepairOrderDataLoader implements CommandLineRunner {
         //Reparatie wordt door event op NIET_UITVOEREN Gezet
 
         inspectionReportService.setApprovalRepair(3, RepairApprovalStatus.NIETAKKOORD);
-        //Factuur wordt automatisch opgeslagen door event vanuit repairorder
-
-
     }
-
-
 }

@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Class handles business logic for car operations
+ * @version 1.3 11 Sept 2021
+ * @author Jamie spekman
+ */
 @Slf4j
 @Service
 public class CarService {
@@ -37,7 +42,6 @@ public class CarService {
        Customer customer = customerService.getCustomer(customerId);
        newCar.setCustomer(customer);
        Car car = carRepository.save(newCar);
-
        log.info("Auto-id : {} aangemaakt voor klant-id: {}",
                car.getId(),customerId);
        return car.getId();
@@ -47,7 +51,7 @@ public class CarService {
         Car existingCar = carRepository.findById(carId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(Car.class,"id",carId.toString()));
-        DtoMapper.INSTANCE.updateCarFromDto(carDto,existingCar);
+        DtoMapper.INSTANCE.updateCarFromDto(carDto,existingCar); // map carDto to car
         carRepository.save(existingCar);
     }
 
