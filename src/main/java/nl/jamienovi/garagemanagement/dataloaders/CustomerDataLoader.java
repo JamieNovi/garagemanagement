@@ -9,7 +9,7 @@ import nl.jamienovi.garagemanagement.authentication.ApplicationUser;
 import nl.jamienovi.garagemanagement.authentication.ApplicationUserRepository;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.security.UserRole;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -26,16 +26,16 @@ import java.time.LocalTime;
 @Transactional
 public class CustomerDataLoader implements CommandLineRunner {
 
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerServiceImpl;
     private final AppointmentService appointmentService;
     private final ApplicationUserRepository applicationUserRepository;
     private final PasswordEncoder encoder;
 
-    public CustomerDataLoader(CustomerService customerService,
+    public CustomerDataLoader(CustomerServiceImpl customerServiceImpl,
                               AppointmentService appointmentService,
                               ApplicationUserRepository applicationUserRepository,
                               PasswordEncoder encoder) {
-        this.customerService = customerService;
+        this.customerServiceImpl = customerServiceImpl;
         this.appointmentService = appointmentService;
         this.applicationUserRepository = applicationUserRepository;
         this.encoder = encoder;
@@ -64,7 +64,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                "90024", "Los Angeles"
                 );
         customer1.addCar(car1);
-        customerService.saveCustomer(customer1);
+        customerServiceImpl.add(customer1);
 
         appointmentService.save(1,new Appointment(
                 LocalDate.of(2021,10,27),
@@ -82,7 +82,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "Los Angeles"
                 );
         customer2.addCar(car2);
-        customerService.saveCustomer(customer2);
+        customerServiceImpl.add(customer2);
 
         appointmentService.save(2,new Appointment(
                 LocalDate.of(2021,11,11),
@@ -100,7 +100,7 @@ public class CustomerDataLoader implements CommandLineRunner {
                 "Texas"
        );
         customer3.addCar(car3);
-        customerService.saveCustomer(customer3);
+        customerServiceImpl.add(customer3);
 
 //        appointmentService.save(3,new Appointment(
 //                LocalDate.of(2021,11,11),

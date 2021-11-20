@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.car;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import java.util.List;
 public class CarService {
 
    private final CarRepository carRepository;
-   private final CustomerService  customerService;
+   private final CustomerServiceImpl customerServiceImpl;
 
    @Autowired
-   public CarService(CarRepository carRepository, CustomerService customerService) {
+   public CarService(CarRepository carRepository, CustomerServiceImpl customerServiceImpl) {
         this.carRepository = carRepository;
-        this.customerService = customerService;
+        this.customerServiceImpl = customerServiceImpl;
    }
 
     public List<Car> getAllCars() {
@@ -39,7 +39,7 @@ public class CarService {
     }
 
     public Integer addCarToCustomer(Integer customerId,Car newCar) {
-       Customer customer = customerService.getCustomer(customerId);
+       Customer customer = customerServiceImpl.findOne(customerId);
        newCar.setCustomer(customer);
        Car car = carRepository.save(newCar);
        log.info("Auto-id : {} aangemaakt voor klant-id: {}",

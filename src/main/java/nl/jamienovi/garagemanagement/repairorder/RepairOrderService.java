@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.repairorder;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.eventmanager.*;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
@@ -20,17 +20,17 @@ import java.util.Optional;
 @Slf4j
 public class RepairOrderService {
     private final RepairOrderRepository repairOrderRepository;
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerServiceImpl;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final DtoMapper mapper;
 
 
     @Autowired
     public RepairOrderService(RepairOrderRepository repairOrderRepository,
-                              CustomerService customerService,
+                              CustomerServiceImpl customerServiceImpl,
                               ApplicationEventPublisher applicationEventPublisher, DtoMapper mapper) {
         this.repairOrderRepository = repairOrderRepository;
-        this.customerService = customerService;
+        this.customerServiceImpl = customerServiceImpl;
         this.applicationEventPublisher = applicationEventPublisher;
         this.mapper = mapper;
     }
@@ -50,7 +50,7 @@ public class RepairOrderService {
 
     public void addRepairOrder(Integer carId) {
         Optional<InspectionReport> inspectionReport = repairOrderRepository.getInspectionReportFromCustomer(carId);
-        Customer customer = customerService.getCustomer(inspectionReport.get().getCar().getCustomer().getId());
+        Customer customer = customerServiceImpl.findOne(inspectionReport.get().getCar().getCustomer().getId());
 
         RepairOrder newRepairOrder = new RepairOrder(customer);
         newRepairOrder.setInspectionReport(inspectionReport.get());

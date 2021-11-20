@@ -26,7 +26,7 @@ class CustomerControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CustomerService customerService;
+    private CustomerServiceImpl customerServiceImpl;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -40,10 +40,10 @@ class CustomerControllerTest {
                 .setEmail("danni@instagram.com")
                 .setAddress("2nd Street").setPostalCode("93992")
                 .setCity("Malibu").build();
-        when(customerService.getAllCustomers())
+        when(customerServiceImpl.findAll())
                 .thenReturn(List.of(customer));
 
-//        when(customerService.getAllCustomers())
+//        when(customerService.findAll())
 //                .thenReturn(List.of(new CustomerBuilder()
 //
 ////                        "Danni",
@@ -72,7 +72,7 @@ class CustomerControllerTest {
                 .setEmail("danni@instagram.com")
                 .setAddress("2nd Street").setPostalCode("93992")
                 .setCity("Malibu").build();
-        when(customerService.getCustomer(3))
+        when(customerServiceImpl.findOne(3))
                 .thenReturn(customer);
 //        when(customerService.getCustomer(3))
 //                .thenReturn(new Customer(3,
@@ -94,7 +94,7 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(authorities = {"customer:write"})
     void shouldCreateCustomer() throws Exception {
-//        Mockito.when(customerService.saveCustomer(any(Customer.class))).thenReturn(1);
+//        Mockito.when(customerService.add(any(Customer.class))).thenReturn(1);
         Customer customer = new Customer(
                 "Danni",
                 "Banks",
@@ -113,7 +113,7 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().exists("Location"));
 
-        verify(customerService).saveCustomer(any(Customer.class));
+        verify(customerServiceImpl).add(any(Customer.class));
     }
 
     @Test
@@ -124,6 +124,6 @@ class CustomerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(customerService).deleteCustomer(any(Integer.class));
+        verify(customerServiceImpl).delete(any(Integer.class));
     }
 }

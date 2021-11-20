@@ -2,6 +2,7 @@ package nl.jamienovi.garagemanagement.customer;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.service.CustomerService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,21 +17,24 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class CustomerService {
+public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final DtoMapper mapper;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, DtoMapper mapper) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, DtoMapper mapper) {
         this.customerRepository = customerRepository;
         this.mapper = mapper;
     }
 
-    public List<Customer> getAllCustomers(){
+
+    @Override
+    public List<Customer> findAll(){
         return customerRepository.findAll();
     }
 
-    public Customer getCustomer(Integer customerId) {
+    @Override
+    public Customer findOne(Integer customerId) {
 //        Customer customer = customerRepository.getById(customerId);
 //        CustomerGetDto dto = DtoMapper.INSTANCE.customerToDto(customer);
 //        log.info(dto.toString());
@@ -38,17 +42,19 @@ public class CustomerService {
                .orElseThrow(() -> new EntityNotFoundException(Customer.class,"id", customerId.toString()));
     }
 
-    public Integer saveCustomer(Customer customer) {
+    @Override
+    public Customer add(Customer customer) {
         if(customerRepository.emailAlreadyExists(customer.getEmail())) {
             throw new IllegalStateException("Email bestaat al in het systeem!");
         }
         log.info(String.format("Klant aangemaakt met klant-id:",
                 customer.getId()));
        Customer newCustomer = customerRepository.save(customer);
-       return newCustomer.getId();
+       return newCustomer;
     }
 
-    public void updateCustomer(Integer customerId, CustomerUpdateDto customerUpdateDto) {
+    @Override
+    public void update(Integer customerId, CustomerUpdateDto customerUpdateDto) {
                Customer existingCustomer = customerRepository.findById(customerId)
                .orElseThrow(() -> new EntityNotFoundException(
                        Customer.class,"id",
@@ -59,7 +65,8 @@ public class CustomerService {
                customerRepository.save(existingCustomer);
     }
 
-    public void deleteCustomer(Integer customerId) {
+    @Override
+    public void delete(Integer customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         Customer.class,
@@ -68,7 +75,7 @@ public class CustomerService {
                 );
         customerRepository.delete(customer);
     }
-
+    @Override
     public List<Customer> getCustomerCallingList() {
         return customerRepository.getCallingList();
     }

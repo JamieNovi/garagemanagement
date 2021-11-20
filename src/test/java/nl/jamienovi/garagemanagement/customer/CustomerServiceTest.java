@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 class CustomerServiceTest {
 
     // System under Test (SuT)
-    private CustomerService underTest;
+    private CustomerServiceImpl underTest;
 
     // Mock
     @Mock
@@ -36,13 +36,13 @@ class CustomerServiceTest {
 
     @BeforeEach
     void setUp() {
-        underTest = new CustomerService(customerRepository,mapper);
+        underTest = new CustomerServiceImpl(customerRepository,mapper);
     }
 
     @Test
     void canGetAllCustomers() {
         //Act
-        underTest.getAllCustomers();
+        underTest.findAll();
         //Assert
         verify(customerRepository).findAll();
     }
@@ -71,13 +71,13 @@ class CustomerServiceTest {
 //        );
 
         when(customerRepository.findById(1)).thenReturn(Optional.of(mockCustomer));
-        underTest.getCustomer(1);
+        underTest.findOne(1);
         //Assert
         verify(customerRepository).findById(1);
     }
 
 //    @Test
-//    void saveCustomer() {
+//    void add() {
 //        //Arrange
 //        Customer mockCustomer = new Customer(
 //                "Famke",
@@ -88,7 +88,7 @@ class CustomerServiceTest {
 //                "Amsterdam"
 //        );
 //        //Act
-//        underTest.saveCustomer(mockCustomer);
+//        underTest.add(mockCustomer);
 //        //Assert
 //        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
 //        verify(customerRepository).save(customerArgumentCaptor.capture());
@@ -122,7 +122,7 @@ class CustomerServiceTest {
 //                .build();
         //Act
         when(customerRepository.existsById(mockCustomer.getId())).thenReturn(true);
-        underTest.deleteCustomer(mockCustomer.getId());
+        underTest.delete(mockCustomer.getId());
         verify(customerRepository).deleteById(mockCustomer.getId());
     }
 
@@ -131,7 +131,7 @@ class CustomerServiceTest {
     void deleteByIdThrowsEntityNotFoundException() throws EntityNotFoundException {
         Integer customerId = 1;
         when(customerRepository.existsById(1)).thenReturn(false);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.deleteCustomer(customerId));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.delete(customerId));
 
     }
 
@@ -140,7 +140,7 @@ class CustomerServiceTest {
     void updateCustomerNotFoundShouldThrowEntityNotFoundException() {
         Integer customerId = 1;
         when(customerRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.updateCustomer(customerId,any()));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.update(customerId,any()));
 
     }
 
@@ -148,6 +148,6 @@ class CustomerServiceTest {
     void getCustomerShouldThrowEntityNotFoundException() {
         Integer customerId = 1;
         when(customerRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.getCustomer(customerId));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.findOne(customerId));
     }
 }

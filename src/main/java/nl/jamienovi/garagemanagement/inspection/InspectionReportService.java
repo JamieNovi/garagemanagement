@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarRepository;
 import nl.jamienovi.garagemanagement.car.CarService;
-import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.eventmanager.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class InspectionReportService {
     @Autowired
     public InspectionReportService(InspectionReportRepository inspectionReportRepository,
                                    CarRepository carRepository,
-                                   CustomerService customerService,
+                                   CustomerServiceImpl customerServiceImpl,
                                    CarService carService,
                                    ApplicationEventPublisher applicationEventPublisher) {
         this.inspectionReportRepository = inspectionReportRepository;

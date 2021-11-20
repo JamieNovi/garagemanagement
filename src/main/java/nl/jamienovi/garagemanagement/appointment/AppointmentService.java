@@ -3,7 +3,7 @@ package nl.jamienovi.garagemanagement.appointment;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarService;
-import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +15,15 @@ import java.util.List;
 @Slf4j
 public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
-    private final CustomerService customerService;
+    private final CustomerServiceImpl customerServiceImpl;
     private final DtoMapper dtoMapper;
     private final CarService carService;
 
 
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerService customerService, DtoMapper dtoMapper, CarService carService) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerServiceImpl customerServiceImpl, DtoMapper dtoMapper, CarService carService) {
         this.appointmentRepository = appointmentRepository;
-        this.customerService = customerService;
+        this.customerServiceImpl = customerServiceImpl;
         this.dtoMapper = dtoMapper;
         this.carService = carService;
     }

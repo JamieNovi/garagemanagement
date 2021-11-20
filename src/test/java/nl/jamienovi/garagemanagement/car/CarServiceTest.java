@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.car;
 
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerBuilder;
-import nl.jamienovi.garagemanagement.customer.CustomerService;
+import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.junit.jupiter.api.Assertions;
@@ -25,7 +25,7 @@ class CarServiceTest {
     private CarRepository carRepository;
 
     @Mock
-    private CustomerService customerService;
+    private CustomerServiceImpl customerServiceImpl;
 
     @Mock
     private DtoMapper mapper;
@@ -57,7 +57,7 @@ class CarServiceTest {
         Car car = createCar();
         Customer customer = createCustomer();
 
-        when(customerService.getCustomer(1)).thenReturn(customer);
+        when(customerServiceImpl.findOne(1)).thenReturn(customer);
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
         Integer result = cut.addCarToCustomer(1,car);

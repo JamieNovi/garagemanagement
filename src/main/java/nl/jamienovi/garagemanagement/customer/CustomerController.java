@@ -20,40 +20,40 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/klanten")
 public class CustomerController {
-    private CustomerService customerService;
+    private CustomerServiceImpl customerServiceImpl;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    public CustomerController(CustomerServiceImpl customerServiceImpl) {
+        this.customerServiceImpl = customerServiceImpl;
     }
 
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+        return customerServiceImpl.findAll();
     }
 
     @GetMapping(path = "/{customerId}")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public ResponseEntity<Customer> getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
-        Customer customer= customerService.getCustomer(customerId);
+        Customer customer= customerServiceImpl.findOne(customerId);
         return ResponseEntity.ok().body(customer);
     }
 
     @GetMapping(path = "contact")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getCustomerCallingList() {
-        return customerService.getCustomerCallingList();
+        return customerServiceImpl.getCustomerCallingList();
     }
 
     @PostMapping(path = "")
     @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
-        Integer customerId = customerService.saveCustomer(customer);
+        Customer customerId = customerServiceImpl.add(customer);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(customerId)
+                .buildAndExpand(customerId.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(uri);
     }
@@ -63,7 +63,7 @@ public class CustomerController {
     public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId,
                                             @RequestBody CustomerUpdateDto customerUpdateDto,
                                             UriComponentsBuilder uriComponentsBuilder) {
-        customerService.updateCustomer(customerId , customerUpdateDto);
+        customerServiceImpl.update(customerId , customerUpdateDto);
         UriComponents uriComponents = uriComponentsBuilder.path("/api/klanten/{id}").buildAndExpand(customerId);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
@@ -73,7 +73,7 @@ public class CustomerController {
     @DeleteMapping(path = "/{customerId}")
     @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") int customerId){
-        customerService.deleteCustomer(customerId);
+        customerServiceImpl.delete(customerId);
         return ResponseEntity.ok(
                 new ResponseMessage(String.format("Klant verwijderd.")));
     }
