@@ -9,22 +9,22 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/tekortkomingen")
 public class ShortComingController {
-    private final ShortComingService shortComingService;
+    private final ShortComingServiceImpl shortComingServiceImpl;
 
     @Autowired
-    public ShortComingController(ShortComingService shortComingService) {
-        this.shortComingService = shortComingService;
+    public ShortComingController(ShortComingServiceImpl shortComingServiceImpl) {
+        this.shortComingServiceImpl = shortComingServiceImpl;
     }
 
     @PreAuthorize("hasAnyAuthority('shortcoming:read','shortcoming:write')")
     @GetMapping(path = "")
     public List<ShortComing> shortComings() {
-        return shortComingService.getAll();
+        return shortComingServiceImpl.findAll();
     }
 
     @PreAuthorize("hasAnyAuthority('shortcoming:write')")
     @PostMapping("/{inspectionReportId}")
     public void addShortComing(@PathVariable("inspectionReportId") Integer inspectionReportId,@RequestBody ShortComing shortComing){
-        shortComingService.addShortComing(inspectionReportId,shortComing);
+        shortComingServiceImpl.add(inspectionReportId,shortComing);
     }
 }

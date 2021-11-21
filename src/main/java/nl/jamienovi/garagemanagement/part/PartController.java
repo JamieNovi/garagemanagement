@@ -21,33 +21,33 @@ import java.util.List;
 @RequestMapping(path = "api/onderdelen")
 public class PartController {
 
-    private final PartService partService;
+    private final PartServiceImpl partServiceImpl;
 
     @Autowired
-    public PartController(PartService partService) {
-        this.partService = partService;
+    public PartController(PartServiceImpl partServiceImpl) {
+        this.partServiceImpl = partServiceImpl;
     }
 
     @PreAuthorize("hasAnyAuthority('part:read','part:write')")
     @GetMapping(path ="")
     public List<Part> getAllParts(){
-        return partService.getAllCarParts();
+        return partServiceImpl.findAll();
     }
 
     @PreAuthorize("hasAnyAuthority('part:read','part:write')")
     @GetMapping(path = "/{partId}")
     public Part getCarPart(@PathVariable("partId") String partId){
-        return partService.getPart(partId);
+        return partServiceImpl.findOne(partId);
     }
 
     @PreAuthorize("hasAnyAuthority('part:write')")
     @PostMapping(path = "")
     public ResponseEntity<?> createPart(@RequestBody @Valid Part part) {
-       String id =  partService.addPart(part);
+       Part newPart =  partServiceImpl.add(part);
 
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(id)
+                    .buildAndExpand(newPart.getId())
                     .toUri();
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(uri);
@@ -60,7 +60,7 @@ public class PartController {
                                         @RequestBody PartDto partDto,
                                         UriComponentsBuilder uriComponentsBuilder) {
 
-        partService.updatePart(partId, partDto);
+        partServiceImpl.update(partId, partDto);
 
         UriComponents uriComponents = uriComponentsBuilder.path("/api/onderdelen/{id}")
                 .buildAndExpand(partId);
@@ -74,7 +74,7 @@ public class PartController {
     @DeleteMapping(path = "/{partId}")
     public ResponseEntity<?> deletePart(@PathVariable("partId") String partId) throws EntityNotFoundException
     {
-        partService.deletePart(partId);
+        partServiceImpl.delete(partId);
         return ResponseEntity.ok(new ResponseMessage(String.format("Onderdeel met id %s verwijderd",partId)));
     }
 }

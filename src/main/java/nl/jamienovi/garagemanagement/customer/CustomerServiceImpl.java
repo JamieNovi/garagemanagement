@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.customer;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.service.CustomerService;
+import nl.jamienovi.garagemanagement.services.CustomerService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

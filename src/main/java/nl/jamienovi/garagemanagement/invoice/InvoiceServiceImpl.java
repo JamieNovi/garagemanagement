@@ -4,6 +4,7 @@ import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto;
+import nl.jamienovi.garagemanagement.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,19 +25,20 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class InvoiceService  {
+public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ServletContext servletContext;
     private final TemplateEngine templateEngine;
 
     @Autowired
-    public InvoiceService(InvoiceRepository invoiceRepository, ServletContext servletContext,
-                          TemplateEngine templateEngine) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, ServletContext servletContext,
+                              TemplateEngine templateEngine) {
         this.invoiceRepository = invoiceRepository;
         this.servletContext = servletContext;
         this.templateEngine = templateEngine;
     }
 
+    @Override
     public InvoicePdf getInvoice(Integer customerId) {
         return invoiceRepository.getById(customerId);
     }
@@ -53,6 +55,7 @@ public class InvoiceService  {
         return invoiceRepository.getLaborOrderLines(customerId);
     }
 
+    @Override
     public InvoicePdf storeInvoicePdf(Integer customerId, byte[] data) throws IOException {
        InvoicePdf invoicePdf = new InvoicePdf(customerId,data);
        try{

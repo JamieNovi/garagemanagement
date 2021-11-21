@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.labor;
 
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.services.GenericService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class LaborService {
+public class LaborService implements GenericService<Labor,String,LaborDto> {
     private final LaborRepository laborRepository;
     private DtoMapper mapper;
 
@@ -17,33 +18,38 @@ public class LaborService {
         this.mapper = mapper;
     }
 
-    public List<Labor> getAll(){
+    @Override
+    public List<Labor> findAll(){
         return laborRepository.findAll();
     }
 
-    public Labor getSingle(String laborId){
+    @Override
+    public Labor findOne(String laborId){
         Labor labor = laborRepository.findById(laborId)
                 .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id",laborId.toString())
                 );
         return labor;
     }
 
-    public void createLaborItem(Labor labor) {
+    @Override
+    public Labor add(Labor labor) {
         Optional<Labor> laborOptional = laborRepository.findById(labor.getId());
         if(laborOptional.isPresent()) {
             throw new IllegalStateException("Handeling bestaat al");
         }
-        laborRepository.save(labor);
+        return laborRepository.save(labor);
     }
 
-    public void updateLabor(String laborId, LaborDto laborDto) {
+    @Override
+    public void update(String laborId, LaborDto laborDto) {
         Labor updatedLabor = laborRepository.findById(laborId)
                 .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id", laborId.toString()));
         mapper.updateLaborFromDto(laborDto,updatedLabor);
         laborRepository.save(updatedLabor);
     }
 
-    public void deleteLabor(String laborId) {
+    @Override
+    public void delete(String laborId) {
         Labor labor = laborRepository.findById(laborId)
                 .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id", laborId));
 

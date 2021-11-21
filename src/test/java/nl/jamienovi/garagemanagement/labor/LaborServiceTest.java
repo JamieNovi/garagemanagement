@@ -49,20 +49,20 @@ class LaborServiceTest {
 
     @Test
     void getAll() {
-        laborService.getAll();
+        laborService.findAll();
         verify(laborRepository).findAll();
     }
 
     @Test
     void getSingle() {
         when(laborRepository.findById("HP001")).thenReturn(Optional.of(labors.get(1)));
-        laborService.getSingle("HP001");
+        laborService.findOne("HP001");
         verify(laborRepository).findById("HP001");
     }
 
     @Test
     void createLaborItem() {
-        laborService.createLaborItem(inspection);
+        laborService.add(inspection);
 
         ArgumentCaptor<Labor> laborArgumentCaptor = ArgumentCaptor.forClass(Labor.class);
         verify(laborRepository).save(laborArgumentCaptor.capture());
@@ -74,13 +74,13 @@ class LaborServiceTest {
     @Test
     void deleteLabor() {
         when(laborRepository.findById(inspection.getId())).thenReturn(Optional.of(inspection));
-        laborService.deleteLabor(inspection.getId());
+        laborService.delete(inspection.getId());
         verify(laborRepository).delete(inspection);
     }
 
     @Test
     void updatedLaborShouldThrowEntityNotFoundException() {
         when(laborRepository.findById("1")).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> laborService.updateLabor("1",any()));
+        Assertions.assertThrows(EntityNotFoundException.class,() -> laborService.update("1",any()));
     }
 }

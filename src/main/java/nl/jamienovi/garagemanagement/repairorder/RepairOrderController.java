@@ -22,14 +22,14 @@ public class RepairOrderController {
     @PreAuthorize("hasAnyAuthority('repairorder:read','repairorder:write')")
     @GetMapping(path="")
     public List<RepairOrder> getAll(){
-        return repairOrderService.getAll();
+        return repairOrderService.findAll();
     }
 
 
     @PreAuthorize("hasAnyAuthority('repairorder:read','repairorder:write')")
     @GetMapping(path="/{repairId}")
     public ResponseEntity<?> getSingle(@PathVariable("repairId") Integer repairId){
-        RepairOrder repairOrder = repairOrderService.getSingle(repairId);
+        RepairOrder repairOrder = repairOrderService.findOne(repairId);
         if(repairOrder == null){
             return ResponseEntity.notFound().build();
         }else {
@@ -39,7 +39,7 @@ public class RepairOrderController {
     @PreAuthorize("hasAnyAuthority('repairorder:write')")
     @PostMapping(path = "/{carId}")
     public ResponseEntity<?> create(@PathVariable Integer carId){
-        repairOrderService.addRepairOrder(carId);
+        repairOrderService.add(carId);
         return ResponseEntity.ok(new ResponseMessage("Reparatie toegevoegd."));
     }
 

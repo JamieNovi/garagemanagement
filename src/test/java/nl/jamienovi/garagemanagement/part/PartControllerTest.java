@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 class PartControllerTest {
 
     @MockBean
-    private PartService partService;
+    private PartServiceImpl partServiceImpl;
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,7 +33,7 @@ class PartControllerTest {
     @Test
     @WithMockUser(authorities = {"part:read"})
     void getAllParts() throws Exception {
-        Mockito.when(partService.getAllCarParts()).thenReturn(
+        Mockito.when(partServiceImpl.findAll()).thenReturn(
                 List.of(new Part("P001","Remschijven",49.99,15)));
 
         RestAssuredMockMvc
@@ -53,7 +53,7 @@ class PartControllerTest {
     @Test
     @WithMockUser(authorities = {"part:read"})
     void shouldGetCarPart() throws Exception {
-        Mockito.when(partService.getPart("P001")).thenReturn(
+        Mockito.when(partServiceImpl.findOne("P001")).thenReturn(
                 new Part("P001","Remschijven",49.99,15));
 
         RestAssuredMockMvc
@@ -70,7 +70,8 @@ class PartControllerTest {
     @Test
     @WithMockUser(authorities = {"part:write"})
     void shouldCreatePart(){
-        Mockito.when(partService.addPart(any(Part.class))).thenReturn("P001");
+        Part newpart = new Part("P001","katalysator",160.95,2);
+        Mockito.when(partServiceImpl.add(any(Part.class))).thenReturn(newpart);
 
         RestAssuredMockMvc
                 .given()

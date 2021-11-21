@@ -3,6 +3,7 @@ package nl.jamienovi.garagemanagement.customer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,7 +16,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // Testing weblayer
@@ -94,7 +96,17 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(authorities = {"customer:write"})
     void shouldCreateCustomer() throws Exception {
-//        Mockito.when(customerService.add(any(Customer.class))).thenReturn(1);
+        Mockito.when(customerServiceImpl.add(any(Customer.class))).thenReturn(
+                new Customer(
+                        1,
+                        "Danni",
+                        "Banks",
+                        "054-242342",
+                        "danni@instagram.com",
+                        "2nd street",
+                        "93992",
+                        "Malibu"));
+
         Customer customer = new Customer(
                 "Danni",
                 "Banks",

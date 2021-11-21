@@ -53,7 +53,7 @@ class LaborControllerTestMockMvcStandaloneTest {
 
     @Test
     void getAll() throws Exception{
-        given(laborService.getAll()).willReturn(labors);
+        given(laborService.findAll()).willReturn(labors);
 
         //when
         MockHttpServletResponse response = mockmvc.perform(
@@ -67,7 +67,7 @@ class LaborControllerTestMockMvcStandaloneTest {
 
     @Test
     void getLabor() throws Exception {
-        given(laborService.getSingle(laborDiscBrakes.getId())).willReturn(laborDiscBrakes);
+        given(laborService.findOne(laborDiscBrakes.getId())).willReturn(laborDiscBrakes);
 
         //when
         MockHttpServletResponse response = mockmvc.perform(

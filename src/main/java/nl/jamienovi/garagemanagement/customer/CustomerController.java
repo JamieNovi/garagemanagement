@@ -3,6 +3,7 @@ package nl.jamienovi.garagemanagement.customer;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
+import nl.jamienovi.garagemanagement.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,36 +21,37 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/klanten")
 public class CustomerController {
-    private CustomerServiceImpl customerServiceImpl;
+    private CustomerService customerService;
 
     @Autowired
-    public CustomerController(CustomerServiceImpl customerServiceImpl) {
-        this.customerServiceImpl = customerServiceImpl;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     @GetMapping("")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getAllCustomers() {
-        return customerServiceImpl.findAll();
+        return customerService.findAll();
     }
 
     @GetMapping(path = "/{customerId}")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public ResponseEntity<Customer> getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
-        Customer customer= customerServiceImpl.findOne(customerId);
+        Customer customer= customerService.findOne(customerId);
         return ResponseEntity.ok().body(customer);
     }
 
     @GetMapping(path = "contact")
     @PreAuthorize("hasAnyAuthority('customer:read')")
     public List<Customer> getCustomerCallingList() {
-        return customerServiceImpl.getCustomerCallingList();
+        return customerService.getCustomerCallingList();
     }
 
     @PostMapping(path = "")
     @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
-        Customer customerId = customerServiceImpl.add(customer);
+        Customer customerId = customerService.add(customer);
+        log.info(customerId.toString());
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -63,7 +65,7 @@ public class CustomerController {
     public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId,
                                             @RequestBody CustomerUpdateDto customerUpdateDto,
                                             UriComponentsBuilder uriComponentsBuilder) {
-        customerServiceImpl.update(customerId , customerUpdateDto);
+        customerService.update(customerId , customerUpdateDto);
         UriComponents uriComponents = uriComponentsBuilder.path("/api/klanten/{id}").buildAndExpand(customerId);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(uriComponents.toUri());
@@ -73,7 +75,7 @@ public class CustomerController {
     @DeleteMapping(path = "/{customerId}")
     @PreAuthorize("hasAuthority('customer:write')")
     public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") int customerId){
-        customerServiceImpl.delete(customerId);
+        customerService.delete(customerId);
         return ResponseEntity.ok(
                 new ResponseMessage(String.format("Klant verwijderd.")));
     }

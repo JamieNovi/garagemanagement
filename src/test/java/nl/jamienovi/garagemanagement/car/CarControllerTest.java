@@ -25,14 +25,14 @@ public class CarControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CarService carService;
+    private CarServiceImpl carServiceImpl;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     @WithMockUser(authorities = {"car:read"})
     void shouldGetAllCars() throws  Exception{
-        Mockito.when(carService.getAllCars())
+        Mockito.when(carServiceImpl.findAll())
                 .thenReturn(List.of(new Car(
                         1,"Tesla","Model 1","KK-9S-SS"
                 )));
@@ -46,7 +46,7 @@ public class CarControllerTest {
     @Test
     @WithMockUser(authorities = {"car:read"})
     void shouldgetCar() throws Exception {
-        Mockito.when(carService.getCar(1))
+        Mockito.when(carServiceImpl.findOne(1))
                 .thenReturn(new Car(
                         1,"Tesla","Model 1","KK-9S-SS"
                 ));
@@ -85,6 +85,6 @@ public class CarControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(carService).deleteCar(any(Integer.class));
+        verify(carServiceImpl).delete(any(Integer.class));
     }
 }

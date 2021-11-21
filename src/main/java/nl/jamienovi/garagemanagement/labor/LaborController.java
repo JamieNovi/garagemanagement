@@ -21,19 +21,19 @@ public class LaborController {
 
     @PreAuthorize("hasAnyAuthority('labor:read','labor:write')")
     @GetMapping(path = "")
-    public List<Labor> getAll(){return laborService.getAll();}
+    public List<Labor> getAll(){return laborService.findAll();}
 
 
     @PreAuthorize("hasAnyAuthority('labor:read','labor:write')")
     @GetMapping(path = "{laborId}")
     public Labor getLabor(@PathVariable String laborId) throws EntityNotFoundException {
-        return laborService.getSingle(laborId);
+        return laborService.findOne(laborId);
     }
 
     @PostMapping(path = "")
     @PreAuthorize("hasAnyAuthority('labor:write')")
     public ResponseEntity<?> addLaborItem(@RequestBody Labor labor) {
-        laborService.createLaborItem(labor);
+        laborService.add(labor);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(labor.getId())
@@ -45,7 +45,7 @@ public class LaborController {
     @PutMapping(path = "/{laborId}")
     public ResponseEntity<?> updateLabor(@PathVariable String laborId,@RequestBody LaborDto laborDto)
     throws EntityNotFoundException {
-        laborService.updateLabor(laborId,laborDto);
+        laborService.update(laborId,laborDto);
 
         return ResponseEntity.ok(new ResponseMessage("Handeling aangepast"));
     }
@@ -53,7 +53,7 @@ public class LaborController {
     @PreAuthorize("hasAnyAuthority('labor:write')")
     @DeleteMapping(path = "/{laborId}")
     public ResponseEntity<?> deleteLabor(@PathVariable String laborId) throws EntityNotFoundException {
-        laborService.deleteLabor(laborId);
+        laborService.delete(laborId);
 
         return ResponseEntity.ok(new ResponseMessage("Handeling verwijderd"));
     }

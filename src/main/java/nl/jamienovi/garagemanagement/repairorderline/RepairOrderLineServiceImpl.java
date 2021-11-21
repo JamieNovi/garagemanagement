@@ -6,7 +6,7 @@ import nl.jamienovi.garagemanagement.labor.Labor;
 import nl.jamienovi.garagemanagement.labor.LaborService;
 import nl.jamienovi.garagemanagement.part.Item;
 import nl.jamienovi.garagemanagement.part.Part;
-import nl.jamienovi.garagemanagement.part.PartService;
+import nl.jamienovi.garagemanagement.part.PartServiceImpl;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,36 +16,39 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class RepairOrderLineService {
+public class RepairOrderLineServiceImpl implements nl.jamienovi.garagemanagement.services.RepairOrderLineService {
     private final RepairOrderLineRepository repairOrderLineRepository;
     private final RepairOrderService repairOrderService;
-    private final PartService partService;
+    private final PartServiceImpl partServiceImpl;
     private final LaborService laborService;
 
     @Autowired
-    public RepairOrderLineService(RepairOrderLineRepository repairOrderLineRepository,
-                                  RepairOrderService repairOrderService, PartService partService,
-                                  LaborService laborService) {
+    public RepairOrderLineServiceImpl(RepairOrderLineRepository repairOrderLineRepository,
+                                      RepairOrderService repairOrderService, PartServiceImpl partServiceImpl,
+                                      LaborService laborService) {
         this.repairOrderLineRepository = repairOrderLineRepository;
         this.repairOrderService = repairOrderService;
-        this.partService = partService;
+        this.partServiceImpl = partServiceImpl;
         this.laborService = laborService;
     }
 
+    @Override
     public List<RepairOrderLine> getAll() {
         return repairOrderLineRepository.findAll();
     }
 
 
+    @Override
     public void addRepairOrderPartItem(Integer repairOrderId, String partCode, Integer quantity){
-        RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
-        Part addedPart = partService.getPart(partCode);
+        RepairOrder repairOrder = repairOrderService.findOne(repairOrderId);
+        Part addedPart = partServiceImpl.findOne(partCode);
         RepairOrderLine line = buildOrderline(repairOrder, addedPart);
         line.setOrderLinePrice(addedPart.getPrice() * quantity);
         repairOrderLineRepository.save(line);
         log.info("Onderdeel: {} toegevoegd aan reparatie-order: {}",addedPart.getName(),repairOrderId);
     }
 
+    @Override
     public RepairOrderLine buildOrderline(RepairOrder repairOrder, Item item) {
         RepairOrderLine line = new RepairOrderLine();
         line.setRepairOrder(repairOrder);
@@ -62,9 +65,10 @@ public class RepairOrderLineService {
         return line;
     }
 
-    public void addRepairOrderLaborItem(Integer repairOrderId,String laborId){
-        RepairOrder repairOrder = repairOrderService.getSingle(repairOrderId);
-        Labor addedLabor = laborService.getSingle(laborId);
+    @Override
+    public void addRepairOrderLaborItem(Integer repairOrderId, String laborId){
+        RepairOrder repairOrder = repairOrderService.findOne(repairOrderId);
+        Labor addedLabor = laborService.findOne(laborId);
         RepairOrderLine line =  buildOrderline(repairOrder,addedLabor);
         repairOrderLineRepository.save(line);
         log.info("Handeling: {} toegevoegd aan reparatie-order: {} ",addedLabor.getName(),repairOrderId);

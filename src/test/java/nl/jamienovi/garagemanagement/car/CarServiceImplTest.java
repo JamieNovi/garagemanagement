@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CarServiceTest {
+class CarServiceImplTest {
     @Mock
     private CarRepository carRepository;
 
@@ -31,25 +31,25 @@ class CarServiceTest {
     private DtoMapper mapper;
 
     @InjectMocks
-    private CarService cut;
+    private CarServiceImpl cut;
 
     @Test
     void shouldGetAllCars() {
-        cut.getAllCars();
+        cut.findAll();
         verify(carRepository).findAll();
     }
 
     @Test
     void shouldGetCar() {
         when(carRepository.findById(1)).thenReturn(Optional.of(createCar()));
-        cut.getCar(1);
+        cut.findOne(1);
         verify(carRepository).findById(1);
     }
 
     @Test
     void shouldThrowEntityNotFoundExceptionWhenCarNotFound() {
         when(carRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.getCar(1));
+        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.findOne(1));
     }
 
     @Test
@@ -68,14 +68,14 @@ class CarServiceTest {
     @Test
     void shouldThrowEntityNotFoundExceptionWhenUpdatedCarNotFound() {
         when(carRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.updateCarCustomer(1,any()));
+        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.update(1,any()));
     }
 
     @Test
     void shouldUpdateCarCustomer() {
         when(carRepository.findById(1)).thenReturn(Optional.of(createCar()));
 
-        cut.updateCarCustomer(1,any());
+        cut.update(1,any());
 
         verify(carRepository).save(any());
     }

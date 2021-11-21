@@ -3,7 +3,6 @@ package nl.jamienovi.garagemanagement.dataloaders;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.appointment.Appointment;
-import nl.jamienovi.garagemanagement.appointment.AppointmentService;
 import nl.jamienovi.garagemanagement.appointment.AppointmentType;
 import nl.jamienovi.garagemanagement.authentication.ApplicationUser;
 import nl.jamienovi.garagemanagement.authentication.ApplicationUserRepository;
@@ -11,6 +10,7 @@ import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.security.UserRole;
+import nl.jamienovi.garagemanagement.services.AppointmentService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,7 +66,7 @@ public class CustomerDataLoader implements CommandLineRunner {
         customer1.addCar(car1);
         customerServiceImpl.add(customer1);
 
-        appointmentService.save(1,new Appointment(
+        appointmentService.addAppointmentToCar(1,new Appointment(
                 LocalDate.of(2021,10,27),
                 LocalTime.of(10,15,00),
                 AppointmentType.KEURING
@@ -84,7 +84,7 @@ public class CustomerDataLoader implements CommandLineRunner {
         customer2.addCar(car2);
         customerServiceImpl.add(customer2);
 
-        appointmentService.save(2,new Appointment(
+        appointmentService.addAppointmentToCar(2,new Appointment(
                 LocalDate.of(2021,11,11),
                 LocalTime.of(10,15,00),
                 AppointmentType.KEURING

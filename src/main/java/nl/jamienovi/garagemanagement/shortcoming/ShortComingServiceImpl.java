@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.shortcoming;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
-import nl.jamienovi.garagemanagement.inspection.InspectionReportService;
+import nl.jamienovi.garagemanagement.inspection.InspectionReportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,23 +10,25 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class ShortComingService {
+public class ShortComingServiceImpl implements nl.jamienovi.garagemanagement.services.ShortComingService {
     private final ShortComingRepository shortComingRepository;
-    private final InspectionReportService inspectionReportService;
+    private final InspectionReportServiceImpl inspectionReportServiceImpl;
 
     @Autowired
-    public ShortComingService(ShortComingRepository shortComingRepository,
-                              InspectionReportService inspectionReportService) {
+    public ShortComingServiceImpl(ShortComingRepository shortComingRepository,
+                                  InspectionReportServiceImpl inspectionReportServiceImpl) {
         this.shortComingRepository = shortComingRepository;
-        this.inspectionReportService = inspectionReportService;
+        this.inspectionReportServiceImpl = inspectionReportServiceImpl;
     }
 
-    public List<ShortComing> getAll() {
+    @Override
+    public List<ShortComing> findAll() {
         return shortComingRepository.findAll();
     }
 
-    public void addShortComing(Integer inspectionReportId, ShortComing shortComing) {
-        InspectionReport inspectionReport = inspectionReportService.getInspectionReport(inspectionReportId);
+    @Override
+    public void add(Integer inspectionReportId, ShortComing shortComing) {
+        InspectionReport inspectionReport = inspectionReportServiceImpl.getInspectionReport(inspectionReportId);
         shortComing.setInspectionReport(inspectionReport);
         shortComingRepository.save(shortComing);
 

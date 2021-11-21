@@ -3,10 +3,14 @@ package nl.jamienovi.garagemanagement.inspection;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarRepository;
-import nl.jamienovi.garagemanagement.car.CarService;
 import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.eventmanager.*;
+import nl.jamienovi.garagemanagement.eventmanager.AddApprovalStatusEvent;
+import nl.jamienovi.garagemanagement.eventmanager.AddInspectionReportEvent;
+import nl.jamienovi.garagemanagement.eventmanager.ChangeInspectionStatusEvent;
+import nl.jamienovi.garagemanagement.eventmanager.RepairOrderCompletedEvent;
+import nl.jamienovi.garagemanagement.services.CarService;
+import nl.jamienovi.garagemanagement.services.InspectionReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -24,37 +28,35 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-public class InspectionReportService {
+public class InspectionReportServiceImpl implements InspectionReportService {
     private final InspectionReportRepository inspectionReportRepository;
-    private final CarRepository carRepository;
     private final CarService carService;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public InspectionReportService(InspectionReportRepository inspectionReportRepository,
-                                   CarRepository carRepository,
-                                   CustomerServiceImpl customerServiceImpl,
-                                   CarService carService,
-                                   ApplicationEventPublisher applicationEventPublisher) {
+    public InspectionReportServiceImpl(InspectionReportRepository inspectionReportRepository,
+                                       CarRepository carRepository,
+                                       CustomerServiceImpl customerServiceImpl,
+                                       CarService carService,
+                                       ApplicationEventPublisher applicationEventPublisher) {
         this.inspectionReportRepository = inspectionReportRepository;
-        this.carRepository = carRepository;
         this.carService = carService;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+    @Override
     public List<InspectionReport> getAllInspectionReports() {
         return inspectionReportRepository.findAll();
     }
 
+    @Override
     public InspectionReport getInspectionReport(Integer inspectionReportId){
         return inspectionReportRepository.getById(inspectionReportId);
     }
 
+    @Override
     public void addInspectionReport(Integer carId){
-        Car existingCar = carRepository.findById(carId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        Car.class,"id",carId.toString()
-                ));
+        Car existingCar = carService.findOne(carId);
 
         if(hasPendingStatus(existingCar.getId())){ // check if car has pending inspectionreport
             throw new IllegalStateException("Auto heeft al een keuring openstaan");
@@ -79,6 +81,7 @@ public class InspectionReportService {
         }
     }
 
+    @Override
     public void deleteInspectionReport(Integer inspectionReportId){
         InspectionReport inspectionReport = inspectionReportRepository.findById(inspectionReportId)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -87,7 +90,8 @@ public class InspectionReportService {
         inspectionReportRepository.delete(inspectionReport);
     }
 
-    public void setInspectionReportStatus(Integer inspectionReportId,InspectionStatus status){
+    @Override
+    public void setInspectionReportStatus(Integer inspectionReportId, InspectionStatus status){
         InspectionReport report = inspectionReportRepository.getById(inspectionReportId);
         report.setStatus(status);
         inspectionReportRepository.save(report);
@@ -111,6 +115,7 @@ public class InspectionReportService {
         }
     }
 
+    @Override
     public void setIsRepaired(Integer inspectionReportId) {
         InspectionReport updateInspectionReport = inspectionReportRepository
                 .getById(inspectionReportId);
@@ -118,6 +123,7 @@ public class InspectionReportService {
         inspectionReportRepository.save(updateInspectionReport);
     }
 
+    @Override
     public void setApprovalRepair(Integer inspectionReportId, RepairApprovalStatus status) {
         InspectionReport report = inspectionReportRepository.getById(inspectionReportId);
         report.setRepairApprovalStatus(status);
@@ -144,8 +150,9 @@ public class InspectionReportService {
      * @param carId
      * @return Boolean true of false
      */
+    @Override
     public Boolean hasPendingStatus(Integer carId) {
-        Car car = carRepository.getById(carId);
+        Car car = carService.findOne(carId);
         Boolean carIsPending = false;
 
         for (InspectionReport item : car.getInspectionReports()) {
@@ -154,15 +161,16 @@ public class InspectionReportService {
                         carIsPending = true;
                         break;
                     case AFGEKEURD:
-                        carIsPending = true;
+                        carIsPending = false;
                         break;
                     case GOEDGEKEURD:
-                        carIsPending = true;
+                        carIsPending = false;
                 }
             }
         return carIsPending;
     }
 
+    @Override
     @EventListener
     public void handleRepairOrderStatusEvent(RepairOrderCompletedEvent event) {
         setIsRepaired(event.getInspectionReportId());

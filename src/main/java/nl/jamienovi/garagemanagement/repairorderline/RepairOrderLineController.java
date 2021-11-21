@@ -12,17 +12,17 @@ import java.util.List;
 @RequestMapping(path = "/api")
 public class RepairOrderLineController {
 
-    private final RepairOrderLineService repairOrderLineService;
+    private final RepairOrderLineServiceImpl repairOrderLineServiceImpl;
 
     @Autowired
-    public RepairOrderLineController(RepairOrderLineService repairOrderLineService) {
-        this.repairOrderLineService = repairOrderLineService;
+    public RepairOrderLineController(RepairOrderLineServiceImpl repairOrderLineServiceImpl) {
+        this.repairOrderLineServiceImpl = repairOrderLineServiceImpl;
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:read','repairorderline:write')")
     @GetMapping(path = "/reparatie-regels")
     public List<RepairOrderLine> getAll() {
-        return repairOrderLineService.getAll();
+        return repairOrderLineServiceImpl.getAll();
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:write')")
@@ -30,14 +30,14 @@ public class RepairOrderLineController {
     public void addRepairOrderPartItem(@PathVariable("repairOrderId") Integer repairOrderId,
                                        @PathVariable("partId") String partId,
                                        @RequestParam("quantity") Integer quantity){
-        repairOrderLineService.addRepairOrderPartItem(repairOrderId,partId, quantity);
+        repairOrderLineServiceImpl.addRepairOrderPartItem(repairOrderId,partId, quantity);
     }
 
     @PreAuthorize("hasAnyAuthority('repairorderline:write')")
     @PostMapping(path = "/reparatie-handeling/{repairOrder}/{laborId}")
     public void addRepairOrderLaborItem(@PathVariable("repairOrder") Integer repairOrderId,
                                         @PathVariable("laborId") String laborId){
-        repairOrderLineService.addRepairOrderLaborItem(repairOrderId,laborId);
+        repairOrderLineServiceImpl.addRepairOrderLaborItem(repairOrderId,laborId);
     }
 
 

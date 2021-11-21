@@ -2,7 +2,7 @@ package nl.jamienovi.garagemanagement.invoice;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
-import nl.jamienovi.garagemanagement.car.CarService;
+import nl.jamienovi.garagemanagement.car.CarServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +28,19 @@ import java.util.Optional;
 @Controller
 @RequestMapping(path = "/api")
 public class InvoiceController {
-    private final InvoiceService invoiceService;
-    private final CarService carService;
+    private final InvoiceServiceImpl invoiceServiceImpl;
+    private final CarServiceImpl carServiceImpl;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, CarService carService) {
-        this.invoiceService = invoiceService;
-        this.carService = carService;
+    public InvoiceController(InvoiceServiceImpl invoiceServiceImpl, CarServiceImpl carServiceImpl) {
+        this.invoiceServiceImpl = invoiceServiceImpl;
+        this.carServiceImpl = carServiceImpl;
     }
 
     @GetMapping(path="factuur/{customerId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_FRONTOFFICE')")
     public ResponseEntity<byte[]> getInvoice(@PathVariable Integer customerId){
-        InvoicePdf invoicePdf =  invoiceService.getInvoice(customerId);
+        InvoicePdf invoicePdf =  invoiceServiceImpl.getInvoice(customerId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=Factuur_klant_id"+ customerId +".pdf")
@@ -52,14 +52,14 @@ public class InvoiceController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_FRONTOFFICE')")
     public String generateInvoice(@PathVariable Integer carId, Model model){
         Optional<InvoiceCustomerDataDto> customerOptional =
-                Optional.ofNullable(invoiceService.getCustomerData(carId));
+                Optional.ofNullable(invoiceServiceImpl.getCustomerData(carId));
         if(customerOptional.isEmpty()){
             throw new EntityNotFoundException(InvoiceCustomerDataDto.class,"carId",carId.toString());
         }else{
-            model.addAttribute("customer",invoiceService.getCustomerData(carId));
-            model.addAttribute("carparts",invoiceService.getPartOrderlines(carId));
-            model.addAttribute("labors", invoiceService.getLaborOrderlines(carId));
-            model.addAttribute("subTotal", invoiceService.getSubtotalFromOrderLines(carId));
+            model.addAttribute("customer", invoiceServiceImpl.getCustomerData(carId));
+            model.addAttribute("carparts", invoiceServiceImpl.getPartOrderlines(carId));
+            model.addAttribute("labors", invoiceServiceImpl.getLaborOrderlines(carId));
+            model.addAttribute("subTotal", invoiceServiceImpl.getSubtotalFromOrderLines(carId));
             log.info("Factuur gegenereerd.");
             return "customer-invoice";
         }
@@ -78,13 +78,13 @@ public class InvoiceController {
                                          @PathVariable("carId") Integer carId,
                                          UriComponentsBuilder uriComponentsBuilder) {
         String message = "";
-        Car car  = carService.getCar(carId);
+        Car car  = carServiceImpl.findOne(carId);
         Integer customerId = car.getCustomer().getId();
-        String invoiceHtml = invoiceService.setWebContext(request,response,carId);
-        byte[] data = invoiceService.setUpSourceAndTargetIOStreams(invoiceHtml);
+        String invoiceHtml = invoiceServiceImpl.setWebContext(request,response,carId);
+        byte[] data = invoiceServiceImpl.setUpSourceAndTargetIOStreams(invoiceHtml);
 
         try{
-            invoiceService.storeInvoicePdf(customerId,data);
+            invoiceServiceImpl.storeInvoicePdf(customerId,data);
             UriComponents uriComponents = uriComponentsBuilder.path("/api/factuur/{id}")
                     .buildAndExpand(customerId);
             HttpHeaders headers = new HttpHeaders();

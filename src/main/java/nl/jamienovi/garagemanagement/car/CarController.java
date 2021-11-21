@@ -2,6 +2,7 @@ package nl.jamienovi.garagemanagement.car;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
+import nl.jamienovi.garagemanagement.services.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,13 @@ public class CarController {
     @GetMapping(path = "/auto")
     @PreAuthorize("hasAnyAuthority('car:read','car:write')")
     public List<Car> getAllCars() {
-        return carService.getAllCars();
+        return carService.findAll();
     }
 
     @GetMapping(path = "/auto/{carId}")
     @PreAuthorize("hasAnyAuthority('car:read','car:write')")
     public Car getCar(@PathVariable("carId") int carId) {
-        return carService.getCar(carId);
+        return carService.findOne(carId);
     }
 
     @PreAuthorize("hasAuthority('car:write')")
@@ -56,7 +57,7 @@ public class CarController {
     public ResponseEntity<URI> updateCar(@PathVariable("carId") Integer carId,
                                          @RequestBody CarDto carDto,
                                          UriComponentsBuilder uriComponentsBuilder){
-        carService.updateCarCustomer(carId,carDto);
+        carService.update(carId,carDto);
 
         UriComponents uriComponents = uriComponentsBuilder.path("/api/auto/{id}")
                 .buildAndExpand(carId);
@@ -69,7 +70,7 @@ public class CarController {
     @DeleteMapping(path = "/auto/{customerId}")
     @PreAuthorize("hasAuthority('car:write')")
        public ResponseEntity<?> deleteCar(@PathVariable("customerId") int customerId) {
-           carService.deleteCar(customerId);
+           carService.delete(customerId);
            return ResponseEntity.ok(
                    new ResponseMessage(String.format("Auto met id %s is verwijderd",customerId))
            );

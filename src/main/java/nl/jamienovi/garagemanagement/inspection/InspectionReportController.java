@@ -12,37 +12,37 @@ import java.util.List;
 @RestController
 @RequestMapping("api/keuringen")
 public class InspectionReportController {
-    private final InspectionReportService inspectionReportService;
+    private final InspectionReportServiceImpl inspectionReportServiceImpl;
 
     @Autowired
-    public InspectionReportController(InspectionReportService inspectionReportService) {
-        this.inspectionReportService = inspectionReportService;
+    public InspectionReportController(InspectionReportServiceImpl inspectionReportServiceImpl) {
+        this.inspectionReportServiceImpl = inspectionReportServiceImpl;
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:read','inspection:write')")
     @GetMapping(path ="")
     public List<InspectionReport> getAllInspectionReports(){
-        return inspectionReportService.getAllInspectionReports();
+        return inspectionReportServiceImpl.getAllInspectionReports();
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:read')")
     @PostMapping(path = "/{carId}")
     public ResponseEntity<?> addInspectionReport(@PathVariable("carId") Integer carId){
-        inspectionReportService.addInspectionReport(carId);
+        inspectionReportServiceImpl.addInspectionReport(carId);
         return ResponseEntity.ok(new ResponseMessage("Keuringsrapport toegevoegd en reparatieorder toegevoegd."));
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:write')")
     @DeleteMapping(path = "/{inspectionReportId}")
     public ResponseEntity<?> deleteInspectionReport(@PathVariable Integer inspectionReportId) throws EntityNotFoundException{
-        inspectionReportService.deleteInspectionReport(inspectionReportId);
+        inspectionReportServiceImpl.deleteInspectionReport(inspectionReportId);
         return ResponseEntity.ok(new ResponseMessage("Keuringsrapport verwijderd."));
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:write')")
     @PutMapping(path = "/{inspectionReportId}")
     public ResponseEntity<?> setInspectionStatus(@PathVariable Integer inspectionReportId, @RequestParam("status") InspectionStatus status){
-        inspectionReportService.setInspectionReportStatus(inspectionReportId, status );
+        inspectionReportServiceImpl.setInspectionReportStatus(inspectionReportId, status );
         return ResponseEntity.ok(new ResponseMessage("Status keuringsrapport:" + status));
     }
 
@@ -50,7 +50,7 @@ public class InspectionReportController {
     @PutMapping(path = "/repareren/{inspectionReportId}")
     public ResponseEntity<?> setApprovalRepair(@PathVariable Integer inspectionReportId,
                                                @RequestParam("akkoord") RepairApprovalStatus status){
-        inspectionReportService.setApprovalRepair(inspectionReportId,status);
+        inspectionReportServiceImpl.setApprovalRepair(inspectionReportId,status);
         return ResponseEntity.ok(new ResponseMessage("akkoord niet akkoord in systeem gezet"));
     }
 

@@ -2,6 +2,7 @@ package nl.jamienovi.garagemanagement.appointment;
 
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
+import nl.jamienovi.garagemanagement.services.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,19 +22,19 @@ public class AppointmentController {
     @GetMapping(path = "/")
     @PreAuthorize("hasAnyAuthority('appointment:read')")
     public List<Appointment> getAll() {
-        return appointmentService.getAll();
+        return appointmentService.findAll();
     }
 
     @GetMapping(path = "/{appointmentId}")
     @PreAuthorize("hasAnyAuthority('appointment:read')")
     public Appointment getSingle(@PathVariable Integer appointmentId) throws EntityNotFoundException {
-        return appointmentService.getSingle(appointmentId);
+        return appointmentService.findOne(appointmentId);
     }
 
     @PreAuthorize("hasAuthority('appointment:write')")
     @PostMapping(path = "/{carId}")
     public ResponseEntity<?> addAppointment(@PathVariable("carId") Integer carId, @Valid @RequestBody Appointment appointment){
-        appointmentService.save(carId,appointment);
+        appointmentService.addAppointmentToCar(carId,appointment);
         return ResponseEntity.ok(new ResponseMessage("Afspraak toegevoegd."));
     }
 

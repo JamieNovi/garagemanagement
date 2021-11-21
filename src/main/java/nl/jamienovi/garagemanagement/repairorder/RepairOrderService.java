@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class RepairOrderService {
+public class RepairOrderService implements nl.jamienovi.garagemanagement.services.RepairOrderService {
     private final RepairOrderRepository repairOrderRepository;
     private final CustomerServiceImpl customerServiceImpl;
     private final ApplicationEventPublisher applicationEventPublisher;
@@ -35,11 +35,13 @@ public class RepairOrderService {
         this.mapper = mapper;
     }
 
-    public List<RepairOrder> getAll() {
+    @Override
+    public List<RepairOrder> findAll() {
         return repairOrderRepository.findAll();
     }
 
-    public RepairOrder getSingle(Integer repairOrderId) {
+    @Override
+    public RepairOrder findOne(Integer repairOrderId) {
         RepairOrder repairOrder = repairOrderRepository.findById(repairOrderId)
                 .orElseThrow(() ->  new EntityNotFoundException(
                         RepairOrder.class,"id", repairOrderId.toString())
@@ -48,7 +50,8 @@ public class RepairOrderService {
         return repairOrder;
     }
 
-    public void addRepairOrder(Integer carId) {
+    @Override
+    public void add(Integer carId) {
         Optional<InspectionReport> inspectionReport = repairOrderRepository.getInspectionReportFromCustomer(carId);
         Customer customer = customerServiceImpl.findOne(inspectionReport.get().getCar().getCustomer().getId());
 
@@ -68,6 +71,7 @@ public class RepairOrderService {
 
     }
 
+    @Override
     public RepairOrder saveAgreements(RepairOrderDto dto, Integer repairOrderId) {
         RepairOrder repairOrder= repairOrderRepository.findById(repairOrderId)
                 .orElseThrow(() ->new EntityNotFoundException(
@@ -79,6 +83,7 @@ public class RepairOrderService {
         return repairOrder;
     }
 
+    @Override
     public RepairOrder setStatus(Integer repairOrderId, RepairStatus status){
             RepairOrder currentRepairOrder = repairOrderRepository.getById(repairOrderId);
             Integer inspectionReportId = currentRepairOrder.getInspectionReport().getId();
@@ -102,7 +107,7 @@ public class RepairOrderService {
 
     @EventListener
     public void onAddInspectionStatusEvent(AddInspectionReportEvent event) {
-       addRepairOrder(event.getCarId());
+       add(event.getCarId());
     }
 
     @EventListener
