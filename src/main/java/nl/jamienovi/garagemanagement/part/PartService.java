@@ -11,12 +11,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class PartServiceImpl implements GenericService<Part,String,PartDto> {
+public class PartService implements GenericService<Part,String,PartDto> {
     private final PartRepository partRepository;
     private DtoMapper mapper;
 
     @Autowired
-    public PartServiceImpl(PartRepository partRepository, DtoMapper mapper) {
+    public PartService(PartRepository partRepository, DtoMapper mapper) {
         this.partRepository = partRepository;
         this.mapper = mapper;
     }

@@ -83,13 +83,13 @@ class CarServiceImplTest {
     @Test
     void shouldDeleteCar() {
         when(carRepository.findById(1)).thenReturn(Optional.of(createCar()));
-        cut.deleteCar(1);
+        cut.delete(1);
         verify(carRepository).deleteById(1);
     }
     @Test
     void shouldThrowEntityNotFoundExceptionWhenDeletedCarNotFound() {
         when(carRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.deleteCar(1));
+        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.delete(1));
     }
 
     private CarDto createCarDto() {

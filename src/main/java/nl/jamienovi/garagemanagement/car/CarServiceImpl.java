@@ -60,11 +60,11 @@ public class CarServiceImpl implements CarService {
         carRepository.save(existingCar);
     }
 
-    public void deleteCar(Integer carId){
+    @Override
+    public void delete(Integer carId){
         Car existingCar = carRepository.findById(carId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(Car.class,"id",carId.toString()));
-        log.info(existingCar.getId().toString());
-       carRepository.deleteById(1);
+       carRepository.deleteById(carId);
     }
 }

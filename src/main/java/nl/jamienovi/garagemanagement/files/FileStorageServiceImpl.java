@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.files;
 
+import nl.jamienovi.garagemanagement.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -14,21 +15,24 @@ import java.util.stream.Stream;
  * @author Jamie Spekman
  */
 @Service
-public class FileStorageService {
+public class FileStorageServiceImpl implements FileStorageService {
     private final FileDBRepository fileDBRepository;
 
     @Autowired
-    public FileStorageService(FileDBRepository fileDBRepository) {
+    public FileStorageServiceImpl(FileDBRepository fileDBRepository) {
         this.fileDBRepository = fileDBRepository;
     }
 
-    public FileDB storeFile(MultipartFile file) throws IOException {
+    @Override
+    public Stream<FileDB> findAll() {return fileDBRepository.findAll().stream();}
+
+    @Override
+    public FileDB findOne(String id) {return fileDBRepository.findById(id).get();}
+
+    @Override
+    public FileDB add(MultipartFile file) throws IOException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         FileDB fileDb = new FileDB(fileName,file.getContentType(),file.getBytes());
         return fileDBRepository.save(fileDb);
     }
-
-    public FileDB getFile(String id) {return fileDBRepository.findById(id).get();}
-
-    public Stream<FileDB> getAllFiles() {return fileDBRepository.findAll().stream();}
 }

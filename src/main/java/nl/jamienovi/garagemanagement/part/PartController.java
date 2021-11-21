@@ -21,29 +21,29 @@ import java.util.List;
 @RequestMapping(path = "api/onderdelen")
 public class PartController {
 
-    private final PartServiceImpl partServiceImpl;
+    private final PartService partService;
 
     @Autowired
-    public PartController(PartServiceImpl partServiceImpl) {
-        this.partServiceImpl = partServiceImpl;
+    public PartController(PartService partService) {
+        this.partService = partService;
     }
 
     @PreAuthorize("hasAnyAuthority('part:read','part:write')")
     @GetMapping(path ="")
     public List<Part> getAllParts(){
-        return partServiceImpl.findAll();
+        return partService.findAll();
     }
 
     @PreAuthorize("hasAnyAuthority('part:read','part:write')")
     @GetMapping(path = "/{partId}")
     public Part getCarPart(@PathVariable("partId") String partId){
-        return partServiceImpl.findOne(partId);
+        return partService.findOne(partId);
     }
 
     @PreAuthorize("hasAnyAuthority('part:write')")
     @PostMapping(path = "")
     public ResponseEntity<?> createPart(@RequestBody @Valid Part part) {
-       Part newPart =  partServiceImpl.add(part);
+       Part newPart =  partService.add(part);
 
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
@@ -60,7 +60,7 @@ public class PartController {
                                         @RequestBody PartDto partDto,
                                         UriComponentsBuilder uriComponentsBuilder) {
 
-        partServiceImpl.update(partId, partDto);
+        partService.update(partId, partDto);
 
         UriComponents uriComponents = uriComponentsBuilder.path("/api/onderdelen/{id}")
                 .buildAndExpand(partId);
@@ -74,7 +74,7 @@ public class PartController {
     @DeleteMapping(path = "/{partId}")
     public ResponseEntity<?> deletePart(@PathVariable("partId") String partId) throws EntityNotFoundException
     {
-        partServiceImpl.delete(partId);
+        partService.delete(partId);
         return ResponseEntity.ok(new ResponseMessage(String.format("Onderdeel met id %s verwijderd",partId)));
     }
 }

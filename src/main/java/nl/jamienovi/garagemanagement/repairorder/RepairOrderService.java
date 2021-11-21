@@ -2,11 +2,11 @@ package nl.jamienovi.garagemanagement.repairorder;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
 import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.eventmanager.*;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.inspection.RepairApprovalStatus;
+import nl.jamienovi.garagemanagement.services.CustomerService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,17 +20,17 @@ import java.util.Optional;
 @Slf4j
 public class RepairOrderService implements nl.jamienovi.garagemanagement.services.RepairOrderService {
     private final RepairOrderRepository repairOrderRepository;
-    private final CustomerServiceImpl customerServiceImpl;
+    private final CustomerService customerService;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final DtoMapper mapper;
 
 
     @Autowired
     public RepairOrderService(RepairOrderRepository repairOrderRepository,
-                              CustomerServiceImpl customerServiceImpl,
+                              CustomerService customerService,
                               ApplicationEventPublisher applicationEventPublisher, DtoMapper mapper) {
         this.repairOrderRepository = repairOrderRepository;
-        this.customerServiceImpl = customerServiceImpl;
+        this.customerService = customerService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.mapper = mapper;
     }
@@ -46,14 +46,14 @@ public class RepairOrderService implements nl.jamienovi.garagemanagement.service
                 .orElseThrow(() ->  new EntityNotFoundException(
                         RepairOrder.class,"id", repairOrderId.toString())
                 );
-
         return repairOrder;
     }
 
     @Override
     public void add(Integer carId) {
-        Optional<InspectionReport> inspectionReport = repairOrderRepository.getInspectionReportFromCustomer(carId);
-        Customer customer = customerServiceImpl.findOne(inspectionReport.get().getCar().getCustomer().getId());
+        Optional<InspectionReport> inspectionReport =
+                repairOrderRepository.getInspectionReportFromCustomer(carId);
+        Customer customer = customerService.findOne(inspectionReport.get().getCar().getCustomer().getId());
 
         RepairOrder newRepairOrder = new RepairOrder(customer);
         newRepairOrder.setInspectionReport(inspectionReport.get());

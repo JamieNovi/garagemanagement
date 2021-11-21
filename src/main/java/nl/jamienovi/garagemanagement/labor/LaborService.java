@@ -52,7 +52,6 @@ public class LaborService implements GenericService<Labor,String,LaborDto> {
     public void delete(String laborId) {
         Labor labor = laborRepository.findById(laborId)
                 .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id", laborId));
-
         laborRepository.delete(labor);
     }
 }

@@ -71,7 +71,7 @@ public class InspectionReport {
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @OneToOne(cascade = { CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},
+    @OneToOne(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
 

@@ -6,9 +6,10 @@ import nl.jamienovi.garagemanagement.labor.Labor;
 import nl.jamienovi.garagemanagement.labor.LaborService;
 import nl.jamienovi.garagemanagement.part.Item;
 import nl.jamienovi.garagemanagement.part.Part;
-import nl.jamienovi.garagemanagement.part.PartServiceImpl;
+import nl.jamienovi.garagemanagement.part.PartService;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
+import nl.jamienovi.garagemanagement.services.RepairOrderLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,19 +17,19 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class RepairOrderLineServiceImpl implements nl.jamienovi.garagemanagement.services.RepairOrderLineService {
+public class RepairOrderLineServiceImpl implements RepairOrderLineService {
     private final RepairOrderLineRepository repairOrderLineRepository;
     private final RepairOrderService repairOrderService;
-    private final PartServiceImpl partServiceImpl;
+    private final PartService partService;
     private final LaborService laborService;
 
     @Autowired
     public RepairOrderLineServiceImpl(RepairOrderLineRepository repairOrderLineRepository,
-                                      RepairOrderService repairOrderService, PartServiceImpl partServiceImpl,
+                                      RepairOrderService repairOrderService, PartService partService,
                                       LaborService laborService) {
         this.repairOrderLineRepository = repairOrderLineRepository;
         this.repairOrderService = repairOrderService;
-        this.partServiceImpl = partServiceImpl;
+        this.partService = partService;
         this.laborService = laborService;
     }
 
@@ -41,7 +42,7 @@ public class RepairOrderLineServiceImpl implements nl.jamienovi.garagemanagement
     @Override
     public void addRepairOrderPartItem(Integer repairOrderId, String partCode, Integer quantity){
         RepairOrder repairOrder = repairOrderService.findOne(repairOrderId);
-        Part addedPart = partServiceImpl.findOne(partCode);
+        Part addedPart = partService.findOne(partCode);
         RepairOrderLine line = buildOrderline(repairOrder, addedPart);
         line.setOrderLinePrice(addedPart.getPrice() * quantity);
         repairOrderLineRepository.save(line);

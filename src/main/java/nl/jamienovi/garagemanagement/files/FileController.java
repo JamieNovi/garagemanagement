@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping(path = "/api/documenten")
 public class FileController {
-    private final FileStorageService fileStorageService;
+    private final FileStorageServiceImpl fileStorageServiceImpl;
 
     @Autowired
-    public FileController(FileStorageService fileStorageService) {
-        this.fileStorageService = fileStorageService;
+    public FileController(FileStorageServiceImpl fileStorageServiceImpl) {
+        this.fileStorageServiceImpl = fileStorageServiceImpl;
     }
 
     @PreAuthorize("hasAuthority('files:write')")
@@ -30,7 +30,7 @@ public class FileController {
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file")MultipartFile file) {
         String message = "";
         try{
-            fileStorageService.storeFile(file);
+            fileStorageServiceImpl.add(file);
             message = "Uploaden van autopapieren gelukt: " + file.getOriginalFilename();
             return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
         }catch (Exception e) {
@@ -46,7 +46,7 @@ public class FileController {
     @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     @RequestMapping(path = "/")
     public ResponseEntity<List<ResponseFile>> getAll() {
-        List<ResponseFile> files = fileStorageService.getAllFiles().map(dbFile -> {
+        List<ResponseFile> files = fileStorageServiceImpl.findAll().map(dbFile -> {
             //Build Uri strings from all files retrieved.
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
@@ -69,7 +69,7 @@ public class FileController {
     @GetMapping( path = "/{id}")
     @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     public ResponseEntity<byte[]> getSingle(@PathVariable("id") String id){
-        FileDB fileDb = fileStorageService.getFile(id);
+        FileDB fileDb = fileStorageServiceImpl.findOne(id);
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,

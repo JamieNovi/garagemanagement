@@ -25,7 +25,7 @@ public class RepairOrderLine {
 
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     @JsonIdentityReference(alwaysAsId=true)
-    @ManyToOne(optional = false,cascade = CascadeType.ALL)
+    @ManyToOne(optional = false,cascade = CascadeType.MERGE)
     @JoinColumn(name = "reparatie_id",nullable = false,referencedColumnName = "reparatie_id")
     private RepairOrder repairOrder;
 

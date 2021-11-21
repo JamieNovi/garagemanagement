@@ -15,13 +15,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PartServiceImplTest {
+class PartServiceTest {
     private List<Part> parts = new ArrayList<>();
     private Part diskbrakes = new Part();
 
     //System under test
     @InjectMocks
-    private PartServiceImpl partServiceImpl;
+    private PartService partService;
     @Mock
     private PartRepository partRepository;
 
@@ -45,13 +45,13 @@ class PartServiceImplTest {
     @Test
     void getPart() {
         when(partRepository.findById("P001")).thenReturn(Optional.of(this.diskbrakes));
-        partServiceImpl.findOne("P001");
+        partService.findOne("P001");
         verify(partRepository).findById("P001");
     }
 
     @Test
     void getAllCarParts() {
-        partServiceImpl.findAll();
+        partService.findAll();
 
         verify(partRepository).findAll();
     }
@@ -59,7 +59,7 @@ class PartServiceImplTest {
     @Test
     void deletePart() {
         when(partRepository.findById(diskbrakes.getId())).thenReturn(Optional.of(this.diskbrakes));
-        partServiceImpl.delete("P001");
+        partService.delete("P001");
         verify(partRepository).delete(this.diskbrakes);
     }
 }
