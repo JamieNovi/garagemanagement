@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,14 +16,12 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("it")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CustomerControllerIntegrationTest {
-
     @LocalServerPort
     private Integer port;
-
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void getCustomersTest() {
+    void shouldGetCustomersTest() {
         RestAssured
                 .given()
                 .auth().basic("administratie","1234")
@@ -30,7 +29,6 @@ class CustomerControllerIntegrationTest {
                 .get("http://localhost:" + port + "/api/klanten")
                 .then()
                 .statusCode(200);
-
     }
 
     @Test
@@ -49,23 +47,20 @@ class CustomerControllerIntegrationTest {
 
     @Test
     void shouldCreateCustomer() throws JsonProcessingException {
-        Customer customer = new CustomerBuilder()
-//                .setId(4)
-                .setFirstName("Jamie")
-                .setLastName("Spekman")
-                .setPhoneNumber("06-243223")
-                .setEmail("jamie@mail.com")
-                .setAddress("De Boot 123")
-                .setPostalCode("7325 NP")
-                .setCity("Apeldoorn").build();
+        Customer customer = Builder.build(Customer.class)
+                .with(s -> s.setId(1000))
+                .with(s -> s.setFirstName("Jamie"))
+                .with(s -> s.setLastName("Spekman"))
+                .with(s -> s.setPhoneNumber("06-243223"))
+                .with(s -> s.setEmail("jamie@mail.com"))
+                .with(s -> s.setAddress("De Boot 123"))
+                .with(s -> s.setPostalCode("7325 NP"))
+                .with(s -> s.setCity("Apeldoorn"))
+                .get();
         ExtractableResponse<Response> response = RestAssured
                 .given()
                 .auth().basic("administratie","1234")
                 .contentType("application/json")
-//                .body("{\"firstName\": \"Jamie\", \"lastName\": \"Wallace\", \"phoneNumber\": " +
-//                        "\"06-32424\", \"email\": \"jamie@mail.com\", " +
-//                        "\"address\": \"Het Schip 148\"," +
-//                        "\"postalCode\": \"7325 NP\", \"city\": \"Apeldoorn\"}")
                 .body(objectMapper.writeValueAsBytes(customer))
                 .when()
                 .post("http://localhost:" + port + "/api/klanten")

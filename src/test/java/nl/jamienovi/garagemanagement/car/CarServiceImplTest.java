@@ -1,9 +1,9 @@
 package nl.jamienovi.garagemanagement.car;
 
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.customer.CustomerBuilder;
 import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class CarServiceImplTest {
     @Test
     void shouldThrowEntityNotFoundExceptionWhenCarNotFound() {
         when(carRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.findOne(1));
+        Assertions.assertThrows(CustomerEntityNotFoundException.class,() -> cut.findOne(1));
     }
 
     @Test
@@ -61,22 +61,19 @@ class CarServiceImplTest {
         when(carRepository.save(any(Car.class))).thenReturn(car);
 
         Integer result = cut.addCarToCustomer(1,car);
-
         assertEquals(customer.getId(),result);
     }
 
     @Test
     void shouldThrowEntityNotFoundExceptionWhenUpdatedCarNotFound() {
         when(carRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.update(1,any()));
+        Assertions.assertThrows(CustomerEntityNotFoundException.class,() -> cut.update(1,any()));
     }
 
     @Test
     void shouldUpdateCarCustomer() {
         when(carRepository.findById(1)).thenReturn(Optional.of(createCar()));
-
         cut.update(1,any());
-
         verify(carRepository).save(any());
     }
 
@@ -89,36 +86,38 @@ class CarServiceImplTest {
     @Test
     void shouldThrowEntityNotFoundExceptionWhenDeletedCarNotFound() {
         when(carRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> cut.delete(1));
+        Assertions.assertThrows(CustomerEntityNotFoundException.class,() -> cut.delete(1));
     }
 
     private CarDto createCarDto() {
-        CarDto dto = new CarDto(1,
-                "Mini",
-                "Cooper",
-                "EE-22-22"
-        );
+        CarDto dto =  Builder.build(CarDto.class)
+                .with(s -> s.setId(1))
+                .with(s -> s.setBrand("Mini"))
+                .with(s -> s.setModel("Cooper"))
+                .with(s -> s.setRegistrationPlate("EE-22-22"))
+                .get();
         return dto;
     }
 
     private Car createCar() {
-        Car car = new Car();
-        car.setId(1);
-        car.setBrand("Peugeot");
-        car.setModel("RXZ");
-        car.setRegistrationPlate("22-22-00");
-        car.setCustomer(createCustomer());
+        Car car = Builder.build(Car.class)
+                .with(s -> s.setId(1))
+                .with(s -> s.setBrand("Peugeot"))
+                .with(s -> s.setModel("RXZ"))
+                .with(s -> s.setRegistrationPlate("22-22-00"))
+                .get();
         return car;
     }
     private Customer createCustomer() {
-        Customer customer = new CustomerBuilder()
-                .setId(1)
-                .setFirstName("John")
-                .setLastName("Wick")
-                .setEmail("wick@parabellum.com")
-                .setAddress("High road 10")
-                .setPostalCode("33992")
-                .setCity("New York").build();
+        Customer customer = Builder.build(Customer.class)
+                .with(s -> s.setId(1))
+                .with(s -> s.setFirstName("John"))
+                .with(s -> s.setLastName("Wick"))
+                .with(s -> s.setEmail("wick@parabellum.com"))
+                .with(s -> s.setAddress("High road 10"))
+                .with(s -> s.setPostalCode("33992"))
+                .with(s -> s.setCity("New York"))
+                .get();
 
         return customer;
     }

@@ -8,8 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Queries that combine multiple tables to generate invoice.
+ *
+ * @author Jamie Spekman
+ */
 @Repository
-public interface InvoiceRepository extends JpaRepository<InvoicePdf, Integer> {
+interface InvoiceRepository extends JpaRepository<InvoicePdf, Integer> {
 
     @Query("SELECT new nl.jamienovi.garagemanagement.invoice.InvoiceCustomerDataDto(" +
             "k.firstName,k.lastName,k.address,k.postalCode,k.city,k.email, " +

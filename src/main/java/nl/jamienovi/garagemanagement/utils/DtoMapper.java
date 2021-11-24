@@ -36,17 +36,8 @@ public interface DtoMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateLaborFromDto(LaborDto laborDto, @MappingTarget Labor entity);
 
-
-//    @Mapping(target = "id",ignore = true)
-//    @Mapping(target = "inspectionReport" ,ignore = true)
-//    @Mapping(target = "createdAt",ignore = true)
-//    @Mapping(target = "status",ignore = true)
-//    @Mapping(target = "repairOrderLines",ignore = true)
-//    @Mapping(target = "customer",ignore = true)
-
    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateRepairOrderFromDto(RepairOrderDto dto, @MappingTarget RepairOrder entity);
-
 
     CustomerGetDto customerToDto(Customer customer);
 

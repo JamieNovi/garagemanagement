@@ -9,9 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RepairOrderLineDto {
     private Integer id;
-    private Integer klant_id;
+    private Integer klantId;
     private String name;
     private Double price;
     private Integer orderLineQuantity;
-
 }

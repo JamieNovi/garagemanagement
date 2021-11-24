@@ -1,9 +1,8 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
-import nl.jamienovi.garagemanagement.services.CustomerService;
+import nl.jamienovi.garagemanagement.interfaces.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/klanten")
 public class CustomerController {
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
     @Autowired
     public CustomerController(CustomerService customerService) {
@@ -36,7 +35,7 @@ public class CustomerController {
 
     @GetMapping(path = "/{customerId}")
     @PreAuthorize("hasAnyAuthority('customer:read')")
-    public ResponseEntity<Customer> getCustomer(@PathVariable("customerId") int customerId) throws EntityNotFoundException {
+    public ResponseEntity<Customer> getCustomer(@PathVariable("customerId") int customerId) {
         Customer customer= customerService.findOne(customerId);
         return ResponseEntity.ok().body(customer);
     }
@@ -49,7 +48,7 @@ public class CustomerController {
 
     @PostMapping(path = "")
     @PreAuthorize("hasAuthority('customer:write')")
-    public ResponseEntity<?> addCustomer(@Valid @RequestBody Customer customer) throws IllegalStateException{
+    public ResponseEntity<URI> addCustomer(@Valid @RequestBody Customer customer) {
         Customer customerId = customerService.add(customer);
         log.info(customerId.toString());
 
@@ -62,7 +61,7 @@ public class CustomerController {
 
     @PutMapping(path="/{customerId}")
     @PreAuthorize("hasAuthority('customer:write')")
-    public ResponseEntity<?> updateCustomer(@PathVariable("customerId") Integer customerId,
+    public ResponseEntity<URI> updateCustomer(@PathVariable("customerId") Integer customerId,
                                             @RequestBody CustomerUpdateDto customerUpdateDto,
                                             UriComponentsBuilder uriComponentsBuilder) {
         customerService.update(customerId , customerUpdateDto);
@@ -74,9 +73,9 @@ public class CustomerController {
 
     @DeleteMapping(path = "/{customerId}")
     @PreAuthorize("hasAuthority('customer:write')")
-    public ResponseEntity<?> deleteCustomer(@PathVariable("customerId") int customerId){
+    public ResponseEntity<ResponseMessage> deleteCustomer(@PathVariable("customerId") int customerId){
         customerService.delete(customerId);
         return ResponseEntity.ok(
-                new ResponseMessage(String.format("Klant verwijderd.")));
+                new ResponseMessage("Klant verwijderd"));
     }
 }

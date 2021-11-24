@@ -1,13 +1,14 @@
 package nl.jamienovi.garagemanagement.part;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.services.GenericService;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.interfaces.GenericService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,9 +29,13 @@ public class PartService implements GenericService<Part,String,PartDto> {
 
     @Override
     public Part findOne(String partId) {
-        Part part = partRepository.findById(partId)
-                .orElseThrow(() -> new EntityNotFoundException(Part.class,"id",partId));
-        return part;
+        Optional<Part> part = partRepository.findById(partId);
+
+        if(part.isEmpty()){
+            throw new CustomerEntityNotFoundException(Part.class,"id",partId);
+        }else {
+            return part.get();
+        }
     }
 
     @Override
@@ -43,7 +48,7 @@ public class PartService implements GenericService<Part,String,PartDto> {
     @Override
     public void update(String partId, PartDto partDto) {
         Part part = partRepository.findById(partId)
-                .orElseThrow(() -> new EntityNotFoundException(Part.class,"id",partId.toString())
+                .orElseThrow(() -> new CustomerEntityNotFoundException(Part.class,"id",partId)
                 );
         mapper.updatePartFromDto(partDto,part);
         partRepository.save(part);
@@ -52,7 +57,7 @@ public class PartService implements GenericService<Part,String,PartDto> {
     @Override
     public void delete(String partId) {
         Part deletedPart = partRepository.findById(partId)
-                .orElseThrow(() -> new EntityNotFoundException(Part.class,"id",partId.toString()));
+                .orElseThrow(() -> new CustomerEntityNotFoundException(Part.class,"id",partId));
         partRepository.delete(deletedPart);
     }
 

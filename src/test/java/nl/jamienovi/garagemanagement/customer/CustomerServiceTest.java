@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.customer;
 
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,24 +52,15 @@ class CustomerServiceTest {
     void shouldGetCustomer() throws Exception {
         //Arrange
         String email = "famkejansen@hotmail.com";
-        Customer mockCustomer = new CustomerBuilder()
-                .setId(1)
-                .setFirstName("Famke")
-                .setLastName("Janssen")
-                .setEmail(email)
-                .setAddress("Keizersgracht 10")
-                .setPostalCode("1002 AB")
-                .setCity("Amsterdam")
-                .build();
-//        Customer mockCustomer = new Customer(
-//                1,
-//                "Famke",
-//                "Janssen",
-//                email,
-//                "Keizersgracht 10",
-//                "1002 AB",
-//                "Amsterdam"
-//        );
+        Customer mockCustomer = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Famke"))
+                .with(s -> s.setLastName("Janssen"))
+                .with(s -> s.setPhoneNumber("0632324"))
+                .with(s -> s.setEmail(email))
+                .with(s -> s.setAddress("Keizersgracht 10"))
+                .with(s -> s.setPostalCode("1002 AB"))
+                .with(s -> s.setCity("Amsterdam"))
+                .get();
 
         when(customerRepository.findById(1)).thenReturn(Optional.of(mockCustomer));
         underTest.findOne(1);
@@ -101,25 +93,17 @@ class CustomerServiceTest {
     @Disabled
     void deleteCustomer() {
         //Arrange
-        Customer mockCustomer = new Customer(
-                1,
-                "Famke",
-                "Janssen",
-                "93420024",
-                "famkejansen@mail.com",
-                "Keizersgracht 10",
-                "1002 AB",
-                "Amsterdam"
-        );
-//        Customer mockCustomer = new CustomerBuilder()
-//                .setId(1)
-//                .setFirstName("Famke")
-//                .setLastName("Janssen")
-//                .setEmail("famkeJansen@mail.com")
-//                .setAddress("Keizersgracht 10")
-//                .setPostalCode("1002 AB")
-//                .setCity("Amsterdam")
-//                .build();
+        Customer mockCustomer = Builder.build(Customer.class)
+                .with(s -> s.setId(1))
+                .with(s -> s.setFirstName("Famke"))
+                .with(s -> s.setLastName("Janssen"))
+                .with(s -> s.setPhoneNumber("0632324"))
+                .with(s -> s.setEmail("famkeJansen@mail.com"))
+                .with(s -> s.setAddress("Keizersgracht 10"))
+                .with(s -> s.setPostalCode("1002 AB"))
+                .with(s -> s.setCity("Amsterdam"))
+                .get();
+
         //Act
         when(customerRepository.existsById(mockCustomer.getId())).thenReturn(true);
         underTest.delete(mockCustomer.getId());
@@ -128,11 +112,10 @@ class CustomerServiceTest {
 
     @Test
     @Disabled
-    void deleteByIdThrowsEntityNotFoundException() throws EntityNotFoundException {
+    void deleteByIdThrowsEntityNotFoundException() throws CustomerEntityNotFoundException {
         Integer customerId = 1;
         when(customerRepository.existsById(1)).thenReturn(false);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.delete(customerId));
-
+        Assertions.assertThrows(CustomerEntityNotFoundException.class, () -> underTest.delete(customerId));
     }
 
     @Test
@@ -140,14 +123,13 @@ class CustomerServiceTest {
     void updateCustomerNotFoundShouldThrowEntityNotFoundException() {
         Integer customerId = 1;
         when(customerRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.update(customerId,any()));
-
+        Assertions.assertThrows(CustomerEntityNotFoundException.class, () -> underTest.update(customerId,any()));
     }
 
     @Test
     void getCustomerShouldThrowEntityNotFoundException() {
         Integer customerId = 1;
         when(customerRepository.findById(1)).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class, () -> underTest.findOne(customerId));
+        Assertions.assertThrows(CustomerEntityNotFoundException.class, () -> underTest.findOne(customerId));
     }
 }

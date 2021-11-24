@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,25 +36,10 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(authorities = {"customer:read"})
     void shouldReturnListOfCustomers() throws Exception {
-        Customer customer = new CustomerBuilder()
-                .setFirstName("Danni")
-                .setLastName("Banks")
-                .setPhoneNumber("234234")
-                .setEmail("danni@instagram.com")
-                .setAddress("2nd Street").setPostalCode("93992")
-                .setCity("Malibu").build();
+        Customer customer = customerBuilder();
+
         when(customerServiceImpl.findAll())
                 .thenReturn(List.of(customer));
-
-//        when(customerService.findAll())
-//                .thenReturn(List.of(new CustomerBuilder()
-//
-////                        "Danni",
-////                        "Banks",
-////                        "danni@instagram.com",
-////                        "2nd street",
-////                        "93992",
-////                        "Malibu")));
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/api/klanten"))
@@ -66,24 +52,10 @@ class CustomerControllerTest {
     @Test
     @WithMockUser(authorities = {"customer:read"})
     void shouldGetSingleCustomer() throws Exception {
-        Customer customer = new CustomerBuilder()
-                .setId(3)
-                .setFirstName("Danni")
-                .setLastName("Banks")
-                .setPhoneNumber("234234")
-                .setEmail("danni@instagram.com")
-                .setAddress("2nd Street").setPostalCode("93992")
-                .setCity("Malibu").build();
+        Customer customer = customerBuilder();
+
         when(customerServiceImpl.findOne(3))
                 .thenReturn(customer);
-//        when(customerService.getCustomer(3))
-//                .thenReturn(new Customer(3,
-//                        "Danni",
-//                        "Banks",
-//                        "danni@instagram.com",
-//                        "2nd street",
-//                        "93992",
-//                        "Malibu"));
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/api/klanten/3"))
@@ -97,24 +69,17 @@ class CustomerControllerTest {
     @WithMockUser(authorities = {"customer:write"})
     void shouldCreateCustomer() throws Exception {
         Mockito.when(customerServiceImpl.add(any(Customer.class))).thenReturn(
-                new Customer(
-                        1,
-                        "Danni",
-                        "Banks",
-                        "054-242342",
-                        "danni@instagram.com",
-                        "2nd street",
-                        "93992",
-                        "Malibu"));
+                customerBuilder());
 
-        Customer customer = new Customer(
-                "Danni",
-                "Banks",
-                "054-242342",
-                "danni@instagram.com",
-                "2nd street",
-                "93992",
-                "Malibu");
+        Customer customer = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Danni"))
+                .with(s -> s.setLastName("Banks"))
+                .with(s -> s.setPhoneNumber("054-242342"))
+                .with(s -> s.setEmail("danni@instagram.com"))
+                .with(s -> s.setAddress("2nd street"))
+                .with(s -> s.setPostalCode("93992"))
+                .with(s -> s.setCity("Malibu"))
+                .get();
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders
@@ -137,5 +102,18 @@ class CustomerControllerTest {
                 .andExpect(status().isOk());
 
         verify(customerServiceImpl).delete(any(Integer.class));
+    }
+
+    private Customer customerBuilder() {
+        return Builder.build(Customer.class)
+                .with(s -> s.setId(3))
+                .with(s -> s.setFirstName("Danni"))
+                .with(s -> s.setLastName("Banks"))
+                .with(s -> s.setPhoneNumber("054-242342"))
+                .with(s -> s.setEmail("danni@instagram.com"))
+                .with(s -> s.setAddress("2nd street"))
+                .with(s -> s.setPostalCode("93992"))
+                .with(s -> s.setCity("Malibu"))
+                .get();
     }
 }

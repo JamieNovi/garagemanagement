@@ -23,8 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -122,6 +121,35 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    /**
+     * Handle PendingInspectionReportException.
+     */
+    @ExceptionHandler(PendingInspectionReportException.class)
+    protected ResponseEntity<Object> handlePendingInspectionReport(RuntimeException ex){
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    /**
+     * Handle EmailDuplicateException
+     */
+    @ExceptionHandler(EmailDuplicateException.class)
+    protected ResponseEntity<Object> handleEmailDuplicate(RuntimeException ex) {
+        ApiError apiError = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    /**
+     * Handle invoice not found exception
+     */
+    @ExceptionHandler(InvoiceNotFoundException.class)
+    protected ResponseEntity<Object> handleInvoiceNotFoundException(RuntimeException ex) {
+        ApiError apiError  = new ApiError(INTERNAL_SERVER_ERROR);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
     /**
      * Handle HttpMessageNotReadableException. Happens when request JSON is malformed.
      *

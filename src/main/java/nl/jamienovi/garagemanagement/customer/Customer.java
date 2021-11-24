@@ -1,8 +1,6 @@
 package nl.jamienovi.garagemanagement.customer;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
@@ -64,46 +62,16 @@ public class Customer {
     private String city;
 
     // Serialize Object by its id instead of full POJO
-    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
-    @JsonIdentityReference(alwaysAsId=true)
-    @Column(name= "cars")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Set<Car> cars = new HashSet<>();
 
-    // Serialize Object by its id instead of full POJO
-    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class,property="id")
-    @JsonIdentityReference(alwaysAsId=true)
+    @JsonIgnoreProperties({"createdAt", "agreementComments", "inspectionReport","repairOrderLines","customer"})
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
     private List<RepairOrder> repairOrders;
-
-    public Customer(String firstName, String lastName,String phoneNumber ,String email, String address,
-                    String postalCode, String city) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
-        this.postalCode = postalCode;
-        this.city = city;
-    }
-
-    // Constructor for unit and integration tests
-    public Customer(Integer id, String firstName, String lastName,String phoneNumber ,String email, String address,
-                    String postalCode, String city) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
-        this.postalCode = postalCode;
-        this.city = city;
-    }
 
     public void addCar(final Car car) {
         car.setCustomer(this);
         this.cars.add(car);
     }
-
 }

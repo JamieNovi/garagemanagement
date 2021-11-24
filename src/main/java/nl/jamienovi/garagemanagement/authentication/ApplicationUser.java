@@ -13,7 +13,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity(name = "Gebruikers")
+@Entity(name = "gebruikers")
 public class ApplicationUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

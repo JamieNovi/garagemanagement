@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.part;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +20,6 @@ import java.util.List;
 @Slf4j
 @RequestMapping(path = "api/onderdelen")
 public class PartController {
-
     private final PartService partService;
 
     @Autowired
@@ -42,7 +41,7 @@ public class PartController {
 
     @PreAuthorize("hasAnyAuthority('part:write')")
     @PostMapping(path = "")
-    public ResponseEntity<?> createPart(@RequestBody @Valid Part part) {
+    public ResponseEntity<URI> createPart(@RequestBody @Valid Part part) {
        Part newPart =  partService.add(part);
 
             URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -56,7 +55,7 @@ public class PartController {
 
     @PreAuthorize("hasAnyAuthority('part:write')")
     @PutMapping(path = "/{partId}")
-    public ResponseEntity<?> updatePart(@PathVariable("partId") String partId,
+    public ResponseEntity<URI> updatePart(@PathVariable("partId") String partId,
                                         @RequestBody PartDto partDto,
                                         UriComponentsBuilder uriComponentsBuilder) {
 
@@ -72,7 +71,7 @@ public class PartController {
 
     @PreAuthorize("hasAnyAuthority('part:write')")
     @DeleteMapping(path = "/{partId}")
-    public ResponseEntity<?> deletePart(@PathVariable("partId") String partId) throws EntityNotFoundException
+    public ResponseEntity<ResponseMessage> deletePart(@PathVariable("partId") String partId) throws CustomerEntityNotFoundException
     {
         partService.delete(partId);
         return ResponseEntity.ok(new ResponseMessage(String.format("Onderdeel met id %s verwijderd",partId)));

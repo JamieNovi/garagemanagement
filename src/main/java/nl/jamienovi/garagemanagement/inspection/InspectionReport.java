@@ -29,7 +29,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Setter
 @NoArgsConstructor
 public class InspectionReport {
-
     // Serialize Object by its id instead of full POJO
     @Id
     @SequenceGenerator(name="inspection_report_sequence", sequenceName = "inspection_report_sequence",allocationSize = 1)
@@ -53,7 +52,6 @@ public class InspectionReport {
     @OneToMany(mappedBy = "inspectionReport",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShortComing> shortcomings;
 
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private InspectionStatus status = InspectionStatus.IN_BEHANDELING;
@@ -74,6 +72,5 @@ public class InspectionReport {
     @OneToOne(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY, mappedBy = "inspectionReport")
     private RepairOrder repairOrder;
-
 
 }

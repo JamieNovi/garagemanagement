@@ -1,6 +1,6 @@
-package nl.jamienovi.garagemanagement.services;
+package nl.jamienovi.garagemanagement.interfaces;
 
-import nl.jamienovi.garagemanagement.eventmanager.RepairOrderCompletedEvent;
+import nl.jamienovi.garagemanagement.eventmanager.RepairOrderStatusChangeEvent;
 import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.inspection.InspectionStatus;
 import nl.jamienovi.garagemanagement.inspection.RepairApprovalStatus;
@@ -26,5 +26,5 @@ public interface InspectionReportService {
     Boolean hasPendingStatus(Integer carId);
 
     @EventListener
-    void handleRepairOrderStatusEvent(RepairOrderCompletedEvent event);
+    void handleRepairOrderStatusEvent(RepairOrderStatusChangeEvent event);
 }

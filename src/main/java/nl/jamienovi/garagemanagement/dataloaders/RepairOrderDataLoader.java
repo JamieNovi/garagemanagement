@@ -5,12 +5,10 @@ import nl.jamienovi.garagemanagement.inspection.InspectionReport;
 import nl.jamienovi.garagemanagement.inspection.InspectionReportServiceImpl;
 import nl.jamienovi.garagemanagement.inspection.InspectionStatus;
 import nl.jamienovi.garagemanagement.inspection.RepairApprovalStatus;
-import nl.jamienovi.garagemanagement.invoice.InvoiceController;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrderDto;
-import nl.jamienovi.garagemanagement.repairorder.RepairOrderService;
+import nl.jamienovi.garagemanagement.repairorder.RepairOrderServiceImpl;
 import nl.jamienovi.garagemanagement.repairorder.RepairStatus;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineServiceImpl;
-import nl.jamienovi.garagemanagement.services.InvoiceService;
 import nl.jamienovi.garagemanagement.shortcoming.ShortComing;
 import nl.jamienovi.garagemanagement.shortcoming.ShortComingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,22 +27,18 @@ public class RepairOrderDataLoader implements CommandLineRunner {
     private final RepairOrderLineServiceImpl repairOrderLineServiceImpl;
     private final InspectionReportServiceImpl inspectionReportServiceImpl;
     private final ShortComingRepository shortComingRepository;
-    private final RepairOrderService repairOrderService;
-    private final InvoiceService invoiceService;
-    private final InvoiceController invoiceController;
+    private final RepairOrderServiceImpl repairOrderServiceImpl;
+    private  String laborId = "H0000";
 
     @Autowired
     public RepairOrderDataLoader(RepairOrderLineServiceImpl repairOrderLineServiceImpl,
                                  InspectionReportServiceImpl inspectionReportServiceImpl,
                                  ShortComingRepository shortComingRepository,
-                                 RepairOrderService repairOrderService,
-                                 InvoiceService invoiceService, InvoiceController invoiceController) {
+                                 RepairOrderServiceImpl repairOrderServiceImpl) {
         this.repairOrderLineServiceImpl = repairOrderLineServiceImpl;
         this.inspectionReportServiceImpl = inspectionReportServiceImpl;
         this.shortComingRepository = shortComingRepository;
-        this.repairOrderService = repairOrderService;
-        this.invoiceService = invoiceService;
-        this.invoiceController = invoiceController;
+        this.repairOrderServiceImpl = repairOrderServiceImpl;
     }
 
 
@@ -76,11 +70,12 @@ public class RepairOrderDataLoader implements CommandLineRunner {
 
         inspectionReportServiceImpl.setApprovalRepair(1,RepairApprovalStatus.AKKOORD);
 
-        repairOrderService.saveAgreements(new RepairOrderDto(null,
+        repairOrderServiceImpl.saveAgreements(new RepairOrderDto(null,
                 "Alles repareren",null
                 ),1);
 
-        repairOrderLineServiceImpl.addRepairOrderLaborItem(1,"H0000");
+
+        repairOrderLineServiceImpl.addRepairOrderLaborItem(1,laborId);
 
         log.info("Monteur is de de auto aan het repareren");
 
@@ -95,13 +90,13 @@ public class RepairOrderDataLoader implements CommandLineRunner {
         repairOrderLineServiceImpl.addRepairOrderPartItem(1, "P002",1);
         repairOrderLineServiceImpl.addRepairOrderLaborItem(1,"HP002");
 
-        repairOrderLineServiceImpl.addRepairOrderPartItem(1, "P003",1);
-        repairOrderLineServiceImpl.addRepairOrderLaborItem(1, "HP003");
+//        repairOrderLineServiceImpl.addRepairOrderPartItem(1, "P003",1);
+//        repairOrderLineServiceImpl.addRepairOrderLaborItem(1, "HP003");
+//
+//        repairOrderLineServiceImpl.addRepairOrderPartItem(1,"P004", 1);
+//        repairOrderLineServiceImpl.addRepairOrderLaborItem(1, "HP004");
 
-        repairOrderLineServiceImpl.addRepairOrderPartItem(1,"P004", 1);
-        repairOrderLineServiceImpl.addRepairOrderLaborItem(1, "HP004");
-
-        repairOrderService.setStatus(1, RepairStatus.VOLTOOID);
+        repairOrderServiceImpl.setStatus(1, RepairStatus.VOLTOOID);
 
 //        /*
 //        Auto van klant 2
@@ -109,7 +104,7 @@ public class RepairOrderDataLoader implements CommandLineRunner {
 //
         inspectionReportServiceImpl.addInspectionReport(2);
 
-        repairOrderLineServiceImpl.addRepairOrderLaborItem(2,"H0000");
+        repairOrderLineServiceImpl.addRepairOrderLaborItem(2,laborId);
         inspectionReportServiceImpl.setInspectionReportStatus(2,InspectionStatus.GOEDGEKEURD);
 
         /*

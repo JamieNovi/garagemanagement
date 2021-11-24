@@ -3,7 +3,7 @@ package nl.jamienovi.garagemanagement.invoice;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.car.CarServiceImpl;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.InvoiceNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -54,7 +54,7 @@ public class InvoiceController {
         Optional<InvoiceCustomerDataDto> customerOptional =
                 Optional.ofNullable(invoiceServiceImpl.getCustomerData(carId));
         if(customerOptional.isEmpty()){
-            throw new EntityNotFoundException(InvoiceCustomerDataDto.class,"carId",carId.toString());
+            throw new InvoiceNotFoundException("Auto met id: " + carId + " heeft geen openstaande factuur.");
         }else{
             model.addAttribute("customer", invoiceServiceImpl.getCustomerData(carId));
             model.addAttribute("carparts", invoiceServiceImpl.getPartOrderlines(carId));
@@ -73,10 +73,10 @@ public class InvoiceController {
      * @return
      */
     @PostMapping(path = "/factuur/{carId}")
-    public ResponseEntity<?> saveInvoice(HttpServletRequest request,
-                                         HttpServletResponse response,
-                                         @PathVariable("carId") Integer carId,
-                                         UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<ResponseMessage> saveInvoice(HttpServletRequest request,
+                                                            HttpServletResponse response,
+                                                            @PathVariable("carId") Integer carId,
+                                                            UriComponentsBuilder uriComponentsBuilder) {
         String message = "";
         Car car  = carServiceImpl.findOne(carId);
         Integer customerId = car.getCustomer().getId();
@@ -90,7 +90,7 @@ public class InvoiceController {
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(uriComponents.toUri());
             log.info("Factuur van klant-id {} is opgeslagen",customerId);
-            return ResponseEntity.created(uriComponents.toUri()).body(uriComponents.toUri());
+            return ResponseEntity.created(uriComponents.toUri()).body(new ResponseMessage(uriComponents.toString()));
         }catch (Exception e ) {
             message = "Opslaan factuur niet gelukt.";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)

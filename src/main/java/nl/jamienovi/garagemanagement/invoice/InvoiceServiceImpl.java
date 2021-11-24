@@ -3,8 +3,9 @@ package nl.jamienovi.garagemanagement.invoice;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import lombok.extern.slf4j.Slf4j;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.interfaces.InvoiceService;
 import nl.jamienovi.garagemanagement.repairorderline.RepairOrderLineDto;
-import nl.jamienovi.garagemanagement.services.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class represents bussines logic of all operations related to invoice class.
@@ -40,7 +42,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoicePdf getInvoice(Integer customerId) {
-        return invoiceRepository.getById(customerId);
+        Optional<InvoicePdf> invoicePdfOptional = invoiceRepository.findById(customerId);
+        if(invoicePdfOptional.isEmpty()) {
+            throw new CustomerEntityNotFoundException(InvoicePdf.class,"id",customerId.toString());
+        }else {
+            return invoicePdfOptional.get();
+        }
     }
 
     public InvoiceCustomerDataDto getCustomerData(Integer carId){
@@ -131,12 +138,10 @@ public class InvoiceServiceImpl implements InvoiceService {
      */
     public byte[] setUpSourceAndTargetIOStreams(String invoiceHtml){
         ByteArrayOutputStream target = new ByteArrayOutputStream();
-
         ConverterProperties converterProperties = new ConverterProperties();
         converterProperties.setBaseUri("http://localhost:8080");
         HtmlConverter.convertToPdf(invoiceHtml,target,converterProperties);
-        byte[] data = target.toByteArray();
-        return data;
+        return target.toByteArray();
     }
 }
 

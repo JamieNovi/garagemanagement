@@ -11,7 +11,7 @@ import static nl.jamienovi.garagemanagement.security.UserPermission.*;
 public enum UserRole {
     FRONTOFFICE(Sets.newHashSet
                     (CUSTOMER_READ,CAR_READ,
-                    REPAIR_ORDER_READ,
+                    REPAIR_ORDER_READ,REPAIR_ORDER_WRITE,
                     INSPECTION_REPORT_READ,
                     INVOICE_WRITE)),
 
@@ -38,10 +38,10 @@ public enum UserRole {
     }
 
     public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
-       Set<SimpleGrantedAuthority> permissions = getPermission().stream() // Ga door alle authorisaties een user role
+       Set<SimpleGrantedAuthority> fetchedPermissions = getPermission().stream() // Ga door alle authorisaties een user role
                .map(permission -> new SimpleGrantedAuthority(permission.getPermissions())) // Haalt string op van UserPermission enum
                .collect(Collectors.toSet()); //Verzamel permissions in een nieuwe set
-       permissions.add(new SimpleGrantedAuthority("ROLE_" + this.name())); // Voeg gebruikersrol toe aan Set permissions.
-       return permissions;
+       fetchedPermissions.add(new SimpleGrantedAuthority("ROLE_" + this.name())); // Voeg gebruikersrol toe aan Set permissions.
+       return fetchedPermissions;
     }
 }

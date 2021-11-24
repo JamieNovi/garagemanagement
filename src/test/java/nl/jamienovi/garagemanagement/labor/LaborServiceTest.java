@@ -1,6 +1,6 @@
 package nl.jamienovi.garagemanagement.labor;
 
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,6 +81,6 @@ class LaborServiceTest {
     @Test
     void updatedLaborShouldThrowEntityNotFoundException() {
         when(laborRepository.findById("1")).thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityNotFoundException.class,() -> laborService.update("1",any()));
+        Assertions.assertThrows(CustomerEntityNotFoundException.class,() -> laborService.update("1",any()));
     }
 }

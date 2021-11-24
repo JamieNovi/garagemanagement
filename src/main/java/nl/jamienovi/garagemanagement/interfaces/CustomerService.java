@@ -1,4 +1,4 @@
-package nl.jamienovi.garagemanagement.services;
+package nl.jamienovi.garagemanagement.interfaces;
 
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerUpdateDto;

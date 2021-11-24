@@ -1,6 +1,6 @@
 package nl.jamienovi.garagemanagement.labor;
 
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,13 +26,13 @@ public class LaborController {
 
     @PreAuthorize("hasAnyAuthority('labor:read','labor:write')")
     @GetMapping(path = "{laborId}")
-    public Labor getLabor(@PathVariable String laborId) throws EntityNotFoundException {
+    public Labor getLabor(@PathVariable String laborId) {
         return laborService.findOne(laborId);
     }
 
     @PostMapping(path = "")
     @PreAuthorize("hasAnyAuthority('labor:write')")
-    public ResponseEntity<?> addLaborItem(@RequestBody Labor labor) {
+    public ResponseEntity<URI> addLaborItem(@RequestBody Labor labor) {
         laborService.add(labor);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -43,8 +43,8 @@ public class LaborController {
 
     @PreAuthorize("hasAnyAuthority('labor:write')")
     @PutMapping(path = "/{laborId}")
-    public ResponseEntity<?> updateLabor(@PathVariable String laborId,@RequestBody LaborDto laborDto)
-    throws EntityNotFoundException {
+    public ResponseEntity<ResponseMessage> updateLabor(@PathVariable String laborId,@RequestBody LaborDto laborDto)
+    throws CustomerEntityNotFoundException {
         laborService.update(laborId,laborDto);
 
         return ResponseEntity.ok(new ResponseMessage("Handeling aangepast"));
@@ -52,7 +52,7 @@ public class LaborController {
 
     @PreAuthorize("hasAnyAuthority('labor:write')")
     @DeleteMapping(path = "/{laborId}")
-    public ResponseEntity<?> deleteLabor(@PathVariable String laborId) throws EntityNotFoundException {
+    public ResponseEntity<ResponseMessage> deleteLabor(@PathVariable String laborId) {
         laborService.delete(laborId);
 
         return ResponseEntity.ok(new ResponseMessage("Handeling verwijderd"));

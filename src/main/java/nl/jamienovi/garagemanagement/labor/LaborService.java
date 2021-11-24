@@ -1,7 +1,7 @@
 package nl.jamienovi.garagemanagement.labor;
 
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.services.GenericService;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.interfaces.GenericService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +25,12 @@ public class LaborService implements GenericService<Labor,String,LaborDto> {
 
     @Override
     public Labor findOne(String laborId){
-        Labor labor = laborRepository.findById(laborId)
-                .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id",laborId.toString())
-                );
-        return labor;
+        Optional<Labor> laborOptional = laborRepository.findById(laborId);
+        if(laborOptional.isEmpty()) {
+            throw  new CustomerEntityNotFoundException(Labor.class,"id",laborId);
+        }else {
+            return laborOptional.get();
+        }
     }
 
     @Override
@@ -43,7 +45,7 @@ public class LaborService implements GenericService<Labor,String,LaborDto> {
     @Override
     public void update(String laborId, LaborDto laborDto) {
         Labor updatedLabor = laborRepository.findById(laborId)
-                .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id", laborId.toString()));
+                .orElseThrow(() -> new CustomerEntityNotFoundException(Labor.class,"id", laborId));
         mapper.updateLaborFromDto(laborDto,updatedLabor);
         laborRepository.save(updatedLabor);
     }
@@ -51,7 +53,7 @@ public class LaborService implements GenericService<Labor,String,LaborDto> {
     @Override
     public void delete(String laborId) {
         Labor labor = laborRepository.findById(laborId)
-                .orElseThrow(() -> new EntityNotFoundException(Labor.class,"id", laborId));
+                .orElseThrow(() -> new CustomerEntityNotFoundException(Labor.class,"id", laborId));
         laborRepository.delete(labor);
     }
 }

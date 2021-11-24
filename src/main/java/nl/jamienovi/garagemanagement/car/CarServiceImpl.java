@@ -2,9 +2,9 @@ package nl.jamienovi.garagemanagement.car;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.customer.Customer;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.services.CarService;
-import nl.jamienovi.garagemanagement.services.CustomerService;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.interfaces.CarService;
+import nl.jamienovi.garagemanagement.interfaces.CustomerService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class CarServiceImpl implements CarService {
-
    private final CarRepository carRepository;
    private final CustomerService customerService;
 
@@ -38,7 +37,7 @@ public class CarServiceImpl implements CarService {
     public Car findOne(Integer carId){
        return carRepository.findById(carId)
                .orElseThrow(() ->
-                   new EntityNotFoundException(Car.class,"id",carId.toString()));
+                   new CustomerEntityNotFoundException(Car.class,"id",carId.toString()));
     }
 
     @Override
@@ -55,7 +54,7 @@ public class CarServiceImpl implements CarService {
     public void update(Integer carId, CarDto carDto){
         Car existingCar = carRepository.findById(carId)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(Car.class,"id",carId.toString()));
+                        new CustomerEntityNotFoundException(Car.class,"id",carId.toString()));
         DtoMapper.INSTANCE.updateCarFromDto(carDto,existingCar); // map carDto to car
         carRepository.save(existingCar);
     }
@@ -64,7 +63,7 @@ public class CarServiceImpl implements CarService {
     public void delete(Integer carId){
         Car existingCar = carRepository.findById(carId)
                 .orElseThrow(() ->
-                        new EntityNotFoundException(Car.class,"id",carId.toString()));
-       carRepository.deleteById(carId);
+                        new CustomerEntityNotFoundException(Car.class,"id",carId.toString()));
+       carRepository.deleteById(existingCar.getId());
     }
 }

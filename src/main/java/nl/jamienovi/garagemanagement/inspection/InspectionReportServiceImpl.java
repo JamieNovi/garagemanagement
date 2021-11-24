@@ -2,15 +2,14 @@ package nl.jamienovi.garagemanagement.inspection;
 
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.car.Car;
-import nl.jamienovi.garagemanagement.car.CarRepository;
-import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.eventmanager.AddApprovalStatusEvent;
-import nl.jamienovi.garagemanagement.eventmanager.AddInspectionReportEvent;
-import nl.jamienovi.garagemanagement.eventmanager.ChangeInspectionStatusEvent;
-import nl.jamienovi.garagemanagement.eventmanager.RepairOrderCompletedEvent;
-import nl.jamienovi.garagemanagement.services.CarService;
-import nl.jamienovi.garagemanagement.services.InspectionReportService;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.PendingInspectionReportException;
+import nl.jamienovi.garagemanagement.eventmanager.ApprovalStatusChangeEvent;
+import nl.jamienovi.garagemanagement.eventmanager.InspectionReportCreatedEvent;
+import nl.jamienovi.garagemanagement.eventmanager.InspectionStatusChangeEvent;
+import nl.jamienovi.garagemanagement.eventmanager.RepairOrderStatusChangeEvent;
+import nl.jamienovi.garagemanagement.interfaces.CarService;
+import nl.jamienovi.garagemanagement.interfaces.InspectionReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -18,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+
+import static nl.jamienovi.garagemanagement.inspection.InspectionStatus.AFGEKEURD;
+import static nl.jamienovi.garagemanagement.inspection.InspectionStatus.GOEDGEKEURD;
 
 /**
  * Class represents bussines logic for all operations related to InspectionReport
@@ -35,8 +37,6 @@ public class InspectionReportServiceImpl implements InspectionReportService {
 
     @Autowired
     public InspectionReportServiceImpl(InspectionReportRepository inspectionReportRepository,
-                                       CarRepository carRepository,
-                                       CustomerServiceImpl customerServiceImpl,
                                        CarService carService,
                                        ApplicationEventPublisher applicationEventPublisher) {
         this.inspectionReportRepository = inspectionReportRepository;
@@ -54,12 +54,20 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         return inspectionReportRepository.getById(inspectionReportId);
     }
 
+    /**
+     * Save inspectionreport with id of car.
+     * @param carId
+     * @throws PendingInspectionReportException
+     */
     @Override
-    public void addInspectionReport(Integer carId){
+    public void addInspectionReport(Integer carId) throws PendingInspectionReportException {
         Car existingCar = carService.findOne(carId);
-
-        if(hasPendingStatus(existingCar.getId())){ // check if car has pending inspectionreport
-            throw new IllegalStateException("Auto heeft al een keuring openstaan");
+        Boolean isPending = hasPendingStatus(existingCar.getId());
+        // check if car has pending inspectionreport
+        if(Boolean.TRUE.equals(isPending)){
+            throw new PendingInspectionReportException(
+                    "Auto heeft al een keuring openstaan. Status van keuringsrapport is : IN BEHANDELING. "
+            );
         }else {
             InspectionReport newInspectionReport = new InspectionReport();
             newInspectionReport.setCar(existingCar);
@@ -76,7 +84,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
              * after inspectionreport is created
              */
 
-            AddInspectionReportEvent event = new AddInspectionReportEvent(this,carId);
+            InspectionReportCreatedEvent event = new InspectionReportCreatedEvent(this,carId);
             applicationEventPublisher.publishEvent(event);
         }
     }
@@ -84,7 +92,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
     @Override
     public void deleteInspectionReport(Integer inspectionReportId){
         InspectionReport inspectionReport = inspectionReportRepository.findById(inspectionReportId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new CustomerEntityNotFoundException(
                         InspectionReport.class,"id",inspectionReportId.toString()
                 ));
         inspectionReportRepository.delete(inspectionReport);
@@ -97,21 +105,19 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         inspectionReportRepository.save(report);
 
         //Stuur event naar repairorder om status te wijzigen naar VOLTOOID
+        if(status == GOEDGEKEURD) {
+            // Publish event for RepairOrderService to change status to NIET_UITVOEREN
+            InspectionStatusChangeEvent eventInspectionStatus =
+                    new InspectionStatusChangeEvent(this,inspectionReportId );
+            applicationEventPublisher.publishEvent(eventInspectionStatus);
 
-        switch(status) {
-            case GOEDGEKEURD:
-                // Publish event for RepairOrderService to change status to NIET_UITVOEREN
-                ChangeInspectionStatusEvent eventInspectionStatus = new ChangeInspectionStatusEvent(this,inspectionReportId );
-                applicationEventPublisher.publishEvent(eventInspectionStatus);
-
-                log.info(String.format("Auto met klant-id: %s en auto-id %s is %s",
-                        report.getCar().getCustomer().getId(),
-                        report.getCar().getId(),
-                        status));
-                break;
-            case AFGEKEURD:
-                log.info("Auto van klant-id: "+
-                        report.getCar().getCustomer().getId() + " is : " + status.toString() + ". Contact opnemen met klant");
+            log.info(String.format("Auto met klant-id: %s en auto-id %s is %s",
+                    report.getCar().getCustomer().getId(),
+                    report.getCar().getId(),
+                    status));
+        }else if (status == AFGEKEURD) {
+            log.info("Auto van klant-id: "+
+                    report.getCar().getCustomer().getId() + " is : " + status.toString() + ". Contact opnemen met klant");
         }
     }
 
@@ -129,14 +135,14 @@ public class InspectionReportServiceImpl implements InspectionReportService {
         report.setRepairApprovalStatus(status);
         inspectionReportRepository.save(report);
         if(status == RepairApprovalStatus.NIETAKKOORD){
-            AddApprovalStatusEvent event = new AddApprovalStatusEvent(
+            ApprovalStatusChangeEvent event = new ApprovalStatusChangeEvent(
                     this,
                     inspectionReportId,
                     RepairApprovalStatus.NIETAKKOORD);
             applicationEventPublisher.publishEvent(event);
         }else{
             log.info("Keuringsrapport-id: " + report.getId() + " is : " + status.toString()+ " met reparatie.");
-            AddApprovalStatusEvent event = new AddApprovalStatusEvent(
+            ApprovalStatusChangeEvent event = new ApprovalStatusChangeEvent(
                     this,
                     inspectionReportId,
                     RepairApprovalStatus.AKKOORD);
@@ -172,7 +178,7 @@ public class InspectionReportServiceImpl implements InspectionReportService {
 
     @Override
     @EventListener
-    public void handleRepairOrderStatusEvent(RepairOrderCompletedEvent event) {
+    public void handleRepairOrderStatusEvent(RepairOrderStatusChangeEvent event) {
         setIsRepaired(event.getInspectionReportId());
     }
 }

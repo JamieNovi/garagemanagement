@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class ShortComingServiceImpl implements nl.jamienovi.garagemanagement.services.ShortComingService {
+public class ShortComingServiceImpl implements nl.jamienovi.garagemanagement.interfaces.ShortComingService {
     private final ShortComingRepository shortComingRepository;
     private final InspectionReportServiceImpl inspectionReportServiceImpl;
 

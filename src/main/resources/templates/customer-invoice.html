@@ -52,12 +52,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="item: ${carparts}">
-            <td class="pl-4 text-left" th:text="${item.getName()}"></td>
-            <td th:text="${item.getPrice()}"></td>
+        <tr th:each="repairItem: ${carparts}">
+            <td class="pl-4 text-left" th:text="${repairItem.getName()}"></td>
+            <td th:text="${repairItem.getPrice()}"></td>
             <td>21 %</td>
-            <td class="pr-4" th:text="${item.getOrderLineQuantity()}"></td>
-            <td th:text="${#numbers.formatDecimal(item.getPrice() *  item.getOrderLineQuantity(),0,2)}"></td>
+            <td class="pr-4" th:text="${repairItem.getOrderLineQuantity()}"></td>
+            <td th:text="${#numbers.formatDecimal(repairItem.getPrice() *  repairItem.getOrderLineQuantity(),0,2)}"></td>
         </tr>
         </tbody>
     </table>
@@ -74,12 +74,12 @@
         </tr>
         </thead>
         <tbody>
-                <tr th:each="item : ${labors}">
-                    <td class="pl-4 text-left" th:text="${item.getName()}"></td>
-                    <td th:text="${item.getPrice()}"></td>
+                <tr th:each="repairItem : ${labors}">
+                    <td class="pl-4 text-left" th:text="${repairItem.getName()}"></td>
+                    <td th:text="${repairItem.getPrice()}"></td>
                     <td>21 %</td>
-                    <td class="pr-4" th:text="${item.getOrderLineQuantity()}"></td>
-                    <td th:text="${#numbers.formatDecimal(item.getPrice() *  item.getOrderLineQuantity(),0,2)}"></td>
+                    <td class="pr-4" th:text="${repairItem.getOrderLineQuantity()}"></td>
+                    <td th:text="${#numbers.formatDecimal(repairItem.getPrice() *  repairItem.getOrderLineQuantity(),0,2)}"></td>
                 </tr>
         </tbody>
     </table>
@@ -100,7 +100,6 @@
                 <span th:text="${#numbers.formatDecimal(subTotal * 1.21,0,2)}" class="text-green-600">123.33</span>
             </h2>
         </div>
-
 
     </div>
 

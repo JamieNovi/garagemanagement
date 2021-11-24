@@ -12,18 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class Config implements WebMvcConfigurer {
 
-//    private final RepairOrderService repairOrderService;
-//    private final InvoiceService invoiceService;
-//    private final InspectionService inspectionService;
-//
-//    @Autowired
-//    public Config(RepairOrderService repairOrderService, InvoiceService invoiceService,
-//                  InspectionService inspectionService) {
-//        this.repairOrderService = repairOrderService;
-//        this.invoiceService = invoiceService;
-//        this.inspectionService = inspectionService;
-//    }
-
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new StringToRepairEnumConverter());
@@ -37,5 +25,4 @@ public class Config implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**");
     }
-
 }

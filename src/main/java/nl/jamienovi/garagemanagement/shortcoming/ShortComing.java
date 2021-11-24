@@ -21,7 +21,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Getter
 @Setter
 public class ShortComing {
-
     @Id
     @SequenceGenerator(name = "shortcoming_sequence",sequenceName = "shortcoming_sequence")
     @GeneratedValue(strategy = SEQUENCE, generator = "shortcoming_sequence")
@@ -35,13 +34,11 @@ public class ShortComing {
             generator = ObjectIdGenerators.PropertyGenerator.class,
             property = "id")
     @JsonIdentityReference(alwaysAsId=true)
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name= "keuringsrapport_id")
     private InspectionReport inspectionReport;
 
     public ShortComing(String description) {
         this.description = description;
     }
-
-
 }

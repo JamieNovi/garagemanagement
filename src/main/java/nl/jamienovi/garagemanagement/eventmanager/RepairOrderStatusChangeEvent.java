@@ -4,10 +4,10 @@ import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 @Getter
-public class RepairOrderCompletedEvent extends ApplicationEvent {
+public class RepairOrderStatusChangeEvent extends ApplicationEvent {
     private Integer inspectionReportId;
 
-    public RepairOrderCompletedEvent(Object source,Integer inspectionReportId) {
+    public RepairOrderStatusChangeEvent(Object source, Integer inspectionReportId) {
         super(source);
         this.inspectionReportId = inspectionReportId;
     }

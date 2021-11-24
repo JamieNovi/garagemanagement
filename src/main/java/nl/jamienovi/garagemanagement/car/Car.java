@@ -27,7 +27,6 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Car {
-    
     @Id
     @SequenceGenerator(name = "car_sequence", sequenceName = "car_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "car_sequence")
@@ -70,12 +69,4 @@ public class Car {
         this.model = model;
         this.registrationPlate = registrationPlate;
     }
-
-    public Car(Integer id, String brand, String model, String registrationPlate) {
-        this.id = id;
-        this.brand = brand;
-        this.model = model;
-        this.registrationPlate = registrationPlate;
-    }
-
 }

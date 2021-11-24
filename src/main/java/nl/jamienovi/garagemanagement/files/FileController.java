@@ -1,5 +1,6 @@
 package nl.jamienovi.garagemanagement.files;
 
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseFile;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Services to upload and download pdf-files from the database
+ *
+ * @author Jamie Spekman
+ */
 @Controller
 @RequestMapping(path = "/api/documenten")
 public class FileController {
@@ -44,7 +50,7 @@ public class FileController {
      * @return ResponseEntity
      */
     @PreAuthorize("hasAnyAuthority('files:read','files:write')")
-    @RequestMapping(path = "/")
+    @RequestMapping(path = "")
     public ResponseEntity<List<ResponseFile>> getAll() {
         List<ResponseFile> files = fileStorageServiceImpl.findAll().map(dbFile -> {
             //Build Uri strings from all files retrieved.
@@ -70,11 +76,15 @@ public class FileController {
     @PreAuthorize("hasAnyAuthority('files:read','files:write')")
     public ResponseEntity<byte[]> getSingle(@PathVariable("id") String id){
         FileDB fileDb = fileStorageServiceImpl.findOne(id);
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename= \" " + fileDb.getName() + "\" "
-                )
-                .body(fileDb.getData());
+        if(fileDb == null) {
+            throw new CustomerEntityNotFoundException(FileDB.class,"id",id);
+        }else {
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename= \" " + fileDb.getName() + "\" "
+                    )
+                    .body(fileDb.getData());
+        }
     }
 }

@@ -24,7 +24,8 @@ public class ShortComingController {
 
     @PreAuthorize("hasAnyAuthority('shortcoming:write')")
     @PostMapping("/{inspectionReportId}")
-    public void addShortComing(@PathVariable("inspectionReportId") Integer inspectionReportId,@RequestBody ShortComing shortComing){
+    public void addShortComing(@PathVariable("inspectionReportId") Integer inspectionReportId,
+                               @RequestBody ShortComing shortComing){
         shortComingServiceImpl.add(inspectionReportId,shortComing);
     }
 }

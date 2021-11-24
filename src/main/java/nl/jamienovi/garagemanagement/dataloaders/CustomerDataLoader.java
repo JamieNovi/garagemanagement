@@ -4,16 +4,13 @@ package nl.jamienovi.garagemanagement.dataloaders;
 import lombok.extern.slf4j.Slf4j;
 import nl.jamienovi.garagemanagement.appointment.Appointment;
 import nl.jamienovi.garagemanagement.appointment.AppointmentType;
-import nl.jamienovi.garagemanagement.authentication.ApplicationUser;
-import nl.jamienovi.garagemanagement.authentication.ApplicationUserRepository;
 import nl.jamienovi.garagemanagement.car.Car;
 import nl.jamienovi.garagemanagement.customer.Customer;
 import nl.jamienovi.garagemanagement.customer.CustomerServiceImpl;
-import nl.jamienovi.garagemanagement.security.UserRole;
-import nl.jamienovi.garagemanagement.services.AppointmentService;
+import nl.jamienovi.garagemanagement.interfaces.AppointmentService;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -25,20 +22,13 @@ import java.time.LocalTime;
 @Slf4j
 @Transactional
 public class CustomerDataLoader implements CommandLineRunner {
-
     private final CustomerServiceImpl customerServiceImpl;
     private final AppointmentService appointmentService;
-    private final ApplicationUserRepository applicationUserRepository;
-    private final PasswordEncoder encoder;
 
     public CustomerDataLoader(CustomerServiceImpl customerServiceImpl,
-                              AppointmentService appointmentService,
-                              ApplicationUserRepository applicationUserRepository,
-                              PasswordEncoder encoder) {
+                              AppointmentService appointmentService) {
         this.customerServiceImpl = customerServiceImpl;
         this.appointmentService = appointmentService;
-        this.applicationUserRepository = applicationUserRepository;
-        this.encoder = encoder;
     }
 
     @Override
@@ -54,15 +44,17 @@ public class CustomerDataLoader implements CommandLineRunner {
         Car car3 =  new Car("BMW","I7","HM-XXX-69");
         Car car4 = new Car("Audi","R8","87-23-WE");
         Car car5 = new Car("Ford","Mustang","HM-00-JJ");
+        Car car6 = new Car("Peugeto","RCZ","DS-SJ-JS");
 
-        Customer customer1 = new Customer(
-               "Tom",
-               "Cruise",
-               "06-43244244",
-               "tomcruise@hollywood.com",
-               "Hollywood boulevard 131",
-               "90024", "Los Angeles"
-                );
+        Customer customer1 = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Tom"))
+                .with(s -> s.setLastName("Cruise"))
+                .with(s -> s.setPhoneNumber("06-43244244"))
+                .with(s -> s.setEmail("tomcruise@hollywood.com"))
+                .with(s -> s.setAddress("Hollywood boulevard 131"))
+                .with(s -> s.setPostalCode("90024"))
+                .with(s -> s.setCity("Los Angeles"))
+                .get();
         customer1.addCar(car1);
         customerServiceImpl.add(customer1);
 
@@ -72,15 +64,16 @@ public class CustomerDataLoader implements CommandLineRunner {
                 AppointmentType.KEURING
         ));
 
-        Customer customer2 = new Customer(
-               "Leonardo",
-                "Dicaprio",
-                "06-23423424",
-                "leo@hollywood.com",
-                "Beverly Hills",
-                "90211",
-                "Los Angeles"
-                );
+        Customer customer2 = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Leonardo"))
+                .with(s -> s.setLastName("Dicaprio"))
+                .with(s -> s.setPhoneNumber("06-23423424"))
+                .with(s -> s.setEmail("leo@hollywood.com"))
+                .with(s -> s.setAddress("Beverly Hills"))
+                .with(s -> s.setPostalCode("90211"))
+                .with(s -> s.setCity("Los Angeles"))
+                .get();
+
         customer2.addCar(car2);
         customerServiceImpl.add(customer2);
 
@@ -90,64 +83,58 @@ public class CustomerDataLoader implements CommandLineRunner {
                 AppointmentType.KEURING
         ));
 
-        Customer customer3 = new Customer(
-                "Julie",
-                "Cash",
-                "089-2342424",
-                "juliecash@bookings.com",
-                "Avenue 5",
-                "24245",
-                "Texas"
-       );
+        Customer customer3 = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Julie"))
+                .with(s -> s.setLastName("Cash"))
+                .with(s -> s.setPhoneNumber("089-2342424"))
+                .with(s -> s.setEmail("juliecash@bookings.com"))
+                .with(s -> s.setAddress("Avenue 6"))
+                .with(s -> s.setPostalCode("242345"))
+                .with(s -> s.setCity("Texas"))
+                .get();
+
         customer3.addCar(car3);
         customerServiceImpl.add(customer3);
 
-//        appointmentService.save(3,new Appointment(
-//                LocalDate.of(2021,11,11),
-//                LocalTime.of(12,30,00),
-//                AppointmentType.KEURING
-//        ));
-//
-//        appointmentService.save(5,new Appointment(
-//                LocalDate.of(2021,10,31),
-//                LocalTime.of(18,30,00),
-//                AppointmentType.KEURING
-//        ));
+        appointmentService.addAppointmentToCar(3,new Appointment(
+                LocalDate.of(2021,11,11),
+                LocalTime.of(12,30,00),
+                AppointmentType.KEURING
+        ));
 
+        Customer customer4 = Builder.build(Customer.class)
+                        .with(s -> s.setFirstName("Ben"))
+                        .with(s -> s.setLastName("Greenfield"))
+                        .with(s -> s.setPhoneNumber("0632324"))
+                        .with(s -> s.setEmail("bengreenfieldfitness@fitness.com"))
+                        .with(s -> s.setAddress("River Road 1"))
+                        .with(s -> s.setPostalCode("34399"))
+                        .with(s -> s.setCity("Spokane"))
+                        .get();
 
-        // == Gebruiker toevoegenen aan database ==
-        ApplicationUser frontOfficeMedewerker = new ApplicationUser(
-                "front-office",
-                encoder.encode("1234"),
-                UserRole.FRONTOFFICE
-        );
-        applicationUserRepository.save(frontOfficeMedewerker);
+        Customer customer5 = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Johnny"))
+                .with(s -> s.setLastName("Depp"))
+                .with(s -> s.setPhoneNumber("064352534"))
+                .with(s -> s.setEmail("dep@mail.com"))
+                .with(s -> s.setAddress("Queens boulevard 1"))
+                .with(s -> s.setPostalCode("2342"))
+                .with(s -> s.setCity("Washington"))
+                .get();
 
-        ApplicationUser administratieMedewerker = new ApplicationUser(
-                "administratie",
-                encoder.encode("1234"),
-                UserRole.ADMIN
-        );
+        Customer customer6 = Builder.build(Customer.class)
+                .with(s -> s.setFirstName("Brad"))
+                .with(s -> s.setLastName("Pitt"))
+                .with(s -> s.setPhoneNumber("0632332444"))
+                .with(s -> s.setEmail("bradpitt@hollywood.com"))
+                .with(s -> s.setAddress("Kings boulevard 22"))
+                .with(s -> s.setPostalCode("234234"))
+                .with(s -> s.setCity("San Diego"))
+                .get();
 
-        applicationUserRepository.save(administratieMedewerker);
-
-        ApplicationUser monteur = new ApplicationUser(
-                "monteur",
-                encoder.encode("1234"),
-                UserRole.MECHANIC
-        );
-
-        applicationUserRepository.save(monteur);
-
-        ApplicationUser backOfficeMedewerker = new ApplicationUser(
-                "back-office",
-                encoder.encode("1234"),
-                UserRole.BACKOFFICE
-        );
-
-        applicationUserRepository.save(backOfficeMedewerker);
-
-
+        customerServiceImpl.add(customer4);
+        customerServiceImpl.add(customer5);
+        customerServiceImpl.add(customer6);
 
     }
 }

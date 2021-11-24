@@ -5,7 +5,7 @@ public enum InspectionStatus {
     GOEDGEKEURD("Goed gekeurd"),
     AFGEKEURD("Afgekeurd");
 
-    final private String value;
+    private final String value;
 
     InspectionStatus(String s) {
         value = s;

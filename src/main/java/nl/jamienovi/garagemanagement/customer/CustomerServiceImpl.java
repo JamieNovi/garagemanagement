@@ -1,8 +1,9 @@
 package nl.jamienovi.garagemanagement.customer;
 
 import lombok.extern.slf4j.Slf4j;
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
-import nl.jamienovi.garagemanagement.services.CustomerService;
+import nl.jamienovi.garagemanagement.errorhandling.EmailDuplicateException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
+import nl.jamienovi.garagemanagement.interfaces.CustomerService;
 import nl.jamienovi.garagemanagement.utils.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,28 +35,28 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer findOne(Integer customerId) {
-//        Customer customer = customerRepository.getById(customerId);
-//        CustomerGetDto dto = DtoMapper.INSTANCE.customerToDto(customer);
-//        log.info(dto.toString());
        return customerRepository.findById(customerId)
-               .orElseThrow(() -> new EntityNotFoundException(Customer.class,"id", customerId.toString()));
+               .orElseThrow(() -> new CustomerEntityNotFoundException(Customer.class,"id", customerId.toString()));
     }
 
     @Override
-    public Customer add(Customer customer) {
-        if(customerRepository.emailAlreadyExists(customer.getEmail())) {
-            throw new IllegalStateException("Email bestaat al in het systeem!");
+    public Customer add(Customer customer) throws EmailDuplicateException {
+        Boolean emailExists = customerRepository.emailAlreadyExists(customer.getEmail());
+        if(Boolean.TRUE.equals(emailExists)) {
+            throw new EmailDuplicateException("Email bestaat al in het systeem!");
         }
-        log.info(String.format("Klant aangemaakt met klant-id:",
-                customer.getId()));
+
+
        Customer newCustomer = customerRepository.save(customer);
+        log.info(String.format("Klant aangemaakt met klant-id: %s",
+                newCustomer.getId()));
        return newCustomer;
     }
 
     @Override
     public void update(Integer customerId, CustomerUpdateDto customerUpdateDto) {
                Customer existingCustomer = customerRepository.findById(customerId)
-               .orElseThrow(() -> new EntityNotFoundException(
+               .orElseThrow(() -> new CustomerEntityNotFoundException(
                        Customer.class,"id",
                        customerId.toString())
                );
@@ -67,7 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void delete(Integer customerId) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new CustomerEntityNotFoundException(
                         Customer.class,
                         "id",
                         customerId.toString())

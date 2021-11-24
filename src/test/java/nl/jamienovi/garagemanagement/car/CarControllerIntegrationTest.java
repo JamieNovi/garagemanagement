@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,13 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("it")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CarControllerIntegrationTest {
-
+class CarControllerIntegrationTest {
     @LocalServerPort
     private Integer port;
-
     private ObjectMapper objectMapper = new ObjectMapper();
-
 
     @Test
     void shouldGetAllCars() {
@@ -50,7 +48,11 @@ public class CarControllerIntegrationTest {
 
     @Test
     void shouldCreateCarwithCustomer() throws Exception {
-        Car car = new Car("Tesla","Model S","AA-DD-55");
+        Car car =  Builder.build(Car.class)
+                .with(s -> s.setBrand("Tesla"))
+                .with(s -> s.setModel("Model S"))
+                .with(s -> s.setRegistrationPlate("AA-DD-55"))
+                .get();
 
         ExtractableResponse<Response> response = RestAssured
                 .given()
@@ -78,15 +80,13 @@ public class CarControllerIntegrationTest {
 
     @Test
     void shouldUpdateCar() throws Exception {
-        CarDto car = new CarDto(1,"Ferrari","Berlinetta","11-22-99");
-//                new Customer(
-//                "Tom",
-//                "Cruise",
-//                "053-35345435",
-//                "tomcruise@hollywood.com",
-//                "Hollywood boulevard 131",
-//                "90024", "Los Angeles"
-//        ));
+        CarDto car =  Builder.build(CarDto.class)
+                .with(s -> s.setId(1))
+                .with(s -> s.setBrand("Ferrari"))
+                .with(s -> s.setModel("Berlinetta"))
+                .with(s -> s.setRegistrationPlate("11-22-99"))
+                .get();
+
         ExtractableResponse<Response> response = RestAssured
                 .given()
                 .auth().basic("administratie","1234")

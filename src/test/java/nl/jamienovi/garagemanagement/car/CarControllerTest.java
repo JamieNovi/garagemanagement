@@ -1,6 +1,7 @@
 package nl.jamienovi.garagemanagement.car;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.jamienovi.garagemanagement.utils.Builder;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CarController.class)
-public class CarControllerTest {
+class CarControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -33,9 +34,12 @@ public class CarControllerTest {
     @WithMockUser(authorities = {"car:read"})
     void shouldGetAllCars() throws  Exception{
         Mockito.when(carServiceImpl.findAll())
-                .thenReturn(List.of(new Car(
-                        1,"Tesla","Model 1","KK-9S-SS"
-                )));
+                .thenReturn(List.of( Builder.build(Car.class)
+                        .with(s -> s.setId(1))
+                        .with(s -> s.setBrand("Tesla"))
+                        .with(s -> s.setModel("Model 1"))
+                        .with(s -> s.setRegistrationPlate("KK-9S-SS"))
+                        .get()));
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/api/auto"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -47,10 +51,13 @@ public class CarControllerTest {
     @WithMockUser(authorities = {"car:read"})
     void shouldgetCar() throws Exception {
         Mockito.when(carServiceImpl.findOne(1))
-                .thenReturn(new Car(
-                        1,"Tesla","Model 1","KK-9S-SS"
-                ));
-
+                .thenReturn(Builder.build(Car.class)
+                        .with(s -> s.setId(1))
+                        .with(s -> s.setBrand("Tesla"))
+                        .with(s -> s.setModel("Model 1"))
+                        .with(s -> s.setRegistrationPlate("KK-9S-SS"))
+                        .get());
+     
         this.mockMvc
                 .perform(MockMvcRequestBuilders.get("/api/auto/1"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -62,9 +69,12 @@ public class CarControllerTest {
     @Test
     @WithMockUser(authorities = {"car:write"})
     void shouldAddCar() throws Exception {
-        Car car = new Car(
-                "Tesla","Model 1","KK-9S-SS"
-        );
+        Car car =  Builder.build(Car.class)
+                .with(s -> s.setId(1))
+                .with(s -> s.setBrand("Tesla"))
+                .with(s -> s.setModel("Model 1"))
+                .with(s -> s.setRegistrationPlate("KK-9S-SS"))
+                .get();
 
         this.mockMvc
                 .perform(MockMvcRequestBuilders

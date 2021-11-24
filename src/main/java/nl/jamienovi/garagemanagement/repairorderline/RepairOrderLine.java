@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import nl.jamienovi.garagemanagement.repairorder.RepairOrder;
 
 import javax.persistence.*;
@@ -15,8 +16,8 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Table(name = "reparatie_bestelregels")
 @Getter
 @Setter
+@ToString
 public class RepairOrderLine {
-
     @Id
     @SequenceGenerator(name = "repair_order_line_sequence",sequenceName = "repair_order_line_sequence",allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "repair_order_line_sequence")

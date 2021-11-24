@@ -6,7 +6,7 @@ import nl.jamienovi.garagemanagement.labor.ItemType;
 
 @Getter
 @Setter
-public class Item {
+public  class RepairItem {
     private String id;
     private String name;
     private Double price;

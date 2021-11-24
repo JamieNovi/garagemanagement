@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Part extends Item{
+public class Part extends RepairItem {
     @Id
     @Column(name = "id",unique = true)
     private String id;
@@ -38,4 +38,6 @@ public class Part extends Item{
         this.price = price;
         this.numberInStock = numberInStock;
     }
+
+
 }

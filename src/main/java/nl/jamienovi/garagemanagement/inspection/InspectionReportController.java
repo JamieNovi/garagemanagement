@@ -1,6 +1,6 @@
 package nl.jamienovi.garagemanagement.inspection;
 
-import nl.jamienovi.garagemanagement.errorhandling.EntityNotFoundException;
+import nl.jamienovi.garagemanagement.errorhandling.CustomerEntityNotFoundException;
 import nl.jamienovi.garagemanagement.payload.response.ResponseMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,28 +27,28 @@ public class InspectionReportController {
 
     @PreAuthorize("hasAnyAuthority('inspection:read')")
     @PostMapping(path = "/{carId}")
-    public ResponseEntity<?> addInspectionReport(@PathVariable("carId") Integer carId){
+    public ResponseEntity<ResponseMessage> addInspectionReport(@PathVariable("carId") Integer carId){
         inspectionReportServiceImpl.addInspectionReport(carId);
         return ResponseEntity.ok(new ResponseMessage("Keuringsrapport toegevoegd en reparatieorder toegevoegd."));
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:write')")
     @DeleteMapping(path = "/{inspectionReportId}")
-    public ResponseEntity<?> deleteInspectionReport(@PathVariable Integer inspectionReportId) throws EntityNotFoundException{
+    public ResponseEntity<ResponseMessage> deleteInspectionReport(@PathVariable Integer inspectionReportId) throws CustomerEntityNotFoundException {
         inspectionReportServiceImpl.deleteInspectionReport(inspectionReportId);
         return ResponseEntity.ok(new ResponseMessage("Keuringsrapport verwijderd."));
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:write')")
     @PutMapping(path = "/{inspectionReportId}")
-    public ResponseEntity<?> setInspectionStatus(@PathVariable Integer inspectionReportId, @RequestParam("status") InspectionStatus status){
+    public ResponseEntity<ResponseMessage> setInspectionStatus(@PathVariable Integer inspectionReportId, @RequestParam("status") InspectionStatus status){
         inspectionReportServiceImpl.setInspectionReportStatus(inspectionReportId, status );
         return ResponseEntity.ok(new ResponseMessage("Status keuringsrapport:" + status));
     }
 
     @PreAuthorize("hasAnyAuthority('inspection:write')")
     @PutMapping(path = "/repareren/{inspectionReportId}")
-    public ResponseEntity<?> setApprovalRepair(@PathVariable Integer inspectionReportId,
+    public ResponseEntity<ResponseMessage> setApprovalRepair(@PathVariable Integer inspectionReportId,
                                                @RequestParam("akkoord") RepairApprovalStatus status){
         inspectionReportServiceImpl.setApprovalRepair(inspectionReportId,status);
         return ResponseEntity.ok(new ResponseMessage("akkoord niet akkoord in systeem gezet"));

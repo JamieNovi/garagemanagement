@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface RepairOrderRepository extends JpaRepository<RepairOrder,Integer> {
 
     @Query("SELECT i FROM InspectionReport i WHERE i.car.id = ?1 and i.status= 'IN_BEHANDELING'")
-    Optional<InspectionReport> getInspectionReportFromCustomer(Integer carId);
+    Optional<InspectionReport> getInspectionReportByCarId(Integer carId);
 
     @Query("SELECT r FROM RepairOrder r WHERE r.inspectionReport.id =?1")
     RepairOrder getRepairOrderWithInspectionReportId(Integer inspectionReportId);

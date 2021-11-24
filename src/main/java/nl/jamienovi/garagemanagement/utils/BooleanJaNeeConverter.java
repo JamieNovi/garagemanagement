@@ -7,7 +7,7 @@ import javax.persistence.Converter;
 public class BooleanJaNeeConverter implements AttributeConverter<Boolean,String> {
     @Override
     public String convertToDatabaseColumn(Boolean value) {
-        if(value) {
+        if(Boolean.TRUE.equals(value)) {
             return "Ja";
         }else{
             return "Nee";

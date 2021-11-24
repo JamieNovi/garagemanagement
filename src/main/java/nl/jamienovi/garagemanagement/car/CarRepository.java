@@ -6,8 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CarRepository extends JpaRepository<Car,Integer> {
-
+interface CarRepository extends JpaRepository<Car,Integer> {
     Optional<Car> findCarByRegistrationPlate(String registrationPlate);
-
 }
